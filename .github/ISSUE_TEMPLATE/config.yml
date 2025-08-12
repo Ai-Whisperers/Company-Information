@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Documentation
+    url: https://github.com/Ai-Whisperers/documentation
+    about: Check our documentation for answers to common questions
+  - name: Discussions
+    url: https://github.com/orgs/Ai-Whisperers/discussions
+    about: Ask questions and discuss ideas with the community
+  - name: Security Issue
+    url: https://github.com/Ai-Whisperers/.github/security/policy
+    about: Please report security vulnerabilities privately
