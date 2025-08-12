@@ -1,0 +1,114 @@
+name: ✅ Task
+description: Create a task or work item
+title: "[TASK] "
+labels: ["task", "needs-triage"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Create a task to track work that needs to be done.
+
+  - type: dropdown
+    id: project
+    attributes:
+      label: Project
+      description: Which project is this task for?
+      options:
+        - Investment AI Platform
+        - Company Website
+        - Comment Analyzer
+        - Core Services
+        - ML Models
+        - Infrastructure
+        - Documentation
+        - Business Operations
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Task Description
+      description: What needs to be done?
+      placeholder: "We need to..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: Acceptance Criteria
+      description: How will we know this task is complete?
+      placeholder: |
+        - [ ] Criterion 1
+        - [ ] Criterion 2
+        - [ ] Criterion 3
+    validations:
+      required: true
+
+  - type: dropdown
+    id: type
+    attributes:
+      label: Task Type
+      description: What kind of task is this?
+      options:
+        - Development
+        - Design
+        - Research
+        - Testing
+        - Documentation
+        - DevOps
+        - Business
+        - Marketing
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: How urgent is this task?
+      options:
+        - Low
+        - Medium
+        - High
+        - Critical
+    validations:
+      required: true
+
+  - type: dropdown
+    id: effort
+    attributes:
+      label: Estimated Effort
+      description: How much work is this?
+      options:
+        - XS - 1-2 hours
+        - S - Half day
+        - M - 1-2 days
+        - L - 3-5 days
+        - XL - 1-2 weeks
+        - XXL - More than 2 weeks
+    validations:
+      required: true
+
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies
+      description: Does this task depend on other work?
+      placeholder: "This task depends on..."
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Any other relevant information
+      placeholder: "Additional notes..."
+    validations:
+      required: false
