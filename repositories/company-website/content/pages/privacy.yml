@@ -1,0 +1,200 @@
+meta:
+  title: "Privacy Policy - AI Paraguay"
+  description: "AI Paraguay's Privacy Policy. Learn how we collect, use, and protect your personal information when using our AI consultancy services."
+  keywords: ["privacy policy", "data protection", "AI Paraguay", "GDPR", "personal information", "data security"]
+  language: "en"
+
+hero:
+  title: "Privacy Policy"
+  description: "Your privacy is important to us. This policy explains how we collect, use, and protect your personal information."
+  lastUpdated: "January 15, 2025"
+
+sections:
+  - id: "information-collection"
+    title: "Information We Collect"
+    content: |
+      We collect information you provide directly to us, such as when you:
+      - Fill out our contact forms or request consultations
+      - Subscribe to our newsletter or updates
+      - Attend our training sessions or workshops
+      - Communicate with us via email, phone, or chat
+      
+      **Types of information we may collect include:**
+      - Name and contact information (email, phone number)
+      - Company name and job title
+      - Business requirements and use case information
+      - Communication preferences
+      - Training attendance and completion records
+
+  - id: "how-we-use-information"
+    title: "How We Use Your Information"
+    content: |
+      We use the information we collect to:
+      - Provide and improve our AI consultancy services
+      - Respond to your inquiries and provide customer support
+      - Send you updates about our services and industry insights
+      - Customize training programs to your specific needs
+      - Analyze usage patterns to improve our offerings
+      - Comply with legal obligations and protect our rights
+      
+      **We do not:**
+      - Sell your personal information to third parties
+      - Use your business data for competitive analysis
+      - Share confidential information discussed during consultations
+
+  - id: "information-sharing"
+    title: "Information Sharing and Disclosure"
+    content: |
+      We may share your information only in the following circumstances:
+      
+      **With your consent:** We may share information when you explicitly agree
+      
+      **Service providers:** We may share information with trusted vendors who help us operate our business, such as:
+      - Email service providers for newsletters
+      - Calendar systems for scheduling
+      - Payment processors for invoicing
+      
+      **Legal requirements:** We may disclose information if required by law or to protect our rights
+      
+      **Business transfers:** In the event of a merger or acquisition, your information may be transferred
+      
+      **De-identified data:** We may share anonymized, aggregated data that cannot identify you
+
+  - id: "data-security"
+    title: "Data Security"
+    content: |
+      We implement appropriate technical and organizational measures to protect your information:
+      
+      **Technical safeguards:**
+      - Encryption in transit and at rest
+      - Secure hosting infrastructure
+      - Regular security updates and monitoring
+      - Access controls and authentication
+      
+      **Organizational measures:**
+      - Limited access to personal information
+      - Employee training on data protection
+      - Regular privacy and security assessments
+      - Incident response procedures
+      
+      **AI tool security:**
+      When using AI tools in our services, we ensure:
+      - No storage of your confidential data in AI systems
+      - Use of enterprise-grade AI platforms with strong privacy protections
+      - Training on secure AI usage practices
+
+  - id: "your-rights"
+    title: "Your Rights and Choices"
+    content: |
+      You have the following rights regarding your personal information:
+      
+      **Access:** Request a copy of the personal information we hold about you
+      
+      **Correction:** Request correction of inaccurate or incomplete information
+      
+      **Deletion:** Request deletion of your personal information (subject to legal obligations)
+      
+      **Portability:** Request your data in a portable format
+      
+      **Objection:** Object to certain types of processing
+      
+      **Marketing:** Opt out of marketing communications at any time
+      
+      **To exercise these rights, contact us at:** privacy@aiparaguay.com
+
+  - id: "cookies-tracking"
+    title: "Cookies and Tracking"
+    content: |
+      We use cookies and similar technologies to:
+      - Remember your preferences
+      - Analyze website usage
+      - Provide personalized content
+      - Improve our services
+      
+      **Types of cookies we use:**
+      - **Essential cookies:** Required for website functionality
+      - **Analytics cookies:** Help us understand how visitors use our site
+      - **Preference cookies:** Remember your settings and choices
+      
+      **You can control cookies through:**
+      - Your browser settings
+      - Our cookie preference center (when available)
+      - Opt-out tools for analytics services
+
+  - id: "international-transfers"
+    title: "International Data Transfers"
+    content: |
+      AI Paraguay is based in Paraguay and serves clients worldwide. Your information may be transferred to and processed in countries other than your own.
+      
+      **When we transfer data internationally, we ensure:**
+      - Adequate protection through appropriate safeguards
+      - Compliance with applicable data protection laws
+      - Use of standard contractual clauses or other approved mechanisms
+      
+      **Countries we may transfer data to:**
+      - United States (for cloud services and AI platforms)
+      - European Union (for email and collaboration tools)
+      - Other countries where our service providers operate
+
+  - id: "retention"
+    title: "Data Retention"
+    content: |
+      We retain your personal information only as long as necessary for the purposes outlined in this policy:
+      
+      **Contact information:** Retained while you remain a client or prospect
+      
+      **Training records:** Retained for 3 years after completion for certification purposes
+      
+      **Communications:** Retained for business record keeping (typically 7 years)
+      
+      **Marketing data:** Retained until you opt out or request deletion
+      
+      **Legal obligations:** Some data may be retained longer to comply with legal requirements
+
+  - id: "children-privacy"
+    title: "Children's Privacy"
+    content: |
+      Our services are designed for businesses and adult professionals. We do not knowingly collect personal information from children under 16.
+      
+      If we become aware that we have collected information from a child under 16, we will take steps to delete such information promptly.
+      
+      If you believe we have collected information from a child, please contact us immediately at privacy@aiparaguay.com.
+
+  - id: "changes-policy"
+    title: "Changes to This Policy"
+    content: |
+      We may update this privacy policy from time to time to reflect:
+      - Changes in our practices
+      - Legal or regulatory requirements
+      - New features or services
+      
+      **When we make changes:**
+      - We will post the updated policy on our website
+      - We will update the "Last Updated" date
+      - For material changes, we may notify you directly
+      
+      **We encourage you to review this policy periodically** to stay informed about how we protect your information.
+
+contact:
+  title: "Contact Us About Privacy"
+  description: "If you have questions about this privacy policy or our data practices, please contact us:"
+  methods:
+    email: "privacy@aiparaguay.com"
+    phone: "+595981324569"
+    address: "AI Paraguay, Asunción, Paraguay"
+    response_time: "We will respond to privacy inquiries within 30 days"
+
+compliance:
+  title: "Compliance and Jurisdiction"
+  content: |
+    This privacy policy is governed by the laws of Paraguay and applicable international data protection regulations.
+    
+    **We comply with:**
+    - Paraguay's data protection laws
+    - GDPR (for EU residents)
+    - Other applicable privacy regulations based on your location
+    
+    **For disputes:**
+    - Initial resolution through direct contact
+    - Mediation or arbitration as agreed
+    - Jurisdiction: Courts of Asunción, Paraguay

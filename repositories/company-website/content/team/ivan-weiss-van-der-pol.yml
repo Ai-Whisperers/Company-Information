@@ -1,0 +1,320 @@
+meta:
+  title: "Ivan Weiss van der Pol - CEO & Founder | AI Paraguay"
+  description: "Meet Ivan Weiss van der Pol, CEO and Founder of AI Paraguay. Expert in business AI implementation with 8+ years of technology experience."
+  keywords: ["Ivan Weiss van der Pol", "AI Paraguay CEO", "AI consultant", "technology leader", "Paraguay"]
+  language: "en"
+
+# Add shared content references
+$use:
+  navigation: true
+  footer: true
+  common:
+    company: true
+
+navigation:
+  brand:
+    text: "AI Paraguay"
+  items:
+    - text: "Home"
+      href: "/"
+    - text: "Services"
+      href: "/servicios"
+    - text: "About Us"
+      href: "/sobre-nosotros"
+    - text: "Blog"
+      href: "/blog"
+    - text: "Contact"
+      href: "/contacto"
+  cta:
+    text: "Free Consultation"
+    href: "/contacto"
+    variant: "default"
+
+hero:
+  name: "Ivan Weiss van der Pol"
+  title: "CEO & Founder"
+  company: "AI Paraguay"
+  tagline: "Transforming businesses with practical AI solutions"
+  image:
+    src: "/images/team/ivan-rodriguez-hero.jpg"
+    alt: "Ivan Weiss van der Pol - CEO and Founder of AI Paraguay"
+  socialLinks:
+    - platform: "LinkedIn"
+      url: "https://linkedin.com/in/ivan-rodriguez-ai"
+      icon: "LinkedIn"
+    - platform: "Twitter"
+      url: "https://twitter.com/ivan_ai_py"
+      icon: "Twitter"
+    - platform: "Email"
+      url: "mailto:ivan@aiparaguay.com"
+      icon: "Mail"
+
+overview:
+  title: "About Ivan"
+  description: "Ivan Weiss van der Pol is the visionary behind AI Paraguay, with a mission to democratize artificial intelligence for businesses across Paraguay and Latin America. With over 8 years of experience in technology and systems engineering, Ivan specializes in making complex AI solutions accessible and practical for organizations of all sizes."
+  
+  highlights:
+    - "8+ years in technology and AI implementation"
+    - "Systems Engineering degree with ML certifications"
+    - "Founder of AI Paraguay's business transformation methodology"
+    - "Expert in change management and technology adoption"
+
+background:
+  title: "Professional Background"
+  
+  experience:
+    - position: "CEO & Founder"
+      company: "AI Paraguay"
+      period: "2022 - Present"
+      location: "Asunción, Paraguay"
+      description: "Founded AI Paraguay to bridge the gap between advanced AI technology and practical business implementation. Built a comprehensive methodology for training non-technical teams on AI tools."
+      achievements:
+        - "Trained 200+ professionals across 50+ companies"
+        - "Developed proprietary AI adoption framework"
+        - "Achieved 85% average productivity improvement for clients"
+        - "Built Paraguay's leading AI consultancy firm"
+      
+    - position: "Senior Technology Consultant"
+      company: "TechSolutions Paraguay"
+      period: "2019 - 2022"
+      location: "Asunción, Paraguay"
+      description: "Led digital transformation projects for mid-to-large enterprises, specializing in automation and process optimization."
+      achievements:
+        - "Managed $2M+ in technology implementations"
+        - "Led teams of up to 15 technical professionals"
+        - "Achieved 95% project success rate"
+        - "Specialized in ERP and automation solutions"
+      
+    - position: "Systems Analyst"
+      company: "Banco Regional Paraguay"
+      period: "2016 - 2019"
+      location: "Asunción, Paraguay"
+      description: "Designed and implemented critical banking systems, focusing on security, efficiency, and regulatory compliance."
+      achievements:
+        - "Reduced transaction processing time by 60%"
+        - "Implemented fraud detection algorithms"
+        - "Managed compliance with financial regulations"
+        - "Led cybersecurity initiative implementation"
+
+education:
+  title: "Education & Certifications"
+  
+  degrees:
+    - degree: "Bachelor of Systems Engineering"
+      institution: "Universidad Nacional de Asunción"
+      year: "2016"
+      location: "Asunción, Paraguay"
+      honors: "Magna Cum Laude"
+      thesis: "Machine Learning Applications in Financial Risk Assessment"
+      
+  certifications:
+    - title: "Machine Learning Specialization"
+      provider: "Stanford University (Coursera)"
+      year: "2021"
+      credential: "ML-STANFORD-2021-IR"
+      
+    - title: "AI for Business Leaders"
+      provider: "MIT Sloan School of Management"
+      year: "2022"
+      credential: "MIT-AI-BL-2022"
+      
+    - title: "AWS Certified Machine Learning - Specialty"
+      provider: "Amazon Web Services"
+      year: "2023"
+      credential: "AWS-MLS-2023-IR"
+      
+    - title: "Google Cloud Professional ML Engineer"
+      provider: "Google Cloud"
+      year: "2023"
+      credential: "GCP-MLE-2023-IR"
+
+expertise:
+  title: "Areas of Expertise"
+  
+  technical:
+    title: "Technical Skills"
+    skills:
+      - name: "AI & Machine Learning"
+        level: 95
+        description: "Advanced expertise in ML algorithms, model development, and deployment"
+        
+      - name: "Business Process Automation"
+        level: 90
+        description: "Proven track record in identifying and automating business processes"
+        
+      - name: "Data Analysis & Visualization"
+        level: 85
+        description: "Expert in extracting insights from complex business data"
+        
+      - name: "Cloud Platforms (AWS, GCP, Azure)"
+        level: 80
+        description: "Certified in major cloud platforms for AI/ML deployment"
+  
+  business:
+    title: "Business Skills"
+    skills:
+      - name: "Strategic Planning"
+        level: 95
+        description: "Expert in developing AI adoption strategies for organizations"
+        
+      - name: "Change Management"
+        level: 90
+        description: "Proven methodology for managing AI transformation initiatives"
+        
+      - name: "Team Training & Development"
+        level: 95
+        description: "Exceptional ability to teach complex concepts to non-technical teams"
+        
+      - name: "Project Management"
+        level: 85
+        description: "Certified in Agile and traditional project management methodologies"
+
+philosophy:
+  title: "Ivan's Philosophy"
+  
+  beliefs:
+    - title: "AI Should Be Accessible"
+      description: "Artificial Intelligence shouldn't be limited to tech giants. Every business, regardless of size or technical expertise, should be able to benefit from AI."
+      
+    - title: "People First, Technology Second"
+      description: "The most successful AI implementations focus on empowering people rather than replacing them. Technology should augment human capabilities."
+      
+    - title: "Practical Over Perfect"
+      description: "It's better to implement a simple AI solution that works today than to wait for the perfect solution that may never come."
+      
+    - title: "Continuous Learning"
+      description: "The AI field evolves rapidly. Success requires a commitment to continuous learning and adaptation."
+
+achievements:
+  title: "Notable Achievements"
+  
+  awards:
+    - title: "Technology Innovation Award"
+      organization: "Paraguay Chamber of Technology"
+      year: "2024"
+      description: "Recognized for advancing AI adoption in Paraguay's business sector"
+      
+    - title: "Young Entrepreneur of the Year"
+      organization: "Paraguay Business Council"
+      year: "2023"
+      description: "Honored for building AI Paraguay and its impact on local businesses"
+  
+  media:
+    - title: "Featured Speaker: AI in Latin America"
+      event: "LatAm Tech Conference 2024"
+      location: "Buenos Aires, Argentina"
+      description: "Keynote presentation on AI adoption strategies for emerging markets"
+      
+    - title: "Podcast Interview: The Future of Work"
+      show: "Paraguay Tech Talk"
+      date: "March 2024"
+      description: "Discussed how AI is reshaping the workplace in Paraguay"
+
+publications:
+  title: "Publications & Thought Leadership"
+  
+  articles:
+    - title: "The AI Adoption Gap: Why Most Companies Fail and How to Succeed"
+      publication: "Paraguay Business Review"
+      date: "January 2024"
+      type: "Magazine Article"
+      url: "/publications/ai-adoption-gap"
+      
+    - title: "Practical AI Implementation: A Framework for SMEs"
+      publication: "Tech Innovation Quarterly"
+      date: "October 2023"
+      type: "Research Paper"
+      url: "/publications/practical-ai-framework"
+      
+    - title: "Building AI Literacy in Non-Technical Teams"
+      publication: "AI Paraguay Blog"
+      date: "Ongoing"
+      type: "Blog Series"
+      url: "/blog/ai-literacy-series"
+
+personalSide:
+  title: "Beyond Work"
+  
+  interests:
+    - title: "Technology Education"
+      description: "Volunteers teaching programming and AI basics to high school students in Paraguay"
+      
+    - title: "Sustainable Technology"
+      description: "Passionate about using technology to address environmental challenges"
+      
+    - title: "Local Community"
+      description: "Active member of Paraguay's entrepreneur ecosystem and startup mentorship programs"
+      
+    - title: "Continuous Learning"
+      description: "Always exploring new technologies, currently focusing on quantum computing applications"
+  
+  personalQuote: "The best technology is the one that makes people's lives better and work more meaningful. That's what drives me every day at AI Paraguay."
+
+testimonials:
+  title: "What Colleagues Say"
+  
+  testimonials:
+    - quote: "Ivan has a unique ability to take complex AI concepts and make them accessible to everyone. His training methodology has transformed how our team works."
+      author: "Ana Martínez"
+      position: "HR Director"
+      company: "TechCorp Paraguay"
+      
+    - quote: "Working with Ivan was a game-changer for our company. He doesn't just implement technology; he transforms how people think about their work."
+      author: "Roberto Silva"
+      position: "General Manager"
+      company: "Distribuidora Nacional"
+      
+    - quote: "Ivan's strategic vision for AI adoption helped us avoid common pitfalls and achieve results faster than we thought possible."
+      author: "Carmen López"
+      position: "CFO"
+      company: "Servicios Financieros SA"
+
+contact:
+  title: "Get in Touch with Ivan"
+  description: "Interested in discussing AI transformation for your organization? Ivan is always happy to share insights and explore collaboration opportunities."
+  
+  methods:
+    - type: "Professional Inquiry"
+      description: "For business consultations and speaking engagements"
+      action:
+        text: "Schedule Meeting"
+        href: "/contacto?team=ivan"
+      
+    - type: "Media & Press"
+      description: "For interviews, quotes, and media appearances"
+      action:
+        text: "Media Contact"
+        href: "mailto:media@aiparaguay.com"
+      
+    - type: "LinkedIn"
+      description: "Connect for professional networking and industry insights"
+      action:
+        text: "Connect on LinkedIn"
+        href: "https://linkedin.com/in/ivan-rodriguez-ai"
+        external: true
+
+relatedContent:
+  title: "Related Content"
+  
+  caseStudies:
+    - title: "TechCorp Paraguay: 10x Faster CV Processing"
+      description: "See how Ivan led this transformation project"
+      href: "/case-studies/techcorp-cv-processing"
+      
+    - title: "Distribuidora Nacional: Inventory Intelligence"
+      description: "Ivan's approach to supply chain AI implementation"
+      href: "/case-studies/distribuidora-inventory-management"
+  
+  blogPosts:
+    - title: "Building AI Literacy in Your Organization"
+      description: "Ivan's methodology for training non-technical teams"
+      href: "/blog/building-ai-literacy"
+      
+    - title: "The Future of AI in Paraguay"
+      description: "Ivan's vision for AI adoption in the region"
+      href: "/blog/future-of-ai-paraguay"
+
+footer:
+  brand:
+    text: "AI Paraguay"
+  copyright: "© 2025 AI Paraguay. All rights reserved."

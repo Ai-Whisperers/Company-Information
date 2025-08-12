@@ -1,0 +1,205 @@
+# Shared Common Elements - English
+
+# Contact Information
+contactInfo:
+  phone: "+595981324569"
+  email: "info@aiparaguay.com"
+  whatsapp: "+595981324569"
+  address:
+    street: "Av. Mariscal López 1234"
+    neighborhood: "Villa Morra"
+    city: "Asunción"
+    country: "Paraguay"
+    zipCode: "1234"
+  serviceArea: "Serving clients worldwide from Paraguay"
+
+# Company Information
+company:
+  name: "AI Paraguay"
+  fullName: "AI Paraguay Consultores"
+  tagline: "Empowering businesses with artificial intelligence"
+  description: "We transform organizations with practical AI training and implementation, making artificial intelligence accessible to businesses of all sizes."
+  
+  mission: "Empower companies worldwide with practical AI tools that generate immediate results and sustainable competitive advantages."
+  
+  vision: "Position Paraguay as a regional leader in business adoption of artificial intelligence by 2030."
+
+# Team Members
+team:
+  members:
+    - id: "ivan-weiss-van-der-pol"
+      name: "Ivan Weiss van der Pol"
+      role: "CEO & Founder"
+      shortBio: "Visionary leader with 8+ years in AI implementation and business transformation"
+      email: "ivan@aiparaguay.com"
+      linkedin: "https://linkedin.com/in/ivan-weiss-van-der-pol"
+      
+    - id: "kiryan-weiss-van-der-pol"
+      name: "Kiryan Weiss van der Pol"
+      role: "Co-Founder & Technical Director"
+      shortBio: "Technical architect specializing in scalable AI solutions and enterprise systems"
+      email: "kiryan@aiparaguay.com"
+      linkedin: "https://linkedin.com/in/kiryan-weiss-van-der-pol"
+
+# Services Overview
+services:
+  main:
+    - id: "training"
+      title: "Business Training"
+      shortDescription: "AI literacy training for non-technical teams"
+      price: "From $2,000 USD"
+      duration: "2-4 weeks"
+      
+    - id: "implementation"
+      title: "Tool Implementation"
+      shortDescription: "Custom AI solution deployment and integration"
+      price: "From $5,000 USD"
+      duration: "4-8 weeks"
+      
+    - id: "automation"
+      title: "Process Automation"
+      shortDescription: "Intelligent automation of repetitive business tasks"
+      price: "From $8,000 USD"
+      duration: "6-12 weeks"
+      
+    - id: "strategy"
+      title: "Digital Strategy"
+      shortDescription: "Complete AI transformation roadmap"
+      price: "From $15,000 USD"
+      duration: "3-6 months"
+
+# Common Call-to-Actions
+ctas:
+  primary:
+    consultation:
+      text: "Schedule Free Consultation"
+      href: "/contacto"
+      variant: "default"
+    
+    whatsapp:
+      text: "Chat on WhatsApp"
+      href: "https://wa.me/595981324569"
+      variant: "default"
+      
+    services:
+      text: "View Our Services"
+      href: "/servicios"
+      variant: "default"
+  
+  secondary:
+    resources:
+      text: "Download Resources"
+      href: "/resources"
+      variant: "outline"
+      
+    blog:
+      text: "Read Success Stories"
+      href: "/blog"
+      variant: "outline"
+      
+    events:
+      text: "Join Our Events"
+      href: "/events"
+      variant: "outline"
+
+# Featured Case Studies
+caseStudies:
+  featured:
+    - id: "techcorp-cv-processing"
+      title: "TechCorp Paraguay: 10x Faster CV Processing"
+      company: "TechCorp Paraguay"
+      industry: "Technology"
+      result: "90% reduction in screening time"
+      href: "/case-studies/techcorp-cv-processing"
+      
+    - id: "distribuidora-inventory"
+      title: "Distribuidora Nacional: Intelligent Inventory"
+      company: "Distribuidora Nacional"
+      industry: "Distribution"
+      result: "30% reduction in stockouts"
+      href: "/case-studies/distribuidora-inventory-management"
+      
+    - id: "servicios-financieros-reports"
+      title: "Servicios Financieros: Automated Reports"
+      company: "Servicios Financieros SA"
+      industry: "Financial Services"
+      result: "80% faster reporting"
+      href: "/case-studies/servicios-financieros-reports"
+
+# Statistics
+stats:
+  company:
+    - metric: "Companies Trained"
+      value: "50+"
+      description: "Across Paraguay and Latin America"
+      
+    - metric: "Professionals Trained"
+      value: "500+"
+      description: "In AI tools and implementation"
+      
+    - metric: "Average Time Savings"
+      value: "40%"
+      description: "Reported by our clients"
+      
+    - metric: "Tool Adoption Rate"
+      value: "90%"
+      description: "After our training programs"
+
+# Testimonials
+testimonials:
+  featured:
+    - quote: "AI Paraguay completely transformed our recruitment process. We now process CVs 10 times faster with better accuracy."
+      author: "Ana Martínez"
+      position: "HR Director"
+      company: "TechCorp Paraguay"
+      
+    - quote: "The training was exceptional. Our entire team now uses AI effectively in their daily work, saving hours every day."
+      author: "Roberto Silva"
+      position: "General Manager"
+      company: "Distribuidora Nacional"
+      
+    - quote: "The ROI was immediate. We recovered our investment in just 3 months through time savings and improved efficiency."
+      author: "Carmen López"
+      position: "CFO"
+      company: "Servicios Financieros SA"
+
+# AI Tools Directory
+aiTools:
+  categories:
+    - id: "development"
+      title: "Development & Code"
+      tools:
+        - name: "Cursor"
+          url: "https://cursor.sh"
+          description: "AI-powered code editor"
+          
+        - name: "Windsurf"
+          url: "https://codeium.com/windsurf"
+          description: "Collaborative IDE with AI"
+          
+        - name: "GitHub Copilot"
+          url: "https://github.com/features/copilot"
+          description: "AI pair programmer"
+    
+    - id: "content"
+      title: "Content & Communication"
+      tools:
+        - name: "ChatGPT"
+          url: "https://chat.openai.com"
+          description: "Advanced language model"
+          
+        - name: "Claude"
+          url: "https://claude.ai"
+          description: "AI assistant for analysis and writing"
+          
+        - name: "Gemini"
+          url: "https://gemini.google.com"
+          description: "Google's multimodal AI"
+
+# Legal Information
+legal:
+  copyright: "© 2025 AI Paraguay. All rights reserved."
+  businessInfo:
+    ruc: "80012345-6"
+    address: "Av. Mariscal López 1234, Villa Morra, Asunción, Paraguay"
+    registeredName: "AI Paraguay Consultores S.R.L."

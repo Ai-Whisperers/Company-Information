@@ -1,0 +1,89 @@
+# Case Study Template
+# This file defines the common structure for all case studies
+
+# Standard sections and structure that all case studies should follow
+structure:
+  required:
+    - meta               # SEO metadata
+    - hero               # Hero section with key summary
+    - overview           # Client and project overview
+    - challenge          # Problem statement
+    - solution           # Solution description
+    - implementation     # Implementation process
+    - results            # Results and metrics
+    - roi                # Return on investment
+    - testimonials       # Client testimonials
+    - cta                # Call to action
+  
+  optional:
+    - technicalDetails   # Technical architecture details
+    - keyFeatures        # Key features of the solution
+    - lessonsLearned     # Insights gained
+    - industryImpact     # Broader industry impact
+    - nextSteps          # Future plans
+    - relatedCases       # Related case studies
+
+# Shared content all case studies should include
+navigation:
+  brand:
+    text: "AI Paraguay"
+  items:
+    - text: "Home"
+      href: "/"
+    - text: "Services"
+      href: "/servicios"
+    - text: "About Us"
+      href: "/sobre-nosotros"
+    - text: "Blog"
+      href: "/blog"
+    - text: "Contact"
+      href: "/contacto"
+  cta:
+    text: "Free Consultation"
+    href: "/contacto"
+    variant: "default"
+
+footer:
+  brand:
+    text: "AI Paraguay"
+  copyright: "© 2025 AI Paraguay. All rights reserved."
+
+# Common sections with placeholders - to be customized per case
+cta:
+  title: "Transform Your [Department/Process]"
+  description: "See how AI can optimize your [business area] just like it did for [Company]."
+  primaryButton:
+    text: "Schedule Free Assessment"
+    href: "/contacto?topic=[topic]"
+    variant: "default"
+  secondaryButton:
+    text: "Download Case Study PDF"
+    href: "/downloads/[case-study-id]-case-study.pdf"
+    variant: "outline"
+
+# Common metrics structure - to be filled per case
+metrics:
+  before:
+    - metric: ""
+      value: ""
+      description: ""
+  after:
+    - metric: ""
+      value: ""
+      improvement: ""
+      description: ""
+
+# Common testimonials structure - to be filled per case
+testimonials:
+  - quote: ""
+    author: ""
+    position: ""
+    company: ""
+    image:
+      src: ""
+      alt: ""
+
+# Related cases section that pulls from a central list
+relatedCases:
+  title: "Related Success Stories"
+  $use: "common.caseStudies.featured"  # Pull from shared case studies list 

@@ -1,0 +1,84 @@
+# Page Template Structure
+# This defines the common structure that all pages should follow
+
+# Standard page structure:
+# 1. Meta information (title, description, keywords, language)
+# 2. Page-specific content sections
+# 3. Optional shared sections (footer, navigation are loaded from shared files)
+
+meta:
+  # Required for all pages
+  title: ""           # Page title for browser tab and SEO
+  description: ""     # Meta description for SEO
+  keywords: []        # Array of SEO keywords
+  language: ""        # Language code (en, es, gn)
+  
+  # Optional meta fields
+  author: ""          # Content author
+  publishDate: ""     # Publication date
+  lastModified: ""    # Last modification date
+  canonical: ""       # Canonical URL
+  
+  # OpenGraph meta for social sharing
+  og:
+    title: ""         # Social media title
+    description: ""   # Social media description
+    image: ""         # Social media image
+    type: ""          # page, article, etc.
+
+# Page content structure
+# Each page defines its own content sections based on needs
+# Common section types:
+
+hero:
+  # Hero section (usually at top of page)
+  headline: ""
+  subheadline: ""
+  description: ""
+  image:
+    src: ""
+    alt: ""
+  cta:
+    primary:
+      text: ""
+      href: ""
+      variant: "default"
+    secondary:
+      text: ""
+      href: ""
+      variant: "outline"
+
+sections:
+  # Array of content sections
+  # Each section has a type and type-specific content
+  - type: "content"
+    title: ""
+    description: ""
+    content: ""
+    
+  - type: "features"
+    title: ""
+    description: ""
+    items: []
+    
+  - type: "testimonials"
+    title: ""
+    items: []
+    
+  - type: "cta"
+    title: ""
+    description: ""
+    primaryCta:
+      text: ""
+      href: ""
+    secondaryCta:
+      text: ""
+      href: ""
+
+# Shared content references
+# These are loaded from shared configuration files
+# and merged into the page data
+shared:
+  navigation: true    # Load from shared/navigation.{lang}.yml
+  footer: true        # Load from shared/footer.{lang}.yml
+  common: true        # Load from shared/common.{lang}.yml

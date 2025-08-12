@@ -1,0 +1,364 @@
+meta:
+  title: "Case Study: Distribuidora Nacional - Intelligent Inventory Management"
+  description: "How Distribuidora Nacional reduced stockouts by 30% and excess inventory by 25% using AI-powered predictive analytics and demand forecasting."
+  keywords: ["Distribuidora Nacional", "inventory management", "AI prediction", "case study", "supply chain"]
+  language: "en"
+
+navigation:
+  brand:
+    text: "AI Paraguay"
+  items:
+    - text: "Home"
+      href: "/"
+    - text: "Services"
+      href: "/servicios"
+    - text: "About Us"
+      href: "/sobre-nosotros"
+    - text: "Blog"
+      href: "/blog"
+    - text: "Contact"
+      href: "/contacto"
+  cta:
+    text: "Free Consultation"
+    href: "/contacto"
+    variant: "default"
+
+hero:
+  badge: "Success Story"
+  headline: "Distribuidora Nacional: Intelligent Inventory Management"
+  subheadline: "AI-powered demand forecasting transforms supply chain efficiency"
+  description: "A complete overhaul of inventory management using predictive analytics, reducing waste and improving customer satisfaction."
+  image:
+    src: "/images/case-studies/distribuidora-hero.jpg"
+    alt: "Distribuidora Nacional warehouse with intelligent inventory systems"
+
+overview:
+  client:
+    name: "Distribuidora Nacional"
+    industry: "Wholesale Distribution"
+    size: "200+ employees"
+    location: "Asunción & nationwide, Paraguay"
+    revenue: "$25M+ annually"
+  
+  project:
+    duration: "12 weeks"
+    timeline: "June - September 2024"
+    budget: "$28,000 USD"
+    team: "4 AI specialists + 8 operations staff"
+
+challenge:
+  title: "The Challenge"
+  description: "Distribuidora Nacional faced critical inventory management issues that were impacting profitability and customer satisfaction."
+  
+  problems:
+    - title: "Frequent Stockouts"
+      description: "High-demand products regularly out of stock"
+      impact: "Lost sales and dissatisfied customers"
+      
+    - title: "Excess Inventory"
+      description: "Overstocking of slow-moving products"
+      impact: "Tied-up capital and storage costs"
+      
+    - title: "Manual Forecasting"
+      description: "Spreadsheet-based demand planning"
+      impact: "Inaccurate predictions and poor timing"
+      
+    - title: "Seasonal Variations"
+      description: "Difficulty predicting seasonal demand patterns"
+      impact: "Major stockouts during peak periods"
+
+  metrics:
+    before:
+      - metric: "Stockout Rate"
+        value: "18%"
+        description: "Of SKUs out of stock at any given time"
+        
+      - metric: "Excess Inventory"
+        value: "35%"
+        description: "Of inventory classified as slow-moving"
+        
+      - metric: "Forecast Accuracy"
+        value: "62%"
+        description: "Manual prediction accuracy"
+        
+      - metric: "Working Capital Efficiency"
+        value: "45%"
+        description: "Capital tied up in inventory"
+
+solution:
+  title: "AI-Powered Inventory Intelligence"
+  description: "We implemented a comprehensive predictive analytics system that learns from historical data, market trends, and external factors."
+  
+  components:
+    - title: "Demand Forecasting Engine"
+      description: "Advanced ML models predicting demand across 2,500+ SKUs"
+      technologies: ["Time Series Analysis", "Machine Learning", "Statistical Modeling"]
+      features:
+        - "Multi-variable demand prediction"
+        - "Seasonal pattern recognition"
+        - "Trend analysis and projection"
+        - "External factor integration"
+      
+    - title: "Intelligent Reorder System"
+      description: "Automated purchase order generation based on AI predictions"
+      technologies: ["Optimization Algorithms", "Business Rules Engine", "ERP Integration"]
+      features:
+        - "Dynamic reorder points"
+        - "Supplier lead time optimization"
+        - "Bulk order optimization"
+        - "Budget constraint handling"
+      
+    - title: "Real-time Analytics Dashboard"
+      description: "Live inventory insights and performance monitoring"
+      technologies: ["Real-time Processing", "Data Visualization", "Alert System"]
+      features:
+        - "Inventory health monitoring"
+        - "Demand vs. stock analysis"
+        - "Performance KPI tracking"
+        - "Automated alert system"
+      
+    - title: "Supplier Performance Intelligence"
+      description: "AI analysis of supplier reliability and optimization"
+      technologies: ["Supplier Analytics", "Performance Scoring", "Risk Assessment"]
+      features:
+        - "Delivery performance tracking"
+        - "Quality score analysis"
+        - "Risk factor assessment"
+        - "Alternative supplier suggestions"
+
+implementation:
+  title: "12-Week Implementation Journey"
+  description: "A phased approach ensuring business continuity while maximizing adoption."
+  
+  phases:
+    - phase: "Week 1-3: Data Foundation"
+      title: "Data Integration and Cleanup"
+      activities:
+        - "Historical sales data analysis (3+ years)"
+        - "Inventory data standardization"
+        - "Supplier performance data collection"
+        - "External data source integration"
+      deliverables:
+        - "Clean, unified dataset"
+        - "Data quality metrics"
+        - "Integration architecture"
+      
+    - phase: "Week 4-7: Model Development"
+      title: "AI Model Training and Testing"
+      activities:
+        - "Demand forecasting model development"
+        - "Backtesting with historical data"
+        - "Model validation and optimization"
+        - "Pilot testing with 100 SKUs"
+      deliverables:
+        - "Trained ML models"
+        - "Validation reports"
+        - "Pilot results analysis"
+      
+    - phase: "Week 8-12: Full Deployment"
+      title: "System Launch and Optimization"
+      activities:
+        - "Full system deployment (2,500+ SKUs)"
+        - "Team training and adoption"
+        - "Performance monitoring setup"
+        - "Continuous optimization implementation"
+      deliverables:
+        - "Fully operational system"
+        - "Trained operations team"
+        - "Monitoring dashboards"
+
+results:
+  title: "Transformative Results"
+  description: "The AI system delivered improvements that exceeded all expectations within the first quarter."
+  
+  metrics:
+    after:
+      - metric: "Stockout Rate"
+        value: "6%"
+        improvement: "67% reduction"
+        description: "Dramatic improvement in product availability"
+        
+      - metric: "Excess Inventory"
+        value: "12%"
+        improvement: "66% reduction"
+        description: "Optimized inventory levels across all categories"
+        
+      - metric: "Forecast Accuracy"
+        value: "91%"
+        improvement: "47% increase"
+        description: "AI predictions vs. actual demand"
+        
+      - metric: "Working Capital Efficiency"
+        value: "78%"
+        improvement: "73% improvement"
+        description: "Better capital utilization"
+
+  businessImpact:
+    - title: "Revenue Growth"
+      value: "$2.3M annually"
+      description: "From reduced stockouts and better availability"
+      
+    - title: "Cost Reduction"
+      value: "$890,000 annually"
+      description: "Lower storage costs and reduced waste"
+      
+    - title: "Customer Satisfaction"
+      value: "94% fill rate"
+      description: "Improved from 82% with better stock management"
+      
+    - title: "Cash Flow Improvement"
+      value: "$1.8M"
+      description: "Released from excess inventory optimization"
+
+roi:
+  title: "Return on Investment"
+  investment: "$28,000"
+  timeframe: "12 weeks implementation"
+  
+  calculations:
+    - category: "Revenue Increase"
+      description: "Better product availability"
+      monthly: "$191,667"
+      annual: "$2,300,000"
+      
+    - category: "Cost Savings"
+      description: "Reduced storage and waste"
+      monthly: "$74,167"
+      annual: "$890,000"
+      
+    - category: "Cash Flow Improvement"
+      description: "Working capital optimization"
+      monthly: "$150,000"
+      annual: "$1,800,000"
+  
+  totals:
+    monthlyBenefit: "$415,834"
+    annualBenefit: "$4,990,000"
+    paybackPeriod: "0.7 months"
+    roiPercentage: "17,721%"
+
+testimonials:
+  - quote: "The AI system has completely transformed how we manage inventory. We now predict demand with incredible accuracy and rarely face stockouts."
+    author: "Roberto Silva"
+    position: "General Manager"
+    company: "Distribuidora Nacional"
+    image:
+      src: "/images/testimonials/roberto-silva-distribuidora.jpg"
+      alt: "Roberto Silva - General Manager at Distribuidora Nacional"
+  
+  - quote: "Our customers are happier because we always have what they need in stock. The AI takes care of the complex calculations while we focus on serving our clients."
+    author: "Carmen López"
+    position: "Operations Director"
+    company: "Distribuidora Nacional"
+    image:
+      src: "/images/testimonials/carmen-lopez.jpg"
+      alt: "Carmen López - Operations Director"
+
+technicalDetails:
+  title: "Technical Architecture"
+  
+  architecture:
+    - component: "Forecasting Engine"
+      technology: "Python + TensorFlow"
+      description: "Deep learning models for demand prediction"
+      
+    - component: "Data Pipeline"
+      technology: "Apache Airflow + PostgreSQL"
+      description: "Automated data processing and storage"
+      
+    - component: "Analytics Dashboard"
+      technology: "React + Plotly + FastAPI"
+      description: "Real-time visualization and monitoring"
+      
+    - component: "Integration Layer"
+      technology: "REST APIs + Webhooks"
+      description: "Seamless ERP and system integration"
+
+  dataSource:
+    - source: "Historical Sales Data"
+      timeframe: "3+ years"
+      description: "Detailed transaction history for pattern analysis"
+      
+    - source: "External Market Data"
+      provider: "Economic indicators"
+      description: "Macroeconomic factors affecting demand"
+      
+    - source: "Supplier Performance"
+      tracking: "Real-time"
+      description: "Delivery times, quality metrics, reliability"
+
+keyFeatures:
+  title: "Advanced System Features"
+  features:
+    - title: "Multi-Level Forecasting"
+      description: "Predictions at product, category, and brand levels"
+      benefits: ["Better planning", "Risk diversification", "Strategic insights"]
+      
+    - title: "Seasonal Intelligence"
+      description: "Automatic detection and prediction of seasonal patterns"
+      benefits: ["Holiday preparation", "Weather-based demand", "Event planning"]
+      
+    - title: "Exception Management"
+      description: "Automatic alerts for unusual patterns or risks"
+      benefits: ["Proactive response", "Risk mitigation", "Opportunity capture"]
+      
+    - title: "Scenario Planning"
+      description: "What-if analysis for different market conditions"
+      benefits: ["Strategic planning", "Risk assessment", "Opportunity analysis"]
+
+lessonsLearned:
+  title: "Key Success Factors"
+  insights:
+    - title: "Data Quality is Foundation"
+      description: "Clean, consistent historical data was crucial for accurate predictions."
+      
+    - title: "Gradual Implementation Works"
+      description: "Starting with a pilot group of SKUs helped build confidence and refine the system."
+      
+    - title: "Change Management Essential"
+      description: "Training the operations team and building trust in AI predictions required careful change management."
+      
+    - title: "Continuous Learning"
+      description: "The system improves over time as it learns from new data and feedback."
+
+industryImpact:
+  title: "Industry Transformation"
+  insights:
+    - title: "Setting New Standards"
+      description: "Other distributors in Paraguay are now adopting similar AI-driven approaches"
+      
+    - title: "Supplier Relationships"
+      description: "Better demand predictions have improved relationships with suppliers"
+      
+    - title: "Customer Expectations"
+      description: "Raised the bar for product availability in the distribution industry"
+
+cta:
+  title: "Transform Your Inventory Management"
+  description: "See how AI can optimize your supply chain just like it did for Distribuidora Nacional."
+  primaryButton:
+    text: "Schedule Free Assessment"
+    href: "/contacto?topic=inventory"
+    variant: "default"
+  secondaryButton:
+    text: "Download Case Study PDF"
+    href: "/downloads/distribuidora-case-study.pdf"
+    variant: "outline"
+
+relatedCases:
+  title: "Related Success Stories"
+  cases:
+    - title: "TechCorp Paraguay: CV Processing"
+      description: "90% reduction in recruitment screening time"
+      href: "/case-studies/techcorp-cv-processing"
+      image: "/images/case-studies/techcorp-thumb.jpg"
+      
+    - title: "Servicios Financieros: Automated Reports"
+      description: "80% faster financial reporting with AI"
+      href: "/case-studies/servicios-financieros-reports"
+      image: "/images/case-studies/servicios-financieros-thumb.jpg"
+
+footer:
+  brand:
+    text: "AI Paraguay"
+  copyright: "© 2025 AI Paraguay. All rights reserved."

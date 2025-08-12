@@ -1,0 +1,268 @@
+# Reference shared components
+$use:
+  navigation: true           # Use default navigation from shared/navigation.yml
+  footer: true               # Use default footer from shared/footer.yml
+  common:
+    contactInfo: true        # Include contact info from common.yml
+    company: true            # Include company info from common.yml
+    ctas: true               # Include common CTAs
+    services: true           # Include services overview
+
+meta:
+  title: "Services - AI Paraguay Consultants"
+  description: "Discover our AI consulting services: business training, tool implementation, automation and digital transformation."
+  keywords: ["AI services", "artificial intelligence consulting", "business training", "automation", "Paraguay"]
+  language: "en"
+
+hero:
+  headline: "AI Consulting Services"
+  subheadline: "We transform your company with practical artificial intelligence solutions"
+  description: "From basic training to complete implementation, we offer services adapted to the specific needs of your company and sector."
+
+mainServices:
+  title: "Our Main Services"
+  description: "Comprehensive solutions to accelerate AI adoption in your organization"
+  services:
+    - icon: "GraduationCap"
+      title: "Business Training"
+      description: "Personalized training for teams in AI tools applied to their daily work"
+      features:
+        - "In-person and virtual workshops"
+        - "Content adapted by department"
+        - "Internal certifications"
+        - "Post-training follow-up"
+      duration: "2-4 weeks"
+      price: "From $2,000 USD"
+      
+    - icon: "Settings"
+      title: "Tool Implementation"
+      description: "Configuration and deployment of specific AI solutions for your industry"
+      features:
+        - "Needs analysis"
+        - "Custom configuration"
+        - "Integration with existing systems"
+        - "Technical team training"
+      duration: "4-8 weeks"
+      price: "From $5,000 USD"
+      
+    - icon: "Zap"
+      title: "Process Automation"
+      description: "Identification and automation of repetitive tasks using AI"
+      features:
+        - "Process audit"
+        - "Automated workflow design"
+        - "Bot implementation"
+        - "Monitoring and optimization"
+      duration: "6-12 weeks"
+      price: "From $8,000 USD"
+      
+    - icon: "BarChart"
+      title: "Digital Transformation Strategy"
+      description: "Complete roadmap for organizational-level AI adoption"
+      features:
+        - "Digital maturity assessment"
+        - "Strategic AI plan"
+        - "Change management"
+        - "Success KPIs and metrics"
+      duration: "3-6 months"
+      price: "From $15,000 USD"
+
+departmentServices:
+  title: "Services by Department"
+  description: "Specific solutions adapted to the needs of each area of your company"
+  departments:
+    - title: "Human Resources"
+      icon: "Users"
+      services:
+        - "Recruitment automation"
+        - "AI-powered CV analysis"
+        - "Employee chatbots"
+        - "Automated assessments"
+      
+    - title: "Marketing and Sales"
+      icon: "TrendingUp"
+      services:
+        - "Content generation"
+        - "Intelligent segmentation"
+        - "Automatic lead scoring"
+        - "Sentiment analysis"
+      
+    - title: "Finance and Accounting"
+      icon: "Calculator"
+      services:
+        - "Invoice processing"
+        - "Fraud detection"
+        - "Automated reports"
+        - "Predictive analysis"
+      
+    - title: "Operations"
+      icon: "Cog"
+      services:
+        - "Inventory optimization"
+        - "Predictive maintenance"
+        - "Quality management"
+        - "Intelligent logistics"
+      
+    - title: "Customer Service"
+      icon: "MessageSquare"
+      services:
+        - "Intelligent chatbots"
+        - "Feedback analysis"
+        - "Automated responses"
+        - "Intelligent escalation"
+      
+    - title: "IT and Development"
+      icon: "Code"
+      services:
+        - "Automated code review"
+        - "Intelligent testing"
+        - "Automatic documentation"
+        - "Bug detection"
+
+tools:
+  title: "Tools We Implement"
+  description: "We work with the best AI platforms on the market"
+  categories:
+    - title: "Development and Code"
+      tools:
+        - name: "Cursor"
+          description: "Code editor with integrated AI"
+          useCase: "AI-assisted programming"
+        - name: "Windsurf"
+          description: "Collaborative IDE with AI"
+          useCase: "Team development"
+        - name: "GitHub Copilot"
+          description: "Microsoft's code assistant"
+          useCase: "Automatic code completion"
+          
+    - title: "Content Generation"
+      tools:
+        - name: "ChatGPT & Gemini"
+          description: "Advanced language models"
+          useCase: "Text generation and analysis"
+        - name: "Claude"
+          description: "Anthropic's AI assistant"
+          useCase: "Long document analysis"
+        - name: "Midjourney"
+          description: "AI image generation"
+          useCase: "Visual content for marketing"
+          
+    - title: "Analysis and Data"
+      tools:
+        - name: "Tableau"
+          description: "Intelligent data visualization"
+          useCase: "Automated dashboards"
+        - name: "Power BI"
+          description: "Microsoft's Business Intelligence"
+          useCase: "Executive reports"
+        - name: "DataRobot"
+          description: "Machine learning platform"
+          useCase: "Predictive analysis"
+
+process:
+  title: "Our Work Process"
+  description: "Proven methodology to guarantee your project's success"
+  steps:
+    - number: "01"
+      title: "Diagnosis"
+      description: "We evaluate your current situation and identify opportunities"
+      duration: "1-2 weeks"
+      
+    - number: "02"
+      title: "Strategy"
+      description: "We design a personalized plan with clear objectives"
+      duration: "1 week"
+      
+    - number: "03"
+      title: "Implementation"
+      description: "We execute the solution with your team step by step"
+      duration: "4-12 weeks"
+      
+    - number: "04"
+      title: "Training"
+      description: "We train your team to use the new tools"
+      duration: "2-4 weeks"
+      
+    - number: "05"
+      title: "Follow-up"
+      description: "We monitor results and continuously optimize"
+      duration: "Ongoing"
+
+pricing:
+  title: "Plans and Pricing"
+  description: "Flexible options for companies of all sizes"
+  plans:
+    - name: "Starter"
+      price: "$2,000"
+      period: "one-time payment"
+      description: "Ideal for small businesses starting with AI"
+      features:
+        - "2-day workshop"
+        - "Up to 10 participants"
+        - "Basic configuration"
+        - "1 month support"
+      cta:
+        text: "Choose Starter"
+        href: "/contacto?plan=starter"
+        
+    - name: "Professional"
+      price: "$8,000"
+      period: "complete project"
+      description: "For medium companies seeking transformation"
+      features:
+        - "Complete diagnosis"
+        - "Personalized implementation"
+        - "Training for 25 people"
+        - "3 months support"
+      popular: true
+      cta:
+        text: "Choose Professional"
+        href: "/contacto?plan=professional"
+        
+    - name: "Enterprise"
+      price: "Custom Quote"
+      period: "personalized"
+      description: "For large organizations with complex needs"
+      features:
+        - "Complete organizational strategy"
+        - "Implementation across multiple departments"
+        - "Unlimited training"
+        - "24/7 continuous support"
+      cta:
+        text: "Contact Sales"
+        href: "/contacto?plan=enterprise"
+
+testimonials:
+  title: "What Our Clients Say"
+  items:
+    - quote: "AI Paraguay completely transformed our human resources area. We now process CVs 10 times faster."
+      author: "Ana Martínez"
+      position: "HR Director"
+      company: "TechCorp Paraguay"
+      
+    - quote: "The training was exceptional. The entire team now uses AI in their daily work and we are much more productive."
+      author: "Roberto Silva"
+      position: "General Manager"
+      company: "Distribuidora Nacional"
+      
+    - quote: "The ROI was immediate. In 3 months we recovered the investment just with time saved on reports."
+      author: "Carmen López"
+      position: "CFO"
+      company: "Servicios Financieros SA"
+
+contact:
+  title: "Ready to Get Started?"
+  description: "Schedule a free consultation to discuss your specific needs"
+  primaryCta:
+    text: "Schedule Free Consultation"
+    href: "/contacto"
+    variant: "default"
+  secondaryCta:
+    text: "Download Brochure"
+    href: "/brochure.pdf"
+    variant: "outline"
+
+footer:
+  brand:
+    text: "AI Paraguay"
+  copyright: "© 2025 AI Paraguay. All rights reserved."

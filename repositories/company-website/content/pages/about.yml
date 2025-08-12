@@ -1,0 +1,107 @@
+# Reference shared components
+$use:
+  navigation: true           # Use default navigation from shared/navigation.yml
+  footer: true               # Use default footer from shared/footer.yml
+  common:
+    contactInfo: true        # Include contact info from common.yml
+    company: true            # Include company info from common.yml
+    ctas: true               # Include common CTAs
+
+meta:
+  title: "About Us - AI Paraguay Consultants"
+  description: "Meet our team of AI experts and our mission to democratize access to artificial intelligence in Paraguay."
+  keywords: ["AI Paraguay team", "AI consultants", "artificial intelligence", "Paraguay", "biography"]
+  language: "en"
+
+hero:
+  headline: "Our Team"
+  subheadline: "AI experts committed to transforming Paraguay"
+  description: "We are a multidisciplinary team with international experience in technology and artificial intelligence, dedicated to making AI accessible to companies worldwide."
+
+story:
+  title: "Our Story"
+  content: |
+    AI Paraguay was born from the vision of democratizing access to artificial intelligence in Paraguay. 
+    We saw how AI tools transformed companies in other countries, while local companies 
+    were left behind due to lack of technical knowledge and specialized resources.
+    
+    We decided to change that. We don't just teach about AI - we implement it practically and accessibly, 
+    adapted to the Paraguayan business reality.
+
+mission:
+  title: "Our Mission"
+  description: "Empower companies worldwide with practical AI tools that generate immediate results and sustainable competitive advantages."
+  
+vision:
+  title: "Our Vision"
+  description: "Position Paraguay as a regional leader in business adoption of artificial intelligence by 2030."
+
+values:
+  title: "Our Values"
+  items:
+    - icon: "Heart"
+      title: "Local Commitment"
+      description: "We understand the specific needs of the Paraguayan market and adapt solutions accordingly."
+    - icon: "Users"
+      title: "Accessibility"
+      description: "We make AI understandable and accessible for companies of all sizes."
+    - icon: "Target"
+      title: "Practical Results"
+      description: "We focus on implementations that generate immediate and measurable value."
+    - icon: "Lightbulb"
+      title: "Responsible Innovation"
+      description: "We promote ethical and responsible use of artificial intelligence."
+
+team:
+  title: "Meet the Team"
+  members:
+    - name: "Ivan Rodriguez"
+      role: "CEO & Founder"
+      bio: "Specialist in business AI implementation with over 8 years of experience in technology. Systems engineering graduate with machine learning certifications."
+      expertise: ["AI Strategy", "Automation", "Technical Leadership"]
+      image:
+        src: "/images/team/ivan.jpg"
+        alt: "Ivan Rodriguez - CEO AI Paraguay"
+    - name: "Maria Gonzalez"
+      role: "Training Director"
+      bio: "Expert in instructional design and corporate training. Specialized in making complex technical concepts accessible to non-technical teams."
+      expertise: ["Business Training", "Curriculum Design", "Change Management"]
+      image:
+        src: "/images/team/maria.jpg"
+        alt: "Maria Gonzalez - Training Director"
+    - name: "Carlos Mendoza"
+      role: "Senior AI Consultant"
+      bio: "Data scientist with experience in AI solution implementation across multiple industries. Expert in process automation and data analysis."
+      expertise: ["Machine Learning", "Data Analysis", "Process Automation"]
+      image:
+        src: "/images/team/carlos.jpg"
+        alt: "Carlos Mendoza - Senior Consultant"
+
+stats:
+  title: "Our Impact"
+  metrics:
+    - value: "50+"
+      description: "Companies trained"
+    - value: "200+"
+      description: "Professionals trained"
+    - value: "85%"
+      description: "Average reduction in task time"
+    - value: "3 years"
+      description: "Experience in local market"
+
+contact:
+  title: "Ready to Transform Your Company?"
+  description: "Schedule a free consultation to discover how AI can revolutionize your business."
+  primaryCta:
+    text: "Schedule Free Consultation"
+    href: "/contacto"
+    variant: "default"
+  secondaryCta:
+    text: "View Our Services"
+    href: "/servicios"
+    variant: "outline"
+
+footer:
+  brand:
+    text: "AI Paraguay"
+  copyright: "© 2025 AI Paraguay. All rights reserved."

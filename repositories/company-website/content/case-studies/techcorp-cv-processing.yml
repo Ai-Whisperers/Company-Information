@@ -1,0 +1,325 @@
+# TechCorp Paraguay CV Processing Case Study - English
+
+# Use shared components and template
+$use:
+  template: "shared/case-study-template.yml"  # Use the case study template
+  navigation: true                           # Use default navigation
+  footer: true                               # Use default footer
+  common:
+    caseStudies: true                        # Include shared case studies list
+
+meta:
+  title: "Case Study: TechCorp Paraguay - 10x Faster CV Processing"
+  description: "How TechCorp Paraguay revolutionized their recruitment process with AI-powered CV analysis, reducing screening time by 90% and improving candidate quality by 85%."
+  keywords: ["TechCorp Paraguay", "CV processing", "AI recruitment", "case study", "HR automation"]
+  language: "en"
+
+hero:
+  badge: "Success Story"
+  headline: "TechCorp Paraguay: 10x Faster CV Processing"
+  subheadline: "How AI transformed recruitment from 8 hours to 48 minutes daily"
+  description: "A complete transformation of HR processes using AI-powered CV analysis and candidate ranking systems."
+  image:
+    src: "/images/case-studies/techcorp-hero.jpg"
+    alt: "TechCorp Paraguay office with HR team using AI tools"
+
+overview:
+  client:
+    name: "TechCorp Paraguay"
+    industry: "Technology Services"
+    size: "150+ employees"
+    location: "Asunción, Paraguay"
+    website: "https://techcorp.com.py"
+  
+  project:
+    duration: "6 weeks"
+    timeline: "March - April 2024"
+    budget: "$12,000 USD"
+    team: "3 AI specialists + 5 HR staff"
+
+challenge:
+  title: "The Challenge"
+  description: "TechCorp Paraguay was struggling with an overwhelming recruitment process that was consuming too much time and resources."
+  
+  problems:
+    - title: "Manual CV Screening"
+      description: "HR team spent 8+ hours daily manually reviewing CVs"
+      impact: "High cost and delayed hiring decisions"
+      
+    - title: "Inconsistent Evaluation"
+      description: "Different reviewers had varying criteria and standards"
+      impact: "Missed qualified candidates and inconsistent hiring quality"
+      
+    - title: "Slow Response Time"
+      description: "Candidates waited weeks for initial screening feedback"
+      impact: "Lost top talent to competitors with faster processes"
+      
+    - title: "Administrative Overhead"
+      description: "Significant time spent on data entry and status updates"
+      impact: "HR team couldn't focus on strategic activities"
+
+  metrics:
+    before:
+      - metric: "CV Processing Time"
+        value: "8 hours/day"
+        description: "Manual review of 50-80 CVs daily"
+        
+      - metric: "Time to First Response"
+        value: "7-14 days"
+        description: "From application to initial feedback"
+        
+      - metric: "Screening Accuracy"
+        value: "65%"
+        description: "Qualified candidates reaching interviews"
+        
+      - metric: "HR Team Productivity"
+        value: "40%"
+        description: "Time spent on strategic vs. administrative tasks"
+
+solution:
+  title: "Our AI Solution"
+  description: "We implemented a comprehensive AI-powered recruitment system that automated CV analysis, candidate ranking, and initial screening processes."
+  
+  components:
+    - title: "AI CV Parser"
+      description: "Automated extraction of key information from CVs in multiple formats"
+      technologies: ["Natural Language Processing", "Document Analysis", "Data Extraction"]
+      features:
+        - "Multi-format support (PDF, Word, plain text)"
+        - "Skills and experience extraction"
+        - "Education and certification parsing"
+        - "Contact information standardization"
+      
+    - title: "Intelligent Candidate Ranking"
+      description: "AI-powered scoring system based on job requirements and company culture fit"
+      technologies: ["Machine Learning", "Scoring Algorithms", "Predictive Analytics"]
+      features:
+        - "Custom scoring criteria per position"
+        - "Experience relevance weighting"
+        - "Skills gap analysis"
+        - "Cultural fit assessment"
+      
+    - title: "Automated Screening Workflows"
+      description: "Streamlined processes with automatic status updates and communications"
+      technologies: ["Workflow Automation", "Email Integration", "CRM Integration"]
+      features:
+        - "Automatic candidate categorization"
+        - "Email templates and responses"
+        - "Interview scheduling suggestions"
+        - "Progress tracking and reporting"
+      
+    - title: "Analytics Dashboard"
+      description: "Real-time insights into recruitment performance and bottlenecks"
+      technologies: ["Data Visualization", "Business Intelligence", "Performance Metrics"]
+      features:
+        - "Recruitment funnel analysis"
+        - "Source effectiveness tracking"
+        - "Time-to-hire metrics"
+        - "Quality of hire predictions"
+
+implementation:
+  title: "Implementation Process"
+  description: "A structured 6-week approach ensuring smooth transition and maximum adoption."
+  
+  phases:
+    - phase: "Week 1-2: Analysis & Setup"
+      title: "Discovery and Configuration"
+      activities:
+        - "Current process analysis and documentation"
+        - "Job requirement standardization"
+        - "AI system configuration and customization"
+        - "Integration with existing HR tools"
+      deliverables:
+        - "Process documentation"
+        - "Configured AI system"
+        - "Integration plan"
+      
+    - phase: "Week 3-4: Pilot Implementation"
+      title: "Pilot Testing and Training"
+      activities:
+        - "Pilot launch with 2 open positions"
+        - "HR team training on new processes"
+        - "System fine-tuning based on feedback"
+        - "Performance baseline establishment"
+      deliverables:
+        - "Trained HR team"
+        - "Pilot results analysis"
+        - "System optimizations"
+      
+    - phase: "Week 5-6: Full Deployment"
+      title: "Full Launch and Optimization"
+      activities:
+        - "Complete system rollout"
+        - "Advanced feature training"
+        - "Performance monitoring setup"
+        - "Ongoing support establishment"
+      deliverables:
+        - "Fully operational system"
+        - "User documentation"
+        - "Support procedures"
+
+results:
+  title: "Impressive Results"
+  description: "The transformation exceeded all expectations, delivering immediate and measurable improvements across all key metrics."
+  
+  metrics:
+    after:
+      - metric: "CV Processing Time"
+        value: "48 minutes/day"
+        improvement: "90% reduction"
+        description: "From 8 hours to less than 1 hour daily"
+        
+      - metric: "Time to First Response"
+        value: "24-48 hours"
+        improvement: "85% faster"
+        description: "Immediate automated responses with rankings"
+        
+      - metric: "Screening Accuracy"
+        value: "92%"
+        improvement: "27% increase"
+        description: "Higher quality candidates reaching interviews"
+        
+      - metric: "HR Team Productivity"
+        value: "85%"
+        improvement: "45% increase"
+        description: "More time for strategic recruitment activities"
+
+  businessImpact:
+    - title: "Cost Savings"
+      value: "$45,000 annually"
+      description: "Reduced time spent on manual screening"
+      
+    - title: "Faster Hiring"
+      value: "65% reduction"
+      description: "In overall time-to-hire for technical positions"
+      
+    - title: "Better Quality Hires"
+      value: "78% success rate"
+      description: "New hires passing 6-month performance reviews"
+      
+    - title: "Improved Candidate Experience"
+      value: "95% satisfaction"
+      description: "Faster feedback and professional communication"
+
+roi:
+  title: "Return on Investment"
+  investment: "$12,000"
+  timeframe: "6 weeks implementation"
+  
+  calculations:
+    - category: "Time Savings"
+      description: "HR team productivity gains"
+      monthly: "$3,750"
+      annual: "$45,000"
+      
+    - category: "Quality Improvements"
+      description: "Reduced bad hires and turnover"
+      monthly: "$2,100"
+      annual: "$25,200"
+      
+    - category: "Process Efficiency"
+      description: "Faster hiring and reduced vacancy costs"
+      monthly: "$1,800"
+      annual: "$21,600"
+  
+  totals:
+    monthlyBenefit: "$7,650"
+    annualBenefit: "$91,800"
+    paybackPeriod: "1.6 months"
+    roiPercentage: "665%"
+
+testimonials:
+  - quote: "The transformation has been incredible. We went from drowning in CVs to having a streamlined, efficient process that actually helps us find better candidates faster."
+    author: "Ana Martínez"
+    position: "HR Director"
+    company: "TechCorp Paraguay"
+    image:
+      src: "/images/testimonials/ana-martinez.jpg"
+      alt: "Ana Martínez - HR Director at TechCorp Paraguay"
+  
+  - quote: "What used to take our team 8 hours now takes less than an hour. The AI doesn't just save time - it actually improves the quality of our candidate selection."
+    author: "Roberto Silva"
+    position: "General Manager"
+    company: "TechCorp Paraguay"
+    image:
+      src: "/images/testimonials/roberto-silva.jpg"
+      alt: "Roberto Silva - General Manager at TechCorp Paraguay"
+
+technicalDetails:
+  title: "Technical Implementation"
+  
+  architecture:
+    - component: "CV Processing Engine"
+      technology: "Python + spaCy NLP"
+      description: "Advanced natural language processing for CV analysis"
+      
+    - component: "Scoring Algorithm"
+      technology: "Machine Learning (scikit-learn)"
+      description: "Custom ML models for candidate ranking"
+      
+    - component: "Workflow Automation"
+      technology: "Zapier + Custom APIs"
+      description: "Integration with existing HR systems"
+      
+    - component: "Dashboard"
+      technology: "React + D3.js"
+      description: "Real-time analytics and reporting interface"
+
+  integrations:
+    - system: "ATS (Applicant Tracking System)"
+      status: "Fully Integrated"
+      description: "Seamless data flow and candidate management"
+      
+    - system: "Email System (Gmail)"
+      status: "Automated"
+      description: "Automatic candidate communications"
+      
+    - system: "Calendar (Google Calendar)"
+      status: "Connected"
+      description: "Interview scheduling optimization"
+
+lessonsLearned:
+  title: "Key Learnings"
+  insights:
+    - title: "Change Management is Critical"
+      description: "The technical implementation was only half the battle. Getting the HR team comfortable with the new process required dedicated training and support."
+      
+    - title: "Data Quality Matters"
+      description: "The AI system's effectiveness improved significantly once we standardized job descriptions and requirements."
+      
+    - title: "Continuous Optimization"
+      description: "The system gets better over time as it learns from hiring decisions and feedback."
+
+nextSteps:
+  title: "What's Next"
+  plans:
+    - title: "Video Interview Analysis"
+      description: "Adding AI-powered analysis of video interviews"
+      timeline: "Q3 2024"
+      
+    - title: "Predictive Analytics"
+      description: "Predicting candidate success and retention likelihood"
+      timeline: "Q4 2024"
+      
+    - title: "Multi-language Support"
+      description: "Expanding to process CVs in multiple languages"
+      timeline: "Q1 2025"
+
+cta:
+  $extend: "template.cta"  # Extend the template CTA
+  title: "Ready to Transform Your Recruitment Process?"
+  description: "See how AI can revolutionize your HR department just like it did for TechCorp Paraguay."
+  primaryButton:
+    text: "Schedule Free Consultation"
+    href: "/contacto?topic=recruitment"
+  secondaryButton:
+    text: "View Our HR Services"
+    href: "/servicios#hr-services"
+
+relatedCases:
+  $use: "template.relatedCases"  # Use the template related cases section
+
+footer:
+  brand:
+    text: "AI Paraguay"
+  copyright: "© 2025 AI Paraguay. All rights reserved."

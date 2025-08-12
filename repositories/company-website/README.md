@@ -1,43 +1,56 @@
 # AI-Whisperers Company Website
 
-Official website for AI-Whisperers organization, showcasing our AI solutions and business services.
-
-## 🌐 Live Website
-- **Production**: https://ai-whisperers.com (Coming Soon)
-- **Staging**: https://company-website-staging.vercel.app (Coming Soon)
+Official website for AI-Whisperers - Advanced AI consultancy and development services.
 
 ## 🚀 Tech Stack
 
-- **Frontend**: Vanilla HTML/CSS/JavaScript with Vite
-- **Build Tool**: Vite 7.0
-- **Testing**: Playwright for E2E testing  
-- **Deployment**: Vercel/Netlify
-- **Domain**: Custom domain ready
+- **Framework**: Next.js 15 with App Router
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS v4
+- **UI Components**: Radix UI + Custom components
+- **Animations**: Framer Motion
+- **AI Integration**: AI SDK (OpenAI + Anthropic)
+- **Content**: YAML-based content management
+- **Icons**: Lucide React
+
+## 🌐 Live Website
+
+- **Production**: https://ai-whisperers.com
+- **Staging**: https://company-website-staging.vercel.app
 
 ## 📁 Project Structure
 
 ```
-company-website/
-├── public/                 # Static website files
-│   ├── index.html         # Homepage
-│   ├── about.html         # About page
-│   ├── contact.html       # Contact page
-│   ├── products.html      # Products/services
-│   ├── portfolio.html     # Portfolio showcase
-│   ├── css/              # Stylesheets
-│   ├── js/               # JavaScript files
-│   ├── images/           # Images and assets
-│   └── data/             # Content data files
-├── scripts/              # Build and utility scripts
-├── tests/               # Playwright tests
-└── vite.config.js       # Vite configuration
+src/
+├── app/                    # Next.js App Router
+│   ├── page.tsx           # Homepage
+│   ├── sobre-nosotros/    # About page (Spanish)
+│   ├── servicios/         # Services page
+│   ├── contacto/          # Contact page
+│   ├── blog/              # Blog section
+│   └── api/               # API routes
+├── components/
+│   ├── pages/             # Page components
+│   ├── sections/          # Reusable sections
+│   ├── interactive/       # Interactive components
+│   └── ui/                # Base UI components
+├── lib/
+│   ├── content/           # Content management
+│   ├── i18n/              # Internationalization
+│   └── themes/            # Theme management
+└── types/                 # TypeScript definitions
+
+content/                   # YAML content files
+├── pages/                 # Page content
+├── shared/                # Shared content
+└── team/                  # Team member profiles
 ```
 
 ## 🛠️ Development
 
 ### Prerequisites
 - Node.js 18+
-- npm or yarn
+- npm, yarn, pnpm, or bun
 
 ### Getting Started
 
@@ -49,178 +62,179 @@ npm install
 2. **Start development server**:
 ```bash
 npm run dev
-# Website available at http://localhost:5173
+# With Turbopack (faster):
+npm run dev
+
+# Without Turbopack:
+npm run dev:stable
 ```
 
-3. **Build for production**:
-```bash
-npm run build
-```
+3. **Open in browser**: http://localhost:3000
 
-4. **Preview production build**:
-```bash
-npm run preview
-```
-
-## 📝 Available Scripts
+### Available Scripts
 
 ```bash
 # Development
-npm run dev          # Start Vite dev server
-npm run build        # Build for production  
-npm run preview      # Preview production build
-npm start           # Serve with http-server
+npm run dev              # Start with Turbopack
+npm run dev:stable       # Start without Turbopack
+npm run build           # Build for production
+npm start              # Start production server
 
-# Testing
-npm run screenshot   # Take screenshots of all pages
-npm run screenshot:desktop # Desktop screenshots only
-npm run screenshot:mobile  # Mobile screenshots only  
-npm run screenshot:tablet  # Tablet screenshots only
+# Code Quality
+npm run lint           # Run ESLint
+npm run lint:fix       # Fix ESLint issues
+npm run type-check     # TypeScript type checking
+npm test              # Run tests (placeholder)
 
-# Deployment
-npm run deploy       # Build and prepare for deployment
+# Analysis
+npm run analyze        # Bundle analysis
 ```
 
-## 🎨 Website Sections
+## ✨ Features
 
-### Pages
-- **Homepage** (`index.html`) - Main landing page
-- **About** (`about.html`) - Company information and team
-- **Products** (`products.html`) - AI solutions and services
-- **Portfolio** (`portfolio.html`) - Case studies and projects
-- **Contact** (`contact.html`) - Contact information and forms
-- **FAQ** (`faq.html`) - Frequently asked questions
-
-### Key Features
+### Core Features
+- **Multilingual Support** - Spanish/English content
+- **AI Integration** - OpenAI and Anthropic AI services
+- **Dynamic Content** - YAML-based content management
 - **Responsive Design** - Mobile-first approach
 - **Modern UI/UX** - Clean, professional design
-- **SEO Optimized** - Meta tags and structured data
-- **Performance Optimized** - Fast loading times
-- **Cross-browser Compatible** - Works on all modern browsers
+- **SEO Optimized** - Meta tags, structured data, sitemap
+- **Performance Optimized** - Next.js optimization features
 
-## 🚀 Deployment
+### Advanced Features
+- **Interactive Components** - Newsletter signup, pricing calculator
+- **Theme System** - Customizable color themes
+- **Animation System** - Framer Motion animations
+- **Content API** - Dynamic content loading
+- **Structured Data** - Rich snippets for SEO
 
-### Vercel (Recommended)
-1. Connect your GitHub repository to Vercel
-2. Configure build settings:
-   - **Build Command**: `npm run build`
-   - **Output Directory**: `dist`
-3. Set up custom domain: `ai-whisperers.com`
+## 📝 Content Management
 
-### Netlify Alternative
-1. Connect GitHub repository
-2. Build settings:
-   - **Build Command**: `npm run build`  
-   - **Publish Directory**: `dist`
-3. Configure custom domain
+Content is managed through YAML files in the `content/` directory:
 
-### GitHub Pages
-```bash
-# Build and deploy to gh-pages branch
-npm run build
-# Push dist/ contents to gh-pages branch
+### Page Content
+```yaml
+# content/pages/homepage.yml
+meta:
+  title: "AI-Whisperers - Advanced AI Solutions"
+  description: "Expert AI consultancy and development services"
+
+hero:
+  title: "Transform Your Business with AI"
+  subtitle: "Expert AI consultancy and development services"
+  cta:
+    text: "Get Started"
+    href: "/contacto"
+```
+
+### Adding New Content
+1. Create/edit YAML files in `content/`
+2. Use the content API: `useContent('homepage')`
+3. Content updates automatically in development
+
+## 🎨 Styling & Themes
+
+### Tailwind CSS v4
+- Modern CSS-first approach
+- Custom color system
+- Responsive design utilities
+- Dark/light mode support
+
+### Theme Customization
+```typescript
+// lib/themes/colorThemes.ts
+export const themes = {
+  corporate: { /* colors */ },
+  creative: { /* colors */ },
+  minimal: { /* colors */ }
+}
 ```
 
 ## 🔧 Configuration
 
 ### Environment Variables
-- `VITE_API_URL` - Backend API URL (if needed)
-- `VITE_CONTACT_EMAIL` - Contact form email
-- `VITE_GA_ID` - Google Analytics ID
+```env
+# .env.local
+NEXT_PUBLIC_SITE_URL=https://ai-whisperers.com
+OPENAI_API_KEY=sk-...
+ANTHROPIC_API_KEY=sk-...
+```
 
-### Domain Setup
-- Update CNAME file for custom domain
-- Configure DNS records:
-  - A record: Point to hosting provider IP
-  - CNAME record: www → ai-whisperers.com
+### Next.js Configuration
+- TypeScript optimizations
+- Bundle analysis ready
+- Vercel deployment optimized
 
-## 📊 Analytics & SEO
+## 🚀 Deployment
 
-### Google Analytics
-- Set up GA4 tracking
-- Configure conversion goals
-- Monitor user behavior
+### Vercel (Recommended)
+```bash
+# Automatic deployment on push to main branch
+# Manual deployment:
+vercel --prod
+```
 
-### SEO Checklist
-- ✅ Meta tags and descriptions
-- ✅ Open Graph tags for social media
-- ✅ Structured data markup
-- ✅ XML sitemap
-- ✅ Robots.txt file
-- ✅ Page speed optimization
+### Build Configuration
+- **Build Command**: `npm run build`
+- **Output Directory**: `.next`
+- **Node.js Version**: 18+
+
+### Performance Targets
+- **First Contentful Paint**: < 1.5s
+- **Largest Contentful Paint**: < 2.5s
+- **Cumulative Layout Shift**: < 0.1
+- **First Input Delay**: < 100ms
 
 ## 🧪 Testing
 
-### Playwright Tests
+### Current Status
+- Component testing: Coming soon
+- E2E testing: Coming soon
+- Performance testing: Lighthouse CI ready
+
+### Adding Tests
 ```bash
-# Run all tests
-npx playwright test
-
-# Run specific test
-npx playwright test tests/homepage.spec.js
-
-# Run in headed mode
-npx playwright test --headed
+# Will add:
+# - Jest + React Testing Library
+# - Playwright for E2E testing
+# - Storybook for component development
 ```
 
-### Manual Testing Checklist
-- [ ] All pages load correctly
-- [ ] Contact forms work
-- [ ] Mobile responsiveness
-- [ ] Cross-browser compatibility
-- [ ] Performance metrics
+## 📊 Analytics & SEO
 
-## 🔄 Content Management
+### SEO Features
+- **Meta Tags**: Dynamic per page
+- **Structured Data**: JSON-LD markup
+- **Sitemap**: Auto-generated
+- **Robots.txt**: Configured
+- **OpenGraph**: Social media optimization
 
-### Updating Content
-- Edit HTML files directly in `public/` directory
-- Update content data in `public/data/content.yml`
-- Add new images to `public/images/`
-
-### Adding New Pages
-1. Create new HTML file in `public/`
-2. Follow existing template structure
-3. Add navigation links
-4. Update sitemap
-
-## 📱 Mobile Optimization
-
-- Responsive breakpoints: 320px, 768px, 1024px, 1200px
-- Touch-friendly navigation
-- Optimized images for mobile
-- Fast loading on mobile networks
+### Analytics Integration
+- Google Analytics 4 ready
+- Custom event tracking
+- Performance monitoring
 
 ## 🔒 Security
 
-- HTTPS enforced
-- Content Security Policy headers
-- No sensitive data in client-side code
-- Regular dependency updates
-
-## 📈 Performance
-
-### Optimization Techniques
-- Image compression and WebP format
-- CSS and JS minification
-- Lazy loading for images
-- Service worker for caching
-- CDN for static assets
-
-### Performance Targets
-- First Contentful Paint: < 1.5s
-- Largest Contentful Paint: < 2.5s
-- Cumulative Layout Shift: < 0.1
-- First Input Delay: < 100ms
+### Security Features
+- **Content Security Policy**: Configured
+- **HTTPS**: Enforced
+- **Environment Variables**: Properly secured
+- **API Routes**: Input validation
 
 ## 🤝 Contributing
 
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature/new-feature`
-3. Make your changes
-4. Test thoroughly
-5. Commit: `git commit -m 'feat: add new feature'`
-6. Push: `git push origin feature/new-feature`
-7. Create a Pull Request
+### Development Workflow
+1. Create feature branch: `git checkout -b feature/new-feature`
+2. Make changes and test locally
+3. Run quality checks: `npm run lint && npm run type-check`
+4. Commit with conventional commits
+5. Create pull request
+
+### Code Style
+- ESLint configuration included
+- TypeScript strict mode
+- Prettier formatting (coming soon)
 
 ## 📞 Support
 
@@ -230,8 +244,8 @@ npx playwright test --headed
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is proprietary and confidential.
 
 ---
 
-**Built with ❤️ by the AI-Whisperers team**
+**Built with ❤️ by the AI-Whisperers team using Next.js 15 and modern web technologies.**

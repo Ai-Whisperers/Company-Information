@@ -1,0 +1,35 @@
+# Shared Navigation Configuration - English
+brand:
+  text: "AI Paraguay"
+  href: "/"
+  logo:
+    src: "/images/logo/ai-paraguay-logo.svg"
+    alt: "AI Paraguay Logo"
+
+items:
+  - text: "Home"
+    href: "/"
+    
+  - text: "Services"
+    href: "/servicios"
+    
+  - text: "About Us"
+    href: "/sobre-nosotros"
+    
+  - text: "Blog"
+    href: "/blog"
+    
+  - text: "Contact"
+    href: "/contacto"
+
+cta:
+  text: "Free Consultation"
+  href: "/contacto"
+  variant: "default"
+
+mobileMenu:
+  closeText: "Close"
+  openText: "Menu"
+
+languageToggle:
+  enabled: false

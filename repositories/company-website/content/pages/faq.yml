@@ -1,0 +1,137 @@
+meta:
+  title: "Frequently Asked Questions - AI Paraguay"
+  description: "Find answers to common questions about AI implementation, pricing, training, and our services. Get comprehensive support for your AI transformation journey."
+  keywords: ["FAQ", "AI Paraguay", "artificial intelligence", "AI implementation", "pricing", "training", "support"]
+  language: "en"
+
+hero:
+  title: "Frequently Asked Questions"
+  description: "Find answers to the most common questions about AI implementation and our services"
+  subtitle: "Can't find what you're looking for? Contact us for personalized support."
+
+categories:
+  - id: "general"
+    title: "General Questions"
+    icon: "HelpCircle"
+    questions:
+      - question: "What is AI Paraguay and what do you do?"
+        answer: "AI Paraguay is a leading AI consultancy that helps businesses implement practical artificial intelligence solutions. We specialize in training non-technical teams to use AI tools like ChatGPT, Claude, Cursor, and Windsurf to improve productivity and automate daily tasks."
+        
+      - question: "Who can benefit from your AI services?"
+        answer: "Our services are designed for complete organizations, not just technical teams. We help executives, sales teams, finance staff, HR teams, operations, and customer service departments. No technical background is required."
+        
+      - question: "Do you only serve companies in Paraguay?"
+        answer: "While we're based in Paraguay, we serve clients worldwide. Our team understands both local business culture and international best practices, making us uniquely positioned to help global organizations."
+        
+      - question: "What makes AI Paraguay different from other AI consultancies?"
+        answer: "Unlike typical AI consultancies that focus on complex infrastructure, we offer practical training that every employee can use immediately. We focus on immediate results and productivity gains rather than theoretical knowledge."
+
+  - id: "services"
+    title: "Services & Implementation"
+    icon: "Settings"
+    questions:
+      - question: "What AI tools do you teach and implement?"
+        answer: "We specialize in ChatGPT, Claude AI, Google Gemini, Cursor (AI-powered code editor), and Windsurf (collaborative IDE). We also work with custom analytics platforms and industry-specific AI tools based on your needs."
+        
+      - question: "How long does a typical AI implementation take?"
+        answer: "Implementation times vary by service: Business Training (2-4 weeks), Tool Implementation (4-8 weeks), Process Automation (6-12 weeks), and Digital Strategy (3-6 months). We provide immediate value from day one."
+        
+      - question: "Do you provide ongoing support after implementation?"
+        answer: "Yes, we offer comprehensive post-implementation support including training updates, technical assistance, and optimization recommendations. Our goal is to ensure long-term success with your AI tools."
+        
+      - question: "Can you work with our existing systems?"
+        answer: "Absolutely. Our solutions are designed to integrate with your current workflows and systems. We assess your existing infrastructure and recommend the best approach for seamless integration."
+        
+      - question: "What if our team has no technical experience?"
+        answer: "That's exactly who we serve! Our training methodology is specifically designed for non-technical teams. We make complex AI concepts accessible and practical for everyone, regardless of technical background."
+
+  - id: "pricing"
+    title: "Pricing & Investment"
+    icon: "DollarSign"
+    questions:
+      - question: "How much do your services cost?"
+        answer: "Our services range from $2,000 USD for Business Training to $15,000 USD for comprehensive Digital Strategy. We offer flexible pricing based on your organization's size and specific needs. All packages include training, implementation, and initial support."
+        
+      - question: "Do you offer payment plans or financing?"
+        answer: "Yes, we offer flexible payment plans for larger projects. We can discuss quarterly payments, milestone-based billing, or custom arrangements that work with your budget and cash flow."
+        
+      - question: "What's included in the service price?"
+        answer: "All services include: initial consultation, custom training materials, hands-on implementation, team training sessions, documentation, and 30 days of post-implementation support. Additional support packages are available."
+        
+      - question: "Is there a minimum commitment or contract length?"
+        answer: "We don't require long-term contracts. Each project is completed within the specified timeframe, and ongoing support is optional. We believe in earning your continued business through results, not contracts."
+        
+      - question: "What ROI can we expect from AI implementation?"
+        answer: "Our clients typically see 40% average time savings on routine tasks, with some achieving up to 90% reduction in specific processes like CV screening or report generation. Most investments are recovered within 3-6 months."
+
+  - id: "training"
+    title: "Training & Support"
+    icon: "BookOpen"
+    questions:
+      - question: "How is the training delivered?"
+        answer: "We offer flexible training delivery: on-site workshops, virtual sessions, or hybrid approaches. Training includes hands-on practice, real-world examples, and customized scenarios relevant to your industry and department."
+        
+      - question: "How many people can be trained at once?"
+        answer: "We can train groups of 5-50 people per session, depending on the format. For larger organizations, we design multi-session programs to ensure everyone receives personalized attention and practical experience."
+        
+      - question: "What languages do you provide training in?"
+        answer: "We primarily conduct training in English and Spanish. Our team is bilingual and can adapt materials and presentations to your preferred language and cultural context."
+        
+      - question: "Do you provide training materials and documentation?"
+        answer: "Yes, all participants receive comprehensive training materials, step-by-step guides, quick reference cards, and access to our online resource library. Materials are customized for your specific use cases."
+        
+      - question: "How do you measure training success?"
+        answer: "We track metrics like tool adoption rates, time savings, productivity improvements, and user satisfaction. We provide regular progress reports and recommend optimizations based on usage data."
+
+  - id: "technical"
+    title: "Technical Questions"
+    icon: "Monitor"
+    questions:
+      - question: "Is our data secure when using AI tools?"
+        answer: "Data security is our top priority. We implement enterprise-grade security configurations, provide training on data handling best practices, and ensure compliance with privacy regulations. We never share or store your sensitive business data."
+        
+      - question: "Do we need special hardware or software?"
+        answer: "Most AI tools we implement are cloud-based and work with standard business computers and internet connections. We'll assess your current setup and recommend any necessary upgrades during our initial consultation."
+        
+      - question: "Can AI tools work offline?"
+        answer: "Most modern AI tools require internet connectivity for optimal performance. However, we can implement hybrid solutions and caching strategies to ensure productivity during connectivity issues."
+        
+      - question: "How do you handle AI tool updates and changes?"
+        answer: "We monitor all AI tool updates and provide regular training updates to keep your team current. Our ongoing support includes notification of new features and optimization opportunities."
+        
+      - question: "What happens if an AI tool we're using discontinues service?"
+        answer: "We always recommend diversified AI tool strategies and provide migration planning as part of our ongoing support. We monitor the AI landscape and proactively suggest alternatives when needed."
+
+  - id: "getting-started"
+    title: "Getting Started"
+    icon: "Rocket"
+    questions:
+      - question: "How do we begin working with AI Paraguay?"
+        answer: "Start with a free consultation where we assess your needs, discuss goals, and recommend the best approach. We'll provide a detailed proposal with timeline, pricing, and expected outcomes tailored to your organization."
+        
+      - question: "What information do you need for the initial consultation?"
+        answer: "We'll want to understand your current processes, team structure, pain points, and goals. No technical details required - just bring your business challenges and we'll propose AI solutions."
+        
+      - question: "How quickly can we start seeing results?"
+        answer: "Most clients see immediate improvements within the first week of training. Significant productivity gains typically occur within 30 days, with full optimization achieved by the end of the implementation period."
+        
+      - question: "Do you offer pilot programs or trial periods?"
+        answer: "Yes, we can design pilot programs for specific departments or use cases. This allows you to experience the benefits before committing to organization-wide implementation."
+        
+      - question: "What if we're not satisfied with the results?"
+        answer: "We stand behind our work with a satisfaction guarantee. If you're not seeing the promised results, we'll work with you to optimize the implementation at no additional cost until you achieve your goals."
+
+contact:
+  title: "Still have questions?"
+  description: "Our team is here to help you understand how AI can transform your business"
+  cta:
+    primary:
+      text: "Schedule Free Consultation"
+      href: "/contacto"
+    secondary:
+      text: "Send Email"
+      href: "mailto:info@aiparaguay.com"
+  info:
+    phone: "+595981324569"
+    email: "info@aiparaguay.com"
+    hours: "Monday - Friday, 9 AM - 6 PM (Asunción time)"

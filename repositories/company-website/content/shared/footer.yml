@@ -1,0 +1,126 @@
+# Shared Footer Configuration - English
+brand:
+  text: "AI Paraguay"
+
+copyright: "© 2025 AI Paraguay. All rights reserved."
+
+companyInfo:
+  description: "We transform organizations with practical AI training and implementation. Making artificial intelligence accessible to businesses across Paraguay and worldwide."
+  
+  contact:
+    address:
+      street: "Av. Mariscal López 1234"
+      neighborhood: "Villa Morra"
+      city: "Asunción"
+      country: "Paraguay"
+      zipCode: "1234"
+    
+    phone: "+595981324569"
+    email: "info@aiparaguay.com"
+    whatsapp: "+595981324569"
+    
+  serviceArea: "🌐 Serving clients worldwide from Paraguay"
+
+navigation:
+  sections:
+    - title: "Services"
+      links:
+        - text: "Business Training"
+          href: "/servicios#training"
+        - text: "Tool Implementation"
+          href: "/servicios#implementation"
+        - text: "Process Automation"
+          href: "/servicios#automation"
+        - text: "Digital Strategy"
+          href: "/servicios#strategy"
+        - text: "View All Services"
+          href: "/servicios"
+    
+    - title: "Resources"
+      links:
+        - text: "Free AI Tools"
+          href: "/resources#tools"
+        - text: "Guides & Templates"
+          href: "/resources#guides"
+        - text: "Case Studies"
+          href: "/case-studies"
+        - text: "Blog Articles"
+          href: "/blog"
+        - text: "AI Tools Directory"
+          href: "/resources#directory"
+    
+    - title: "Company"
+      links:
+        - text: "About Us"
+          href: "/sobre-nosotros"
+        - text: "Our Team"
+          href: "/sobre-nosotros#team"
+        - text: "Events & Workshops"
+          href: "/events"
+        - text: "Contact"
+          href: "/contacto"
+        - text: "Careers"
+          href: "/careers"
+    
+    - title: "Support"
+      links:
+        - text: "Help Center"
+          href: "/support"
+        - text: "Documentation"
+          href: "/docs"
+        - text: "FAQ"
+          href: "/faq"
+        - text: "Book Consultation"
+          href: "/contacto"
+
+socialMedia:
+  title: "Follow Us"
+  links:
+    - platform: "LinkedIn"
+      url: "https://linkedin.com/company/ai-paraguay"
+      icon: "LinkedIn"
+      
+    - platform: "Twitter"
+      url: "https://twitter.com/ai_paraguay"
+      icon: "Twitter"
+      
+    - platform: "YouTube"
+      url: "https://youtube.com/@aiparaguay"
+      icon: "YouTube"
+      
+    - platform: "WhatsApp"
+      url: "https://wa.me/595981324569"
+      icon: "MessageSquare"
+
+newsletter:
+  title: "AI Insights Newsletter"
+  description: "Get weekly AI tips, case studies, and industry insights"
+  form:
+    emailPlaceholder: "Enter your email"
+    submitButton: "Subscribe"
+    privacyNote: "We respect your privacy. Unsubscribe anytime."
+
+legal:
+  copyright: "© 2025 AI Paraguay. All rights reserved."
+  links:
+    - text: "Privacy Policy"
+      href: "/privacy"
+    - text: "Terms of Service"
+      href: "/terms"
+    - text: "Cookie Policy"
+      href: "/cookies"
+
+certifications:
+  title: "Certifications & Partners"
+  items:
+    - name: "Google Cloud Partner"
+      logo: "/images/certifications/google-cloud.svg"
+      alt: "Google Cloud Partner"
+      
+    - name: "AWS Advanced Partner"
+      logo: "/images/certifications/aws-partner.svg"
+      alt: "AWS Advanced Partner"
+      
+    - name: "Microsoft Gold Partner"
+      logo: "/images/certifications/microsoft-gold.svg"
+      alt: "Microsoft Gold Partner"
