@@ -21,7 +21,9 @@ This guide will help you deploy all three AI-Whisperers websites and set up the 
 
 ### Status: ✅ READY FOR DEPLOYMENT
 
-**Repository**: Already set up in `repositories/company-website/`
+**Repository**: Production-ready Next.js 15 website in `repositories/company-website/`
+**Tech Stack**: Next.js 15 + TypeScript + TailwindCSS v4 + AI SDK
+**Features**: Multilingual, AI integration, YAML content management
 
 ### Deployment Steps:
 
@@ -31,8 +33,9 @@ This guide will help you deploy all three AI-Whisperers websites and set up the 
 # 2. Connect your GitHub organization
 # 3. Import the company-website repository
 # 4. Configure project:
+#    - Framework Preset: Next.js
 #    - Build Command: npm run build
-#    - Output Directory: dist
+#    - Output Directory: .next
 #    - Root Directory: repositories/company-website
 # 5. Add custom domain: ai-whisperers.com
 ```
@@ -50,11 +53,11 @@ This guide will help you deploy all three AI-Whisperers websites and set up the 
 
 ### Environment Variables to Set:
 ```
-VITE_API_URL=https://api.ai-whisperers.com
-VITE_CONTACT_EMAIL=business@ai-whisperers.com
-VITE_GA_ID=G-XXXXXXXXXX
-VITE_COMPANY_NAME=AI-Whisperers
-VITE_DOMAIN=ai-whisperers.com
+NEXT_PUBLIC_SITE_URL=https://ai-whisperers.com
+NEXT_PUBLIC_CONTACT_EMAIL=business@ai-whisperers.com
+NEXT_PUBLIC_GA_ID=G-XXXXXXXXXX
+OPENAI_API_KEY=sk-...
+ANTHROPIC_API_KEY=sk-ant-...
 ```
 
 ## 📊 2. Investment AI Platform
@@ -241,6 +244,29 @@ Total: ~$163/month (~$1,950/year)
 
 ---
 
+## 🆕 What's New (Latest Update)
+
+### ✅ Company Website Upgraded
+- **Replaced**: Simple Vite website → **Advanced Next.js 15 website**
+- **Features Added**: AI integration, multilingual support, YAML content management
+- **Tech Stack**: Next.js 15 + TypeScript + TailwindCSS v4 + AI SDK
+- **Portfolio**: Previous client website moved to `repositories/portfolio-showcase/`
+
+### 🔧 Enhanced Development
+```bash
+# Next.js Development Commands
+npm run dev              # Turbopack-powered development
+npm run lint && npm run type-check  # Quality checks
+npm run build            # Production build
+```
+
+### 🚀 Advanced Features Ready
+- **Multilingual**: Spanish/English content system
+- **AI Integration**: OpenAI + Anthropic API ready
+- **Content Management**: YAML-based, easy to update
+- **SEO Optimized**: Structured data, meta tags, sitemap
+- **Performance**: Next.js 15 optimizations
+
 ## 📞 Support
 
 If you need help with any step:
@@ -248,4 +274,4 @@ If you need help with any step:
 2. Use the kanban board to track progress
 3. Reference this guide for step-by-step instructions
 
-**Ready to launch AI-Whisperers! 🚀**
+**Ready to launch AI-Whisperers with cutting-edge technology! 🚀**
