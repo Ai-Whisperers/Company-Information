@@ -1,0 +1,76 @@
+# Azure Pipeline for Core Services
+# Build and test Python/Node.js backend services
+
+trigger:
+  branches:
+    include:
+      - main
+      - develop
+  paths:
+    include:
+      - 'repositories/core-services/**'
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  PYTHON_VERSION: '3.11'
+  NODE_VERSION: '18.x'
+
+stages:
+- stage: Test
+  displayName: 'Test Services'
+  jobs:
+  - job: PythonTests
+    displayName: 'Python Service Tests'
+    steps:
+    - task: UsePythonVersion@0
+      inputs:
+        versionSpec: $(PYTHON_VERSION)
+      displayName: 'Use Python $(PYTHON_VERSION)'
+
+    - script: |
+        cd repositories/core-services
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+      displayName: 'Install dependencies'
+
+    - script: |
+        cd repositories/core-services
+        python -m pytest tests/ --cov=src --cov-report=xml
+      displayName: 'Run Python tests'
+
+  - job: NodeTests
+    displayName: 'Node.js Service Tests'
+    steps:
+    - task: NodeTool@0
+      inputs:
+        versionSpec: $(NODE_VERSION)
+      displayName: 'Install Node.js'
+
+    - script: |
+        cd repositories/core-services
+        npm ci
+      displayName: 'Install dependencies'
+
+    - script: |
+        cd repositories/core-services
+        npm test
+      displayName: 'Run Node.js tests'
+
+- stage: Build
+  displayName: 'Build Docker Images'
+  condition: succeeded()
+  jobs:
+  - job: BuildContainers
+    displayName: 'Build and Push Images'
+    steps:
+    - task: Docker@2
+      inputs:
+        containerRegistry: 'dockerHub'
+        repository: 'aiwhisperers/core-services'
+        command: 'buildAndPush'
+        Dockerfile: 'repositories/core-services/Dockerfile'
+        tags: |
+          $(Build.BuildId)
+          latest

@@ -1,0 +1,71 @@
+# Azure Pipeline for ML Models
+# Train, evaluate, and deploy machine learning models
+
+trigger:
+  branches:
+    include:
+      - main
+      - develop
+  paths:
+    include:
+      - 'repositories/ml-models/**'
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  PYTHON_VERSION: '3.10'
+  CUDA_VERSION: '11.8'
+
+stages:
+- stage: Validate
+  displayName: 'Validate Models'
+  jobs:
+  - job: ValidateCode
+    displayName: 'Code Quality Checks'
+    steps:
+    - task: UsePythonVersion@0
+      inputs:
+        versionSpec: $(PYTHON_VERSION)
+      displayName: 'Use Python $(PYTHON_VERSION)'
+
+    - script: |
+        cd repositories/ml-models
+        python -m pip install --upgrade pip
+        pip install -r requirements-dev.txt
+      displayName: 'Install dependencies'
+
+    - script: |
+        cd repositories/ml-models
+        python -m black --check src/
+        python -m flake8 src/
+      displayName: 'Code formatting checks'
+
+    - script: |
+        cd repositories/ml-models
+        python -m pytest tests/unit/ -v
+      displayName: 'Run unit tests'
+
+- stage: Train
+  displayName: 'Train Models'
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+  jobs:
+  - job: TrainModel
+    displayName: 'Train ML Model'
+    timeoutInMinutes: 180
+    steps:
+    - script: |
+        cd repositories/ml-models
+        python src/training/train.py --config configs/model_config.yaml
+      displayName: 'Train model'
+
+    - script: |
+        cd repositories/ml-models
+        python src/evaluation/evaluate.py --model models/latest.pt
+      displayName: 'Evaluate model'
+
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: 'repositories/ml-models/models'
+        ArtifactName: 'trained-models'
+      displayName: 'Publish model artifacts'

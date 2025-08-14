@@ -1,90 +1,120 @@
-# AI-Whisperers
+# AI-Whisperers Organization
 
-## Organization Overview
-AI-Whisperers is focused on developing innovative AI solutions and integrations.
+🚀 **Multi-project AI consultancy and development organization**
 
-## Project Structure
+## 📁 Repository Structure
 
-### Repositories
-- **core-services** - Main backend services and APIs
-- **web-platform** - Frontend applications and user interfaces
-- **ml-models** - Machine learning models and training pipelines
-- **documentation** - Technical documentation and guides
-- **infrastructure** - Infrastructure as code and deployment configs
+```
+AI-Whisperers/
+├── repositories/           # All project repositories
+│   ├── websites/          # Website projects
+│   │   ├── company/       # AI-Whisperers main website (Next.js)
+│   │   ├── wpg-amenities/ # Client hospitality website (Static)
+│   │   ├── ai-investment/ # Investment analysis platform
+│   │   └── comment-analyzer/ # Sentiment analysis SaaS (Python/Streamlit)
+│   └── internal/          # Internal tools
+│       ├── meeting-recorder/ # AI meeting transcription
+│       └── automation/    # Business automation workflows
+├── docs/                  # Documentation
+│   ├── setup/            # Business setup guides
+│   └── guides/           # Development guides
+├── scripts/              # Automation scripts
+└── documentation/        # Business documentation
+```
 
-## Getting Started
+## 🎯 Active Projects
 
-### Prerequisites
-- Git
-- GitHub account with organization access
-- Development environment setup (varies by project)
+### 1️⃣ Company Business Website
+- **Tech:** Next.js 15, TypeScript, Tailwind CSS
+- **Status:** Development
+- **URL:** ai-whisperers.org
+- **Repo:** [Company-website](https://github.com/aiwhispererwvdp/Company-website)
 
-### Quick Start
-1. Clone the repository you want to work on
-2. Check the project's README for specific setup instructions
-3. Create a feature branch for your work
-4. Submit pull requests for review
+### 2️⃣ WPG Amenities Website
+- **Tech:** Static HTML, JavaScript, CSS
+- **Status:** Client delivery pending
+- **Type:** Client project
+- **Repo:** [WPG-Amenities](https://github.com/aiwhispererwvdp/WPG-Amenities)
 
-## Development Workflow
+### 3️⃣ AI Investment Website
+- **Tech:** TBD (React/Python backend)
+- **Status:** Planning
+- **Type:** SaaS product
+- **Repo:** [Investment-platform](https://github.com/aiwhispererwvdp/Investment-platform)
 
-### Branch Strategy
-- `main` - Production-ready code
-- `develop` - Integration branch for features
-- `feature/*` - Feature branches
-- `hotfix/*` - Emergency fixes for production
-- `release/*` - Release preparation branches
+### 4️⃣ Comment Analyzer Website
+- **Tech:** Python, Streamlit, OpenAI API
+- **Status:** MVP ready
+- **Type:** SaaS product
+- **Repo:** [Comment-Analizer](https://github.com/aiwhispererwvdp/Comment-Analizer)
 
-### Commit Conventions
-Use conventional commits format:
-- `feat:` - New feature
-- `fix:` - Bug fix
-- `docs:` - Documentation changes
-- `style:` - Code style changes (formatting, etc)
-- `refactor:` - Code refactoring
-- `test:` - Test additions or changes
-- `chore:` - Build process or auxiliary tool changes
+### 5️⃣ Business Setup
+- Legal entity registration
+- Banking and payments
+- Professional email
+- Documentation
 
-## Progress Tracking
+### 6️⃣ Internal Projects
+- Meeting Recorder (AI transcription)
+- Automation workflows
+- Internal dashboards
 
-### Issue Management
-- Use GitHub Issues for bug reports and feature requests
-- Label issues appropriately (bug, enhancement, documentation, etc.)
-- Link issues to pull requests
+## 🛠️ Quick Start
 
-### Project Boards
-- Active projects are tracked on GitHub Projects
-- Move cards through columns: To Do → In Progress → Review → Done
+### Development Commands
 
-### Milestones
-- Group related issues into milestones
-- Set target dates for milestone completion
-- Review progress weekly
+```bash
+# Company Website
+cd repositories/websites/company/company-website
+npm run dev
 
-## Contributing
+# WPG Amenities
+cd repositories/websites/wpg-amenities/WPG-Amenities
+npm start
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'feat: add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+# Comment Analyzer
+cd repositories/websites/comment-analyzer
+python src/main.py
+```
 
-## Team Communication
+### Deploy Commands
 
-- **GitHub Discussions** - For general discussions and ideas
-- **Issues** - For specific bugs and feature requests
-- **Pull Request Comments** - For code review discussions
+```bash
+# Company Website
+npm run build && npm run deploy
 
-## Resources
+# WPG Amenities  
+npm run build
 
-- [GitHub Organization Best Practices](https://docs.github.com/en/organizations)
-- [Conventional Commits](https://www.conventionalcommits.org/)
-- [GitHub Flow](https://guides.github.com/introduction/flow/)
+# Comment Analyzer
+docker build -t comment-analyzer .
+```
 
-## License
+## 📊 Project Management
 
-Specify your license here
+All projects are tracked using Azure DevOps with organized work items:
+1. Company Business Website
+2. WPG Amenities Website  
+3. AI Investment Website
+4. Comment Analyzer Website
+5. Business Setup
+6. Internal Projects
 
-## Contact
+View workspace: [Azure DevOps](https://dev.azure.com/ai-whisperers)
 
-- Organization: AI-Whisperers
-- GitHub: [@ai-whisperers](https://github.com/ai-whisperers)
+## 🔗 GitHub Repositories
+
+- [Company-website](https://github.com/aiwhispererwvdp/Company-website)
+- [WPG-Amenities](https://github.com/aiwhispererwvdp/WPG-Amenities)
+- [Investment-platform](https://github.com/aiwhispererwvdp/Investment-platform)
+- [Comment-Analizer](https://github.com/aiwhispererwvdp/Comment-Analizer)
+- [Call-Recorder](https://github.com/aiwhispererwvdp/Call-Recorder)
+
+## 📧 Contact
+
+**Email:** business@ai-whisperers.org  
+**Domain:** ai-whisperers.org
+
+---
+
+*🤖 Powered by AI-driven development and automation*

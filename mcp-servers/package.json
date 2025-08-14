@@ -1,0 +1,24 @@
+{
+  "name": "mcp-servers",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "test-mcp": "node test-connections.js",
+    "setup": "node setup-mcp.js",
+    "start:github": "node node_modules/@modelcontextprotocol/server-github/dist/index.js",
+    "start:postgres": "node node_modules/@modelcontextprotocol/server-postgres/dist/index.js",
+    "start:filesystem": "node node_modules/@modelcontextprotocol/server-filesystem/dist/index.js",
+    "load-env": "node load-env-to-mcp.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@modelcontextprotocol/server-filesystem": "^2025.7.29",
+    "@modelcontextprotocol/server-github": "^2025.4.8",
+    "@modelcontextprotocol/server-postgres": "^0.6.2",
+    "dotenv": "^16.6.1"
+  }
+}

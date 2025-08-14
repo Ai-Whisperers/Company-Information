@@ -1,0 +1,6 @@
+{
+  "organization": "aiwhisperer",
+  "project": "Business Setup",
+  "pat": "YOUR_AZURE_DEVOPS_PAT_HERE",
+  "baseUrl": "https://dev.azure.com/aiwhisperer"
+}

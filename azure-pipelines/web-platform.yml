@@ -1,0 +1,77 @@
+# Azure Pipeline for Web Platform
+# Build and deploy Next.js application
+
+trigger:
+  branches:
+    include:
+      - main
+      - develop
+  paths:
+    include:
+      - 'repositories/web-platform/**'
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  NODE_VERSION: '18.x'
+  NEXT_TELEMETRY_DISABLED: 1
+
+stages:
+- stage: Build
+  displayName: 'Build Application'
+  jobs:
+  - job: BuildJob
+    displayName: 'Build Next.js App'
+    steps:
+    - task: NodeTool@0
+      inputs:
+        versionSpec: $(NODE_VERSION)
+      displayName: 'Install Node.js'
+
+    - script: |
+        cd repositories/web-platform
+        npm ci
+      displayName: 'Install dependencies'
+
+    - script: |
+        cd repositories/web-platform
+        npm run lint
+      displayName: 'Run linting'
+
+    - script: |
+        cd repositories/web-platform
+        npm run typecheck
+      displayName: 'Run type checking'
+
+    - script: |
+        cd repositories/web-platform
+        npm test -- --coverage
+      displayName: 'Run tests'
+
+    - script: |
+        cd repositories/web-platform
+        npm run build
+      displayName: 'Build application'
+
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: 'repositories/web-platform/.next'
+        ArtifactName: 'nextjs-build'
+      displayName: 'Publish build artifacts'
+
+- stage: Deploy
+  displayName: 'Deploy to Vercel'
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+  jobs:
+  - deployment: DeployJob
+    displayName: 'Deploy to Production'
+    environment: 'production'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - script: |
+              npm i -g vercel
+              vercel --prod --token $(VERCEL_TOKEN)
+            displayName: 'Deploy to Vercel'

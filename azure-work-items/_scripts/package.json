@@ -1,0 +1,34 @@
+{
+  "name": "azure-work-items-manager",
+  "version": "1.0.0",
+  "description": "Manage Azure DevOps work items as markdown files",
+  "main": "import-to-azure.js",
+  "scripts": {
+    "import": "node import-to-azure.js",
+    "import:dry": "node import-to-azure.js --dry-run",
+    "export": "node export-from-azure.js",
+    "create:epic": "node create-item.js --type epic",
+    "create:feature": "node create-item.js --type feature",
+    "create:story": "node create-item.js --type story",
+    "sync": "node sync-azure.js",
+    "validate": "node validate-structure.js",
+    "report": "node generate-report.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.0.0",
+    "axios": "^1.6.0",
+    "markdown-it": "^14.0.0",
+    "js-yaml": "^4.1.0"
+  },
+  "devDependencies": {
+    "prettier": "^3.0.0"
+  },
+  "keywords": [
+    "azure-devops",
+    "work-items",
+    "agile",
+    "project-management"
+  ],
+  "author": "AI-Whisperers",
+  "license": "MIT"
+}
