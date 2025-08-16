@@ -8,6 +8,8 @@ on:
       - 'azure-work-items/**'
       - '*.md'
       - 'CLAUDE.md'
+    paths-ignore:
+      - 'azure-pipelines.yml'  # Avoid circular triggers
   workflow_dispatch:
 
 jobs:
