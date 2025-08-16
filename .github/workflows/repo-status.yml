@@ -1,0 +1,140 @@
+name: Repository Status Dashboard
+
+on:
+  schedule:
+    - cron: '0 9 * * MON' # Every Monday at 9 AM
+  workflow_dispatch: # Manual trigger
+
+jobs:
+  check-repos:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+      
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Check Organization Repositories
+        id: repo-check
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const expectedRepos = [
+              'core-services',
+              'web-platform',
+              'ml-models',
+              'documentation',
+              'infrastructure'
+            ];
+            
+            // Get all org repos
+            const repos = await github.paginate(github.rest.repos.listForOrg, {
+              org: 'Ai-Whisperers',
+              per_page: 100
+            });
+            
+            const repoNames = repos.map(r => r.name);
+            const missingRepos = expectedRepos.filter(name => !repoNames.includes(name));
+            const existingRepos = expectedRepos.filter(name => repoNames.includes(name));
+            
+            // Get detailed info for existing repos
+            const repoDetails = await Promise.all(
+              existingRepos.map(async (name) => {
+                const repo = repos.find(r => r.name === name);
+                const { data: commits } = await github.rest.repos.listCommits({
+                  owner: 'Ai-Whisperers',
+                  repo: name,
+                  per_page: 1
+                });
+                
+                return {
+                  name: repo.name,
+                  description: repo.description || 'No description',
+                  private: repo.private,
+                  lastCommit: commits[0]?.commit?.author?.date || 'No commits',
+                  defaultBranch: repo.default_branch,
+                  topics: repo.topics || [],
+                  openIssues: repo.open_issues_count,
+                  url: repo.html_url
+                };
+              })
+            );
+            
+            return {
+              existing: repoDetails,
+              missing: missingRepos,
+              timestamp: new Date().toISOString()
+            };
+            
+      - name: Update Status Report
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const status = ${{ steps.repo-check.outputs.result }};
+            const date = new Date().toLocaleDateString('en-US', { 
+              year: 'numeric', 
+              month: 'long', 
+              day: 'numeric' 
+            });
+            
+            let report = `# Organization Repository Status\n\n`;
+            report += `Last Updated: ${date}\n\n`;
+            
+            report += `## ✅ Active Repositories (${status.existing.length})\n\n`;
+            report += `| Repository | Description | Last Commit | Issues | Status |\n`;
+            report += `|------------|-------------|-------------|--------|--------|\n`;
+            
+            status.existing.forEach(repo => {
+              const lastCommitDate = new Date(repo.lastCommit).toLocaleDateString();
+              const isStale = (Date.now() - new Date(repo.lastCommit)) > 30 * 24 * 60 * 60 * 1000;
+              const statusEmoji = isStale ? '⚠️' : '✅';
+              
+              report += `| [${repo.name}](${repo.url}) | ${repo.description} | ${lastCommitDate} | ${repo.openIssues} | ${statusEmoji} |\n`;
+            });
+            
+            if (status.missing.length > 0) {
+              report += `\n## ❌ Missing Repositories (${status.missing.length})\n\n`;
+              report += `The following expected repositories were not found:\n\n`;
+              status.missing.forEach(name => {
+                report += `- [ ] ${name}\n`;
+              });
+            }
+            
+            report += `\n## 📊 Summary\n\n`;
+            report += `- **Total Expected Repositories:** 5\n`;
+            report += `- **Found:** ${status.existing.length}\n`;
+            report += `- **Missing:** ${status.missing.length}\n`;
+            
+            // Create or update issue
+            const issues = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: 'repo-status',
+              state: 'open'
+            });
+            
+            const title = `Repository Status Report - ${date}`;
+            
+            if (issues.data.length > 0) {
+              // Update existing issue
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issues.data[0].number,
+                title: title,
+                body: report
+              });
+            } else {
+              // Create new issue
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: title,
+                body: report,
+                labels: ['repo-status', 'automated']
+              });
+            }

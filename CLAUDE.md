@@ -8,16 +8,26 @@ AI-Whisperers is a multi-repository organization focused on developing innovativ
 
 ## Repository Structure
 
-This organization contains 5 main repositories:
-- **core-services**: Python/Node.js backend services with FastAPI/Express, PostgreSQL, Redis
-- **web-platform**: React 18/Next.js 14 frontend with TypeScript, Redux Toolkit, TailwindCSS
-- **ml-models**: PyTorch/TensorFlow ML models with MLflow tracking and FastAPI serving
-- **documentation**: Technical documentation and guides
-- **infrastructure**: Docker, Kubernetes, Terraform deployment configurations
+This is the **Company-Information** repository which serves as the central hub for:
+- Organization-wide documentation and strategy
+- GitHub Actions for cross-repository management
+- Azure DevOps integration and work items
+- Business setup and planning documents
+
+The organization maintains these separate code repositories:
+- **[core-services](https://github.com/Ai-Whisperers/core-services)**: Python/Node.js backend services with FastAPI/Express, PostgreSQL, Redis
+- **[web-platform](https://github.com/Ai-Whisperers/web-platform)**: React 18/Next.js 14 frontend with TypeScript, Redux Toolkit, TailwindCSS
+- **[ml-models](https://github.com/Ai-Whisperers/ml-models)**: PyTorch/TensorFlow ML models with MLflow tracking and FastAPI serving
+- **[documentation](https://github.com/Ai-Whisperers/documentation)**: Technical documentation and guides
+- **[infrastructure](https://github.com/Ai-Whisperers/infrastructure)**: Docker, Kubernetes, Terraform deployment configurations
+
+**Note**: Each repository is maintained independently. Clone only the repositories you need for your current work.
 
 ## Development Commands
 
-### Web Platform (`repositories/web-platform/`)
+**Important**: These commands should be run in their respective repository directories after cloning them separately.
+
+### Web Platform (in `web-platform` repository)
 ```bash
 # Development
 npm run dev              # Start Next.js dev server on http://localhost:3000
@@ -42,7 +52,7 @@ npm run analyze         # Bundle size analysis
 npm run storybook       # Storybook dev server
 ```
 
-### Core Services (`repositories/core-services/`)
+### Core Services (in `core-services` repository)
 ```bash
 # Development
 uvicorn src.main:app --reload --port 8000  # Python FastAPI
@@ -67,7 +77,7 @@ npm run format         # Code formatting
 docker-compose up -d   # Start services
 ```
 
-### ML Models (`repositories/ml-models/`)
+### ML Models (in `ml-models` repository)
 ```bash
 # Environment
 python -m venv venv && source venv/bin/activate  # Create virtual env

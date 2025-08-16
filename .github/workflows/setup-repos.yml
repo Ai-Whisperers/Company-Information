@@ -1,0 +1,152 @@
+name: Initialize Missing Repositories
+
+on:
+  workflow_dispatch:
+    inputs:
+      repo_name:
+        description: 'Repository name to create (leave empty to create all missing)'
+        required: false
+        type: string
+
+jobs:
+  create-repos:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      administration: write
+      
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Create Missing Repositories
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const repoConfigs = {
+              'core-services': {
+                description: 'Backend services with FastAPI/Express, PostgreSQL, Redis',
+                topics: ['fastapi', 'nodejs', 'postgresql', 'redis', 'backend'],
+                gitignore: 'Node',
+                license: 'mit',
+                auto_init: true
+              },
+              'web-platform': {
+                description: 'React 18/Next.js 14 frontend with TypeScript, Redux Toolkit, TailwindCSS',
+                topics: ['nextjs', 'react', 'typescript', 'tailwindcss', 'frontend'],
+                gitignore: 'Node',
+                license: 'mit',
+                auto_init: true
+              },
+              'ml-models': {
+                description: 'PyTorch/TensorFlow ML models with MLflow tracking and FastAPI serving',
+                topics: ['pytorch', 'tensorflow', 'mlflow', 'machine-learning', 'ai'],
+                gitignore: 'Python',
+                license: 'mit',
+                auto_init: true
+              },
+              'documentation': {
+                description: 'Technical documentation and guides',
+                topics: ['documentation', 'guides', 'markdown'],
+                gitignore: 'Node',
+                license: 'mit',
+                auto_init: true
+              },
+              'infrastructure': {
+                description: 'Docker, Kubernetes, Terraform deployment configurations',
+                topics: ['docker', 'kubernetes', 'terraform', 'infrastructure', 'devops'],
+                gitignore: 'Terraform',
+                license: 'mit',
+                auto_init: true
+              }
+            };
+            
+            const inputRepo = '${{ inputs.repo_name }}';
+            const reposToCreate = inputRepo ? [inputRepo] : Object.keys(repoConfigs);
+            
+            // Get existing repos
+            const existingRepos = await github.paginate(github.rest.repos.listForOrg, {
+              org: 'Ai-Whisperers',
+              per_page: 100
+            });
+            const existingNames = existingRepos.map(r => r.name);
+            
+            const results = [];
+            
+            for (const repoName of reposToCreate) {
+              if (!repoConfigs[repoName]) {
+                results.push({
+                  name: repoName,
+                  status: 'skipped',
+                  message: 'Not in expected repository list'
+                });
+                continue;
+              }
+              
+              if (existingNames.includes(repoName)) {
+                results.push({
+                  name: repoName,
+                  status: 'exists',
+                  message: 'Repository already exists'
+                });
+                continue;
+              }
+              
+              try {
+                const config = repoConfigs[repoName];
+                const { data: newRepo } = await github.rest.repos.createInOrg({
+                  org: 'Ai-Whisperers',
+                  name: repoName,
+                  description: config.description,
+                  private: false,
+                  auto_init: config.auto_init,
+                  gitignore_template: config.gitignore,
+                  license_template: config.license
+                });
+                
+                // Add topics
+                if (config.topics && config.topics.length > 0) {
+                  await github.rest.repos.replaceAllTopics({
+                    owner: 'Ai-Whisperers',
+                    repo: repoName,
+                    names: config.topics
+                  });
+                }
+                
+                results.push({
+                  name: repoName,
+                  status: 'created',
+                  message: 'Successfully created',
+                  url: newRepo.html_url
+                });
+                
+              } catch (error) {
+                results.push({
+                  name: repoName,
+                  status: 'failed',
+                  message: error.message
+                });
+              }
+            }
+            
+            // Create summary
+            let summary = '## Repository Creation Results\n\n';
+            results.forEach(result => {
+              const emoji = result.status === 'created' ? '✅' : 
+                           result.status === 'exists' ? 'ℹ️' : 
+                           result.status === 'failed' ? '❌' : '⏭️';
+              summary += `${emoji} **${result.name}**: ${result.message}`;
+              if (result.url) {
+                summary += ` - [View Repository](${result.url})`;
+              }
+              summary += '\n';
+            });
+            
+            // Output to job summary
+            await core.summary
+              .addHeading('Repository Setup')
+              .addRaw(summary)
+              .write();
+              
+            console.log(results);
