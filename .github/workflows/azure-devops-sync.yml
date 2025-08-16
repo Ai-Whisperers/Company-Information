@@ -1,0 +1,101 @@
+name: Sync to Azure DevOps
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'documentation/**'
+      - 'azure-work-items/**'
+      - '*.md'
+      - 'CLAUDE.md'
+  workflow_dispatch:
+
+jobs:
+  sync-to-azure:
+    runs-on: ubuntu-latest
+    name: Mirror to Azure Repos
+    
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Full history for proper mirroring
+        
+    - name: Configure Git
+      run: |
+        git config --global user.email "sync@ai-whisperers.org"
+        git config --global user.name "GitHub Azure Sync Bot"
+        
+    - name: Push to Azure DevOps
+      env:
+        AZURE_DEVOPS_PAT: ${{ secrets.AZURE_DEVOPS_PAT }}
+      run: |
+        # Add Azure DevOps as remote
+        git remote add azure https://${AZURE_DEVOPS_PAT}@dev.azure.com/aiwhisperers/AI-Whisperers/_git/Company-Information
+        
+        # Push all branches
+        git push azure --all --force
+        
+        # Push all tags
+        git push azure --tags --force
+        
+    - name: Sync Work Items
+      if: contains(github.event.head_commit.message, 'AB#')
+      env:
+        AZURE_DEVOPS_PAT: ${{ secrets.AZURE_DEVOPS_PAT }}
+      run: |
+        # Extract work item number from commit message
+        WORK_ITEM=$(echo "${{ github.event.head_commit.message }}" | grep -oP 'AB#\K\d+')
+        
+        if [ ! -z "$WORK_ITEM" ]; then
+          echo "Linking commit to Azure Boards work item #$WORK_ITEM"
+          
+          # Install Azure CLI
+          curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+          az extension add --name azure-devops
+          
+          # Login with PAT
+          echo $AZURE_DEVOPS_PAT | az devops login --organization https://dev.azure.com/aiwhisperers
+          
+          # Add commit link to work item
+          az boards work-item relation add \
+            --id $WORK_ITEM \
+            --relation-type "ArtifactLink" \
+            --target-url "https://github.com/${{ github.repository }}/commit/${{ github.sha }}" \
+            --org https://dev.azure.com/aiwhisperers
+        fi
+
+  sync-documentation:
+    runs-on: ubuntu-latest
+    name: Sync Documentation to Wiki
+    if: |
+      contains(github.event.head_commit.modified, '.md') ||
+      contains(github.event.head_commit.added, '.md')
+    
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+      
+    - name: Sync Markdown Files to Azure Wiki
+      env:
+        AZURE_DEVOPS_PAT: ${{ secrets.AZURE_DEVOPS_PAT }}
+      run: |
+        # Clone Azure DevOps Wiki
+        git clone https://${AZURE_DEVOPS_PAT}@dev.azure.com/aiwhisperers/AI-Whisperers/_git/AI-Whisperers.wiki wiki
+        
+        # Copy documentation files
+        cp -r documentation/* wiki/ 2>/dev/null || true
+        cp README.md wiki/Home.md
+        cp CLAUDE.md wiki/Claude-Integration.md
+        
+        # Copy work items documentation
+        mkdir -p wiki/Work-Items
+        cp -r azure-work-items/*.md wiki/Work-Items/ 2>/dev/null || true
+        
+        # Commit and push to wiki
+        cd wiki
+        git config user.email "sync@ai-whisperers.org"
+        git config user.name "GitHub Azure Sync Bot"
+        git add .
+        git diff --staged --quiet || git commit -m "Sync documentation from GitHub - ${{ github.sha }}"
+        git push origin wikiMaster
