@@ -1,0 +1,308 @@
+name: Todo Synchronization
+
+on:
+  push:
+    paths:
+      - 'project-todos/**'
+  schedule:
+    - cron: '0 8 * * MON,WED,FRI' # Monday, Wednesday, Friday at 8 AM
+  workflow_dispatch: # Manual trigger
+    inputs:
+      target_repository:
+        description: 'Target specific repository (leave empty for all)'
+        required: false
+        default: ''
+      force_sync:
+        description: 'Force sync even if no changes detected'
+        type: boolean
+        default: false
+
+jobs:
+  sync-todos:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+      
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        
+      - name: Setup PowerShell
+        shell: pwsh
+        run: |
+          # Ensure PowerShell modules are available
+          Write-Host "PowerShell version: $($PSVersionTable.PSVersion)"
+          
+      - name: Install GitHub CLI
+        run: |
+          curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
+          echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+          sudo apt update
+          sudo apt install gh -y
+          
+      - name: Authenticate GitHub CLI
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | gh auth login --with-token
+        
+      - name: Detect Changed Todo Files
+        id: changes
+        run: |
+          # Get changed files in the project-todos directory
+          if [ "${{ github.event_name }}" == "push" ]; then
+            changed_files=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} -- project-todos/ || true)
+          else
+            # For scheduled runs, check all todo files
+            changed_files=$(find project-todos/ -name "*.md" -not -name "README.md" | head -20)
+          fi
+          
+          echo "Changed todo files:"
+          echo "$changed_files"
+          
+          # Convert to space-separated list for matrix
+          todo_files=""
+          for file in $changed_files; do
+            if [[ $file == project-todos/*-todos.md ]]; then
+              repo_name=$(basename "$file" -todos.md)
+              # Map file names to repository names
+              case $repo_name in
+                "web-platform") repo="web-platform" ;;
+                "core-services") repo="core-services" ;;
+                "ml-models") repo="ml-models" ;;
+                "documentation") repo="documentation" ;;
+                "infrastructure") repo="infrastructure" ;;
+                "company-information") repo="Company-Information" ;;
+                *) continue ;;
+              esac
+              
+              # Check if target repository filter is set
+              if [[ -n "${{ github.event.inputs.target_repository }}" ]]; then
+                if [[ "$repo" != "${{ github.event.inputs.target_repository }}" ]]; then
+                  continue
+                fi
+              fi
+              
+              todo_files="$todo_files $repo:$file"
+            fi
+          done
+          
+          if [[ -z "$todo_files" ]]; then
+            echo "No todo files to process"
+            echo "matrix={\"include\":[]}" >> $GITHUB_OUTPUT
+          else
+            # Build matrix JSON
+            matrix_json="{\"include\":["
+            first=true
+            for entry in $todo_files; do
+              repo=$(echo $entry | cut -d: -f1)
+              file=$(echo $entry | cut -d: -f2)
+              if [[ $first == true ]]; then
+                first=false
+              else
+                matrix_json="$matrix_json,"
+              fi
+              matrix_json="$matrix_json{\"repository\":\"$repo\",\"todo_file\":\"$file\"}"
+            done
+            matrix_json="$matrix_json]}"
+            
+            echo "Matrix JSON: $matrix_json"
+            echo "matrix=$matrix_json" >> $GITHUB_OUTPUT
+          fi
+
+  process-todos:
+    needs: sync-todos
+    runs-on: ubuntu-latest
+    if: needs.sync-todos.outputs.matrix != '{\"include\":[]}'
+    permissions:
+      contents: read
+      issues: write
+    strategy:
+      matrix: ${{ fromJson(needs.sync-todos.outputs.matrix) }}
+      fail-fast: false
+      
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        
+      - name: Install GitHub CLI
+        run: |
+          curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
+          echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+          sudo apt update
+          sudo apt install gh -y
+          
+      - name: Authenticate GitHub CLI
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | gh auth login --with-token
+        
+      - name: Process Todo File
+        run: |
+          echo "Processing todos for repository: ${{ matrix.repository }}"
+          echo "Todo file: ${{ matrix.todo_file }}"
+          
+          # Read and parse the todo file
+          todo_file="${{ matrix.todo_file }}"
+          repository="${{ matrix.repository }}"
+          
+          if [[ ! -f "$todo_file" ]]; then
+            echo "Todo file not found: $todo_file"
+            exit 1
+          fi
+          
+          # Build issue content
+          issue_title="Todo Sync - $(date '+%Y-%m-%d')"
+          
+          # Get technology stack info
+          tech_stack=""
+          case $repository in
+            "web-platform") tech_stack="React 18/Next.js 14, TypeScript, Redux Toolkit, TailwindCSS" ;;
+            "core-services") tech_stack="Python FastAPI/Node.js Express, PostgreSQL, Redis" ;;
+            "ml-models") tech_stack="PyTorch/TensorFlow, MLflow, FastAPI, Docker" ;;
+            "documentation") tech_stack="Markdown, GitHub Pages, Docusaurus/GitBook" ;;
+            "infrastructure") tech_stack="Docker, Kubernetes, Terraform, Azure/AWS" ;;
+            "Company-Information") tech_stack="Management, GitHub Actions, PowerShell" ;;
+          esac
+          
+          # Create issue body
+          issue_body="# Todos for $repository
+
+          This issue contains todos synchronized from the Company-Information repository.
+
+          **Technology Stack:** $tech_stack
+          **Source File:** \`$todo_file\`
+          **Last Sync:** $(date '+%Y-%m-%d %H:%M:%S UTC')
+
+          ## Tasks
+
+          "
+          
+          # Parse markdown file and extract todos
+          current_section=""
+          total_tasks=0
+          completed_tasks=0
+          
+          while IFS= read -r line; do
+            if [[ $line =~ ^##[[:space:]]+(.+) ]]; then
+              current_section="${BASH_REMATCH[1]}"
+              issue_body="$issue_body
+
+          ### $current_section
+
+          "
+            elif [[ $line =~ ^-[[:space:]]+\[([[:space:]x])\][[:space:]]+(.+) ]]; then
+              checkbox="${BASH_REMATCH[1]}"
+              task="${BASH_REMATCH[2]}"
+              
+              if [[ $checkbox == "x" ]]; then
+                issue_body="$issue_body- [x] $task"$'\n'
+                ((completed_tasks++))
+              else
+                issue_body="$issue_body- [ ] $task"$'\n'
+              fi
+              ((total_tasks++))
+            elif [[ $line =~ ^[[:space:]]*-.* ]] && [[ ! $line =~ ^\-[[:space:]]*\[ ]]; then
+              # Handle sub-items and additional context
+              issue_body="$issue_body$line"$'\n'
+            fi
+          done < "$todo_file"
+          
+          # Add progress summary
+          if [[ $total_tasks -gt 0 ]]; then
+            progress=$((completed_tasks * 100 / total_tasks))
+          else
+            progress=0
+          fi
+          
+          issue_body="$issue_body
+
+          ---
+          **Progress:** $completed_tasks/$total_tasks tasks completed ($progress%)
+          **Auto-generated** by Company-Information todo management system"
+          
+          # Check if repository exists and is accessible
+          if ! gh repo view "Ai-Whisperers/$repository" > /dev/null 2>&1; then
+            echo "Repository Ai-Whisperers/$repository not found or not accessible"
+            exit 1
+          fi
+          
+          # Check for existing todo-sync issue
+          existing_issues=$(gh issue list --repo "Ai-Whisperers/$repository" --label "todo-sync" --state open --json number,title | jq -r '.[].number')
+          
+          if [[ -n "$existing_issues" ]]; then
+            # Update existing issue
+            issue_number=$(echo "$existing_issues" | head -n1)
+            echo "Updating existing issue #$issue_number"
+            
+            # Create temporary file for issue body
+            temp_file=$(mktemp)
+            echo "$issue_body" > "$temp_file"
+            
+            gh issue edit "$issue_number" \
+              --repo "Ai-Whisperers/$repository" \
+              --title "$issue_title" \
+              --body-file "$temp_file"
+              
+            rm "$temp_file"
+            
+            echo "✅ Updated todo issue #$issue_number in $repository"
+          else
+            # Create new issue
+            echo "Creating new todo issue"
+            
+            # Create temporary file for issue body
+            temp_file=$(mktemp)
+            echo "$issue_body" > "$temp_file"
+            
+            gh issue create \
+              --repo "Ai-Whisperers/$repository" \
+              --title "$issue_title" \
+              --body-file "$temp_file" \
+              --label "todo-sync,automated"
+              
+            rm "$temp_file"
+            
+            echo "✅ Created new todo issue in $repository"
+          fi
+
+  summary:
+    needs: [sync-todos, process-todos]
+    runs-on: ubuntu-latest
+    if: always()
+    permissions:
+      contents: write
+      issues: write
+      
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        
+      - name: Create Summary Report
+        run: |
+          echo "# Todo Sync Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Workflow:** ${{ github.workflow }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Trigger:** ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Time:** $(date '+%Y-%m-%d %H:%M:%S UTC')" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [[ "${{ needs.sync-todos.result }}" == "success" ]] && [[ "${{ needs.process-todos.result }}" == "success" || "${{ needs.process-todos.result }}" == "skipped" ]]; then
+            echo "✅ **Status:** Completed successfully" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ **Status:** Some tasks failed" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## Processed Repositories" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [[ "${{ needs.sync-todos.outputs.matrix }}" != '{"include":[]}' ]]; then
+            echo "Todo files were processed for the following repositories:" >> $GITHUB_STEP_SUMMARY
+            echo "${{ needs.sync-todos.outputs.matrix }}" | jq -r '.include[] | "- " + .repository' >> $GITHUB_STEP_SUMMARY || echo "- (Matrix parsing failed)" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "No todo files required processing." >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## Next Steps" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- Check the created/updated issues in target repositories" >> $GITHUB_STEP_SUMMARY
+          echo "- Review and update todo completion status" >> $GITHUB_STEP_SUMMARY
+          echo "- Run \`scripts/manage-todos.ps1 -Action status\` for current status" >> $GITHUB_STEP_SUMMARY
