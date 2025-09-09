@@ -14,12 +14,15 @@ This is the **Company-Information** repository which serves as the central hub f
 - Azure DevOps integration and work items
 - Business setup and planning documents
 
-The organization maintains these separate code repositories:
-- **[core-services](https://github.com/Ai-Whisperers/core-services)**: Python/Node.js backend services with FastAPI/Express, PostgreSQL, Redis
-- **[web-platform](https://github.com/Ai-Whisperers/web-platform)**: React 18/Next.js 14 frontend with TypeScript, Redux Toolkit, TailwindCSS
-- **[ml-models](https://github.com/Ai-Whisperers/ml-models)**: PyTorch/TensorFlow ML models with MLflow tracking and FastAPI serving
-- **[documentation](https://github.com/Ai-Whisperers/documentation)**: Technical documentation and guides
-- **[infrastructure](https://github.com/Ai-Whisperers/infrastructure)**: Docker, Kubernetes, Terraform deployment configurations
+The organization maintains these actual code repositories:
+- **[Comment-Analizer](https://github.com/Ai-Whisperers/Comment-Analizer)**: AI-powered customer feedback analysis (Python, GPT-4, Streamlit)
+- **[AI-Investment](https://github.com/Ai-Whisperers/AI-Investment)**: Waardhaven AutoIndex investment platform (FastAPI, Next.js, 145+ endpoints)
+- **[clockify-ADO-automated-report](https://github.com/Ai-Whisperers/clockify-ADO-automated-report)**: Time tracking automation (Python, Hexagonal Architecture)
+- **[AI-Whisperers-website-and-courses](https://github.com/Ai-Whisperers/AI-Whisperers-website-and-courses)**: Strategic educational platform (Planning)
+- **[WPG-Amenities](https://github.com/Ai-Whisperers/WPG-Amenities)**: Winnipeg local services (Assessment required)
+- **[AI-Whisperers-Website](https://github.com/Ai-Whisperers/AI-Whisperers-Website)**: Legacy website (Migration planned)
+- **[AI-Whisperers](https://github.com/Ai-Whisperers/AI-Whisperers)**: Organizational standards (Development required)
+- **[Call-Recorder](https://github.com/Ai-Whisperers/Call-Recorder)**: Inactive repository (Archive recommended)
 
 **Note**: Each repository is maintained independently. Clone only the repositories you need for your current work.
 
@@ -27,102 +30,90 @@ The organization maintains these separate code repositories:
 
 **Important**: These commands should be run in their respective repository directories after cloning them separately.
 
-### Web Platform (in `web-platform` repository)
+### Comment-Analizer (in `Comment-Analizer` repository)
 ```bash
 # Development
-npm run dev              # Start Next.js dev server on http://localhost:3000
+streamlit run main.py                    # Start Streamlit app
+python -m pytest                        # Run tests
+python -m black .                       # Code formatting
+python -m flake8                        # Linting
+
+# Docker
+docker build -t comment-analizer .      # Build container
+docker run -p 8501:8501 comment-analizer # Run container
+```
+
+### AI-Investment (in `AI-Investment` repository)
+```bash
+# Backend Development
+uvicorn src.main:app --reload --port 8000  # FastAPI server
+alembic upgrade head                       # Database migrations
+
+# Frontend Development
+npm run dev              # Next.js dev server on http://localhost:3000
 npm run build           # Production build
 npm start               # Start production server
 
-# Testing  
-npm test                # Jest unit tests
-npm run test:watch      # Jest in watch mode
-npm run test:coverage   # Jest with coverage
-npm run e2e             # Cypress E2E tests
-npm run e2e:headless    # Cypress headless
+# Testing
+npm test                # Frontend tests
+python -m pytest       # Backend tests
+npm run test:coverage   # Test coverage
 
 # Code Quality
 npm run lint            # ESLint
-npm run lint:fix        # ESLint with fixes
-npm run format          # Prettier formatting
-npm run typecheck       # TypeScript type checking
-
-# Tools
-npm run analyze         # Bundle size analysis
-npm run storybook       # Storybook dev server
-```
-
-### Core Services (in `core-services` repository)
-```bash
-# Development
-uvicorn src.main:app --reload --port 8000  # Python FastAPI
-npm run dev                                # Node.js Express
-
-# Database
-alembic upgrade head    # Python migrations
-npm run migrate         # Node.js migrations
-
-# Testing
-npm test               # All tests
-npm run test:unit      # Unit tests only
-npm run test:integration  # Integration tests
-npm run test:coverage  # With coverage
-
-# Code Quality
-npm run lint           # Linting
-npm run typecheck      # Type checking
-npm run format         # Code formatting
+npm run typecheck       # TypeScript checking
+python -m black .       # Python formatting
+python -m flake8        # Python linting
 
 # Docker
-docker-compose up -d   # Start services
+docker-compose up -d    # Start all services
 ```
 
-### ML Models (in `ml-models` repository)
+### clockify-ADO-automated-report (in `clockify-ADO-automated-report` repository)
 ```bash
-# Environment
+# Development
 python -m venv venv && source venv/bin/activate  # Create virtual env
 pip install -r requirements.txt                  # Install dependencies
-
-# Training
-python src/training/train.py --config configs/model_config.yaml
-python src/training/train.py --resume checkpoints/model_epoch_10.pt
-
-# Evaluation  
-python src/evaluation/evaluate.py --model models/best_model.pt --dataset test
-
-# Serving
-uvicorn src.inference.api:app --host 0.0.0.0 --port 8080
-
-# MLflow
-mlflow ui --host 0.0.0.0 --port 5000
+python main.py                                   # Run application
 
 # Testing
-pytest tests/          # All tests
-pytest --cov=src tests/  # With coverage
+python -m pytest                        # Run tests
+python -m pytest --cov=src             # With coverage
+
+# Code Quality
+python -m black .                       # Code formatting
+python -m flake8                        # Linting
+
+# Docker
+docker build -t clockify-ado .          # Build container
+docker run clockify-ado                 # Run container
 ```
 
 ## Architecture Patterns
 
-### Web Platform Architecture
-- **Framework**: Next.js 14 with App Router
-- **State Management**: Redux Toolkit with React Query for server state
-- **Styling**: Tailwind CSS with component-based architecture
-- **Testing**: Jest + React Testing Library for units, Cypress for E2E
-- **API Layer**: Axios-based service layer with centralized error handling
+### Comment-Analizer Architecture
+- **Framework**: Streamlit for web UI with Python backend
+- **AI Integration**: OpenAI GPT-4 API for analysis
+- **Architecture**: Clean Architecture with SOLID principles
+- **Data Processing**: Multi-language support (Spanish, Guaraní, English)
+- **Output**: Professional Excel report generation
+- **Deployment**: Streamlit Cloud with secure configuration
 
-### Core Services Architecture  
-- **API Design**: RESTful APIs with OpenAPI/Swagger documentation at `/docs`
-- **Authentication**: JWT-based with refresh tokens
-- **Database**: PostgreSQL with Alembic/migrations, Redis for caching
-- **Structure**: Layered architecture (API → Services → Models)
-- **Health Checks**: `/health` and `/ready` endpoints for monitoring
+### AI-Investment Architecture
+- **Backend**: FastAPI with Python for investment analysis
+- **Frontend**: Next.js 14 with TypeScript and modern React patterns
+- **Database**: PostgreSQL for data persistence, Redis for caching
+- **AI Engine**: Multi-signal analysis with 145+ API endpoints
+- **Data Sources**: TwelveData and MarketAux integration
+- **Architecture**: Microservices with Docker containerization
 
-### ML Models Architecture
-- **Training**: Configuration-driven training with experiment tracking
-- **Model Registry**: Versioned models with metadata and metrics
-- **Serving**: FastAPI-based inference servers with Docker deployment
-- **Data Pipeline**: Structured data processing with validation steps
-- **Monitoring**: Performance benchmarks and latency tracking
+### clockify-ADO-automated-report Architecture
+- **Framework**: Python with Hexagonal Architecture pattern
+- **Integration**: Clockify API and Azure DevOps REST API
+- **Data Processing**: Pattern matching and time tracking automation
+- **CLI Interface**: Command-line tool with configuration management
+- **Deployment**: Docker containerization for consistent execution
+- **Logging**: Structured logging with error tracking
 
 ## Git Workflow
 
@@ -145,37 +136,108 @@ Use conventional commits:
 
 ## Key Environment Variables
 
-### Web Platform
-- `NEXT_PUBLIC_API_URL`: Backend API URL (default: http://localhost:8000)
-- `NEXT_PUBLIC_APP_URL`: App URL (default: http://localhost:3000)
+### Comment-Analizer
+- `OPENAI_API_KEY`: OpenAI API key for GPT-4 access
+- `STREAMLIT_SERVER_PORT`: Server port (default: 8501)
+- `ANALYSIS_TIMEOUT`: Analysis timeout in seconds
 
-### Core Services  
+### AI-Investment
 - `DATABASE_URL`: PostgreSQL connection string
 - `REDIS_URL`: Redis connection string
 - `JWT_SECRET`: JWT signing secret
-- `API_KEY`: API authentication key
+- `TWELVEDATA_API_KEY`: TwelveData API key for market data
+- `MARKETAUX_API_KEY`: MarketAux API key for news data
+- `NEXT_PUBLIC_API_URL`: Backend API URL (default: http://localhost:8000)
 
-### ML Models
-- `MLFLOW_TRACKING_URI`: MLflow server URL
-- `MODEL_REGISTRY_URI`: Model registry location
-- `CUDA_VISIBLE_DEVICES`: GPU device selection
+### clockify-ADO-automated-report
+- `CLOCKIFY_API_KEY`: Clockify API key for time tracking
+- `AZURE_DEVOPS_PAT`: Azure DevOps Personal Access Token
+- `AZURE_DEVOPS_ORG`: Azure DevOps organization URL
+- `LOG_LEVEL`: Logging level (DEBUG, INFO, WARNING, ERROR)
 
 ## Testing Strategy
 
-### Web Platform
-- Unit tests: React components with Testing Library
-- Integration tests: API integration and routing
-- E2E tests: User workflows with Cypress
+### Comment-Analizer
+- Unit tests: Analysis logic and data processing functions
+- Integration tests: OpenAI API integration and response handling
+- UI tests: Streamlit component functionality
+- Performance tests: Analysis speed and memory usage
 
-### Core Services
-- Unit tests: Business logic and utilities
-- Integration tests: Database and API endpoints
-- E2E tests: Complete request/response flows
+### AI-Investment
+- Backend tests: Investment analysis algorithms and API endpoints
+- Frontend tests: React components and user interactions
+- Integration tests: Database operations and external API calls
+- Performance tests: Trading signal generation speed
+- Security tests: Authentication and data protection
 
-### ML Models
-- Unit tests: Data processing and model functions
-- Integration tests: Training and inference pipelines
-- Performance tests: Latency and memory benchmarks
+### clockify-ADO-automated-report
+- Unit tests: Pattern matching and data transformation logic
+- Integration tests: Clockify and Azure DevOps API integration
+- CLI tests: Command-line interface and configuration handling
+- Performance tests: Large dataset processing efficiency
+
+## Organizational Management Tools
+
+This repository includes PowerShell-based management tools for cross-repository coordination:
+
+### Management Scripts
+
+Located in the `scripts/` directory:
+
+```powershell
+# Management Overview
+.\management-summary.ps1             # Overview of all management tools and system status
+
+# Todo Management
+.\todo-manager.ps1 status           # View todos across all repositories  
+.\todo-manager.ps1 sync             # Synchronize todo changes across repos
+
+# Repository Monitoring  
+.\repo-monitor-dashboard.ps1        # Repository health and activity dashboard
+.\repo-monitor-dashboard.ps1 health # Focus on repositories needing attention
+.\repo-monitor-dashboard.ps1 activity # Activity summary across organization
+
+# File Synchronization
+.\file-sync-manager.ps1 status      # Check file synchronization status
+.\file-sync-manager.ps1 validate    # Validate template files before sync
+
+# Azure DevOps Integration
+.\azure-devops-sync.ps1 status      # Check Azure DevOps integration status
+.\azure-devops-sync.ps1 test        # Test prerequisites and connectivity
+```
+
+### Prerequisites for Management Tools
+
+- **GitHub CLI**: Required for repository access and API operations
+  ```bash
+  # Install: https://cli.github.com/
+  gh auth login  # Authenticate with GitHub
+  ```
+  
+- **Azure CLI** (for DevOps integration): Required for Azure DevOps sync features
+  ```bash
+  # Install: https://docs.microsoft.com/en-us/cli/azure/install-azure-cli
+  az login  # Authenticate with Azure
+  az extension add --name azure-devops  # Install DevOps extension
+  ```
+
+- **PowerShell**: Scripts tested with PowerShell 5.1+ on Windows
+
+### Management Features
+
+- **Cross-Repository Todo Tracking**: Automatically discovers and tracks todo items across all organization repositories
+- **Repository Health Monitoring**: Tracks commit activity, open issues, and pull requests with health scoring
+- **Documentation Template Sync**: Maintains consistent documentation standards across repositories
+- **Azure DevOps Integration**: Framework for synchronizing GitHub issues and PRs with Azure work items
+- **Centralized Dashboard**: Single interface for monitoring organizational health and progress
+
+### Configuration
+
+Management tools are configured for the AI-Whisperers organization. Key configuration files:
+- Repository lists are dynamically fetched from GitHub API
+- Template files located in `documentation-templates/` directory
+- Todo files located in `project-todos/` directory  
+- Azure DevOps settings configurable in scripts (organization/project names)
 
 ## Deployment Considerations
 

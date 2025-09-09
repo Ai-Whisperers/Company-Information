@@ -1,0 +1,503 @@
+name: File Synchronization
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'CLAUDE.md'
+      - '.gitignore'
+      - 'SECURITY.md'
+      - '.github/dependabot.yml'
+      - '.github/CODEOWNERS'
+      - '.github/workflows/shared-*.yml'
+      - 'documentation-templates/**'
+      - 'sync-config.json'
+  schedule:
+    - cron: '0 10 * * MON,WED,FRI' # Monday, Wednesday, Friday at 10 AM
+  workflow_dispatch: # Manual trigger
+    inputs:
+      target_repository:
+        description: 'Target specific repository (leave empty for all)'
+        required: false
+        default: ''
+      file_pattern:
+        description: 'Target specific file pattern'
+        required: false
+        default: ''
+      dry_run:
+        description: 'Preview changes without executing'
+        type: boolean
+        default: false
+      force_sync:
+        description: 'Force sync even with conflicts'
+        type: boolean
+        default: false
+
+jobs:
+  validate-config:
+    runs-on: ubuntu-latest
+    outputs:
+      config-valid: ${{ steps.validate.outputs.valid }}
+      
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        
+      - name: Install PowerShell
+        run: |
+          # Install PowerShell on Ubuntu
+          wget -q https://github.com/PowerShell/PowerShell/releases/download/v7.3.6/powershell_7.3.6-1.deb_amd64.deb
+          sudo dpkg -i powershell_7.3.6-1.deb_amd64.deb
+          sudo apt-get install -f
+          
+      - name: Install GitHub CLI
+        run: |
+          curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
+          echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+          sudo apt update
+          sudo apt install gh -y
+          
+      - name: Authenticate GitHub CLI
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | gh auth login --with-token
+        
+      - name: Validate Sync Configuration
+        id: validate
+        run: |
+          pwsh -Command "
+            try {
+              \$config = Get-Content 'sync-config.json' | ConvertFrom-Json
+              Write-Host 'Configuration loaded successfully'
+              
+              # Basic validation
+              if (-not \$config.organization) {
+                throw 'Missing organization in config'
+              }
+              
+              if (-not \$config.syncRules) {
+                throw 'Missing syncRules in config'  
+              }
+              
+              if (-not \$config.repositories) {
+                throw 'Missing repositories in config'
+              }
+              
+              Write-Host '✅ Configuration validation passed'
+              echo 'valid=true' >> \$env:GITHUB_OUTPUT
+            }
+            catch {
+              Write-Host '❌ Configuration validation failed: ' \$_.Exception.Message
+              echo 'valid=false' >> \$env:GITHUB_OUTPUT
+              exit 1
+            }
+          "
+
+  detect-changes:
+    needs: validate-config
+    runs-on: ubuntu-latest
+    if: needs.validate-config.outputs.config-valid == 'true'
+    outputs:
+      sync-matrix: ${{ steps.changes.outputs.matrix }}
+      has-changes: ${{ steps.changes.outputs.has-changes }}
+      
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 2  # Need previous commit for diff
+          
+      - name: Detect Changed Files
+        id: changes
+        run: |
+          echo "Event: ${{ github.event_name }}"
+          
+          # Load sync configuration
+          sync_rules=$(cat sync-config.json | jq -r '.syncRules | keys[]')
+          
+          changed_files=""
+          if [ "${{ github.event_name }}" == "push" ]; then
+            # Get changed files from push event
+            changed_files=$(git diff --name-only HEAD^ HEAD)
+          else
+            # For scheduled runs or manual triggers, check all tracked files
+            for rule in $sync_rules; do
+              source_file=$(cat sync-config.json | jq -r ".syncRules[\"$rule\"].sourceFile // empty")
+              source_pattern=$(cat sync-config.json | jq -r ".syncRules[\"$rule\"].sourcePattern // empty")
+              
+              if [ -n "$source_file" ] && [ -f "$source_file" ]; then
+                changed_files="$changed_files $source_file"
+              fi
+              
+              if [ -n "$source_pattern" ]; then
+                pattern_files=$(find . -path "./$source_pattern" 2>/dev/null || true)
+                changed_files="$changed_files $pattern_files"
+              fi
+            done
+          fi
+          
+          echo "Changed files detected:"
+          echo "$changed_files"
+          
+          # Build matrix for files that have sync rules
+          matrix_entries=""
+          has_changes=false
+          
+          for file in $changed_files; do
+            # Remove leading ./
+            clean_file=$(echo "$file" | sed 's|^\./||')
+            
+            # Check if this file has sync rules
+            for rule in $sync_rules; do
+              enabled=$(cat sync-config.json | jq -r ".syncRules[\"$rule\"].enabled // true")
+              if [ "$enabled" = "false" ]; then
+                continue
+              fi
+              
+              source_file=$(cat sync-config.json | jq -r ".syncRules[\"$rule\"].sourceFile // empty")
+              source_pattern=$(cat sync-config.json | jq -r ".syncRules[\"$rule\"].sourcePattern // empty")
+              
+              file_matches=false
+              
+              # Check direct file match
+              if [ "$source_file" = "$clean_file" ]; then
+                file_matches=true
+              fi
+              
+              # Check pattern match
+              if [ -n "$source_pattern" ]; then
+                if [[ "$clean_file" == $source_pattern ]]; then
+                  file_matches=true
+                fi
+              fi
+              
+              # Apply input filters
+              if [ -n "${{ github.event.inputs.file_pattern }}" ]; then
+                if [[ "$clean_file" != *"${{ github.event.inputs.file_pattern }}"* ]]; then
+                  file_matches=false
+                fi
+              fi
+              
+              if [ "$file_matches" = true ]; then
+                # Get target repositories for this rule
+                targets=$(cat sync-config.json | jq -c ".syncRules[\"$rule\"].targets[]")
+                
+                while IFS= read -r target; do
+                  repo=$(echo "$target" | jq -r '.repository')
+                  target_path=$(echo "$target" | jq -r '.targetPath')
+                  sync_mode=$(echo "$target" | jq -r '.syncMode // "replace"')
+                  
+                  # Apply repository filter if specified
+                  if [ -n "${{ github.event.inputs.target_repository }}" ]; then
+                    if [ "$repo" != "${{ github.event.inputs.target_repository }}" ] && [ "$repo" != "*" ]; then
+                      continue
+                    fi
+                  fi
+                  
+                  # Handle wildcard repositories
+                  if [ "$repo" = "*" ]; then
+                    # Get all repositories from config
+                    repos=$(cat sync-config.json | jq -r '.repositories | keys[]')
+                    for target_repo in $repos; do
+                      if [ "$target_repo" != "Company-Information" ]; then
+                        if [ -n "$matrix_entries" ]; then
+                          matrix_entries="$matrix_entries,"
+                        fi
+                        matrix_entries="$matrix_entries{\"rule\":\"$rule\",\"source_file\":\"$clean_file\",\"repository\":\"$target_repo\",\"target_path\":\"$target_path\",\"sync_mode\":\"$sync_mode\"}"
+                        has_changes=true
+                      fi
+                    done
+                  else
+                    if [ -n "$matrix_entries" ]; then
+                      matrix_entries="$matrix_entries,"
+                    fi
+                    matrix_entries="$matrix_entries{\"rule\":\"$rule\",\"source_file\":\"$clean_file\",\"repository\":\"$repo\",\"target_path\":\"$target_path\",\"sync_mode\":\"$sync_mode\"}"
+                    has_changes=true
+                  fi
+                done <<< "$targets"
+              fi
+            done
+          done
+          
+          if [ "$has_changes" = true ]; then
+            matrix="{\"include\":[$matrix_entries]}"
+            echo "Generated matrix: $matrix"
+            echo "matrix=$matrix" >> $GITHUB_OUTPUT
+            echo "has-changes=true" >> $GITHUB_OUTPUT
+          else
+            echo "matrix={\"include\":[]}" >> $GITHUB_OUTPUT
+            echo "has-changes=false" >> $GITHUB_OUTPUT
+          fi
+
+  sync-files:
+    needs: [validate-config, detect-changes]
+    runs-on: ubuntu-latest
+    if: needs.detect-changes.outputs.has-changes == 'true'
+    permissions:
+      contents: write
+      pull-requests: write
+    strategy:
+      matrix: ${{ fromJson(needs.detect-changes.outputs.sync-matrix) }}
+      fail-fast: false
+      max-parallel: 3
+      
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        
+      - name: Install PowerShell
+        run: |
+          wget -q https://github.com/PowerShell/PowerShell/releases/download/v7.3.6/powershell_7.3.6-1.deb_amd64.deb
+          sudo dpkg -i powershell_7.3.6-1.deb_amd64.deb
+          sudo apt-get install -f
+          
+      - name: Install GitHub CLI
+        run: |
+          curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
+          echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+          sudo apt update
+          sudo apt install gh -y
+          
+      - name: Authenticate GitHub CLI
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | gh auth login --with-token
+        
+      - name: Sync File to Repository
+        run: |
+          echo "Syncing file: ${{ matrix.source_file }}"
+          echo "To repository: ${{ matrix.repository }}"
+          echo "Target path: ${{ matrix.target_path }}"
+          echo "Sync mode: ${{ matrix.sync_mode }}"
+          
+          # Verify source file exists
+          if [ ! -f "${{ matrix.source_file }}" ]; then
+            echo "❌ Source file not found: ${{ matrix.source_file }}"
+            exit 1
+          fi
+          
+          # Check if target repository exists
+          if ! gh repo view "Ai-Whisperers/${{ matrix.repository }}" > /dev/null 2>&1; then
+            echo "❌ Repository not found: Ai-Whisperers/${{ matrix.repository }}"
+            exit 1
+          fi
+          
+          # Get repository info
+          repo_info=$(gh api "repos/Ai-Whisperers/${{ matrix.repository }}" --jq '{default_branch: .default_branch, private: .private}')
+          default_branch=$(echo "$repo_info" | jq -r '.default_branch')
+          
+          echo "Repository default branch: $default_branch"
+          
+          # Read source file content
+          source_content=$(cat "${{ matrix.source_file }}")
+          
+          # Check if target file exists
+          target_exists=false
+          current_sha=""
+          if gh api "repos/Ai-Whisperers/${{ matrix.repository }}/contents/${{ matrix.target_path }}" > /dev/null 2>&1; then
+            target_exists=true
+            file_info=$(gh api "repos/Ai-Whisperers/${{ matrix.repository }}/contents/${{ matrix.target_path }}")
+            current_sha=$(echo "$file_info" | jq -r '.sha')
+            current_content=$(echo "$file_info" | jq -r '.content' | base64 -d)
+            
+            # Compare content to avoid unnecessary updates
+            if [ "$source_content" = "$current_content" ]; then
+              echo "✅ No changes needed for ${{ matrix.repository }}/${{ matrix.target_path }}"
+              exit 0
+            fi
+          fi
+          
+          # Handle dry run
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+            echo "🏃 [DRY RUN] Would sync ${{ matrix.source_file }} to ${{ matrix.repository }}/${{ matrix.target_path }}"
+            if [ "$target_exists" = true ]; then
+              echo "   Action: Update existing file"
+            else
+              echo "   Action: Create new file"
+            fi
+            exit 0
+          fi
+          
+          # Prepare final content based on sync mode
+          final_content="$source_content"
+          case "${{ matrix.sync_mode }}" in
+            "merge-append")
+              if [ "$target_exists" = true ]; then
+                final_content="$current_content
+
+# === Synced from Company-Information ===
+$source_content"
+              fi
+              ;;
+            "merge-prepend")
+              if [ "$target_exists" = true ]; then
+                final_content="# === Synced from Company-Information ===
+$source_content
+
+$current_content"
+              fi
+              ;;
+            *)
+              # Default to replace mode
+              final_content="$source_content"
+              ;;
+          esac
+          
+          # Encode content for GitHub API
+          encoded_content=$(echo "$final_content" | base64 -w 0)
+          
+          # Create commit message
+          commit_message="file-sync: Update ${{ matrix.target_path }} from Company-Information
+
+Synced from: ${{ matrix.source_file }}
+Sync mode: ${{ matrix.sync_mode }}
+Rule: ${{ matrix.rule }}
+
+🤖 Auto-generated by Company-Information file synchronization system"
+          
+          # Create or update the file
+          if [ "$target_exists" = true ]; then
+            # Update existing file
+            gh api "repos/Ai-Whisperers/${{ matrix.repository }}/contents/${{ matrix.target_path }}" \
+              --method PUT \
+              --field message="$commit_message" \
+              --field content="$encoded_content" \
+              --field sha="$current_sha" \
+              --field branch="$default_branch" > /dev/null
+            
+            echo "✅ Updated ${{ matrix.target_path }} in ${{ matrix.repository }}"
+          else
+            # Create new file
+            gh api "repos/Ai-Whisperers/${{ matrix.repository }}/contents/${{ matrix.target_path }}" \
+              --method PUT \
+              --field message="$commit_message" \
+              --field content="$encoded_content" \
+              --field branch="$default_branch" > /dev/null
+            
+            echo "✅ Created ${{ matrix.target_path }} in ${{ matrix.repository }}"
+          fi
+          
+          # Add labels to help track file sync commits
+          # Note: This would require additional API calls to find and label the commit/PR
+
+  summary:
+    needs: [validate-config, detect-changes, sync-files]
+    runs-on: ubuntu-latest
+    if: always()
+    permissions:
+      contents: write
+      issues: write
+      
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        
+      - name: Create Sync Summary
+        run: |
+          echo "# File Sync Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Workflow:** ${{ github.workflow }}" >> $GITHUB_STEP_SUMMARY  
+          echo "**Trigger:** ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Time:** $(date '+%Y-%m-%d %H:%M:%S UTC')" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          # Overall status
+          if [[ "${{ needs.validate-config.result }}" == "success" ]]; then
+            echo "✅ **Configuration:** Valid" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ **Configuration:** Invalid" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          if [[ "${{ needs.detect-changes.outputs.has-changes }}" == "true" ]]; then
+            echo "📁 **Changes Detected:** Yes" >> $GITHUB_STEP_SUMMARY
+            
+            if [[ "${{ needs.sync-files.result }}" == "success" ]]; then
+              echo "✅ **Sync Status:** Completed successfully" >> $GITHUB_STEP_SUMMARY
+            elif [[ "${{ needs.sync-files.result }}" == "failure" ]]; then
+              echo "❌ **Sync Status:** Some syncs failed" >> $GITHUB_STEP_SUMMARY
+            else
+              echo "⏭️ **Sync Status:** Skipped" >> $GITHUB_STEP_SUMMARY
+            fi
+          else
+            echo "📁 **Changes Detected:** No" >> $GITHUB_STEP_SUMMARY
+            echo "⏭️ **Sync Status:** Nothing to sync" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## Sync Matrix" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [[ "${{ needs.detect-changes.outputs.has-changes }}" == "true" ]]; then
+            echo "The following files were processed:" >> $GITHUB_STEP_SUMMARY
+            echo "${{ needs.detect-changes.outputs.sync-matrix }}" | jq -r '.include[] | "- **" + .source_file + "** → " + .repository + "/" + .target_path + " (" + .sync_mode + ")"' >> $GITHUB_STEP_SUMMARY || echo "- (Matrix parsing failed)" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "No files required synchronization." >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## Next Steps" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- Check target repositories for updated files" >> $GITHUB_STEP_SUMMARY
+          echo "- Verify builds and tests in affected repositories" >> $GITHUB_STEP_SUMMARY  
+          echo "- Run \`scripts/file-sync.ps1 -Action status\` for detailed status" >> $GITHUB_STEP_SUMMARY
+          
+          # Create issue for failures if needed
+          if [[ "${{ needs.sync-files.result }}" == "failure" ]]; then
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "⚠️ **Note:** Some file syncs failed. Check the job logs for details." >> $GITHUB_STEP_SUMMARY
+          fi
+
+  create-failure-issue:
+    needs: [sync-files]
+    runs-on: ubuntu-latest
+    if: failure() && needs.sync-files.result == 'failure'
+    permissions:
+      contents: read
+      issues: write
+      
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        
+      - name: Install GitHub CLI
+        run: |
+          curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
+          echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+          sudo apt update
+          sudo apt install gh -y
+          
+      - name: Authenticate GitHub CLI
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | gh auth login --with-token
+        
+      - name: Create Failure Issue
+        run: |
+          issue_title="File Sync Failure - $(date '+%Y-%m-%d %H:%M')"
+          issue_body="# File Synchronization Failed
+
+**Workflow Run:** [${{ github.run_number }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+**Trigger:** ${{ github.event_name }}
+**Time:** $(date '+%Y-%m-%d %H:%M:%S UTC')
+**Branch:** ${{ github.ref_name }}
+
+## Error Details
+
+Some file synchronization tasks failed during this run. Please check the workflow logs for specific error details.
+
+## Troubleshooting Steps
+
+1. Check the workflow logs for specific error messages
+2. Verify target repositories are accessible
+3. Ensure GitHub CLI authentication is working
+4. Check if target files have conflicts or protection rules
+5. Run manual sync with: \`scripts/file-sync.ps1 -Action sync -Verbose\`
+
+## Next Actions
+
+- [ ] Review and fix the underlying issue
+- [ ] Re-run the failed workflow or run manual sync
+- [ ] Update sync configuration if needed
+- [ ] Close this issue when resolved
+
+This issue was automatically created by the file synchronization system."
+
+          gh issue create \
+            --title "$issue_title" \
+            --body "$issue_body" \
+            --label "file-sync,automated,bug" \
+            --assignee "${{ github.actor }}"
