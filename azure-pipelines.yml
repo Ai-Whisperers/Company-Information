@@ -21,7 +21,7 @@ pr:
     - develop
 
 pool:
-  vmImage: 'ubuntu-latest'
+  vmImage: 'ubuntu-22.04'
 
 variables:
   - group: 'GitHub-Sync'  # Create this variable group in Azure DevOps with GITHUB_PAT
@@ -46,11 +46,16 @@ stages:
         script: |
           git config --global user.email "azure-sync@ai-whisperers.org"
           git config --global user.name "Azure DevOps Bot"
+        errorActionPreference: 'stop'
+        failOnStderr: true
+      retryCountOnTaskFailure: 1
           
     - task: PowerShell@2
       displayName: 'Sync from GitHub'
       inputs:
         targetType: 'inline'
+        errorActionPreference: 'stop'
+        failOnStderr: false
         script: |
           # Add GitHub as remote if not exists
           if (!(git remote | Select-String "github")) {
@@ -126,6 +131,10 @@ stages:
         PathtoPublish: 'documentation'
         ArtifactName: 'documentation'
         publishLocation: 'Container'
+        parallel: true
+        retentionDays: 90
+      condition: succeededOrFailed()
+      continueOnError: false
 
 - stage: Notifications
   displayName: 'Send Notifications'

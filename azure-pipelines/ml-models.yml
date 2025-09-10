@@ -11,11 +11,12 @@ trigger:
       - 'repositories/ml-models/**'
 
 pool:
-  vmImage: 'ubuntu-latest'
+  vmImage: 'ubuntu-22.04'
 
 variables:
-  PYTHON_VERSION: '3.10'
-  CUDA_VERSION: '11.8'
+  PYTHON_VERSION: '3.12'
+  CUDA_VERSION: '12.3'
+  pip_cache_dir: $(Pipeline.Workspace)/.pip
 
 stages:
 - stage: Validate
@@ -27,13 +28,27 @@ stages:
     - task: UsePythonVersion@0
       inputs:
         versionSpec: $(PYTHON_VERSION)
+        addToPath: true
+        architecture: 'x64'
       displayName: 'Use Python $(PYTHON_VERSION)'
+      retryCountOnTaskFailure: 2
 
+    - task: Cache@2
+      inputs:
+        key: 'python | "$(Agent.OS)" | repositories/ml-models/requirements-dev.txt'
+        restoreKeys: |
+          python | "$(Agent.OS)"
+          python
+        path: $(pip_cache_dir)
+      displayName: 'Cache pip dependencies'
+      condition: succeeded()
+      
     - script: |
         cd repositories/ml-models
         python -m pip install --upgrade pip
         pip install -r requirements-dev.txt
       displayName: 'Install dependencies'
+      retryCountOnTaskFailure: 2
 
     - script: |
         cd repositories/ml-models
@@ -45,6 +60,15 @@ stages:
         cd repositories/ml-models
         python -m pytest tests/unit/ -v
       displayName: 'Run unit tests'
+      
+    - script: |
+        cd repositories/ml-models
+        python -m pip install safety bandit
+        safety check --json --output safety-report.json || true
+        bandit -r src/ -f json -o bandit-report.json || true
+        python -m pip install pip-audit
+        pip-audit --format=json --output=pip-audit-report.json || true
+      displayName: 'Security vulnerability scan'
 
 - stage: Train
   displayName: 'Train Models'
@@ -53,6 +77,7 @@ stages:
   - job: TrainModel
     displayName: 'Train ML Model'
     timeoutInMinutes: 180
+    cancelTimeoutInMinutes: 5
     steps:
     - script: |
         cd repositories/ml-models
@@ -68,4 +93,9 @@ stages:
       inputs:
         PathtoPublish: 'repositories/ml-models/models'
         ArtifactName: 'trained-models'
+        publishLocation: 'Container'
+        parallel: true
+        retentionDays: 30
       displayName: 'Publish model artifacts'
+      condition: succeededOrFailed()
+      continueOnError: false

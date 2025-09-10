@@ -13,8 +13,9 @@ echo.
 echo Azure CLI installed. Configuring...
 echo.
 
-REM Refresh PATH
-set PATH=%PATH%;C:\Program Files (x86)\Microsoft SDKs\Azure\CLI2\wbin;C:\Program Files\Microsoft SDKs\Azure\CLI2\wbin
+REM Refresh PATH - Let system handle Azure CLI path registration
+REM Azure CLI installer should automatically update system PATH
+echo Refreshing environment variables...
 
 REM Install Azure DevOps extension
 call az extension add --name azure-devops
