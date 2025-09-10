@@ -11,11 +11,12 @@ trigger:
       - 'repositories/web-platform/**'
 
 pool:
-  vmImage: 'ubuntu-latest'
+  vmImage: 'ubuntu-22.04'
 
 variables:
-  NODE_VERSION: '18.x'
+  NODE_VERSION: '20.x'
   NEXT_TELEMETRY_DISABLED: 1
+  npm_config_cache: $(Pipeline.Workspace)/.npm
 
 stages:
 - stage: Build
@@ -27,12 +28,25 @@ stages:
     - task: NodeTool@0
       inputs:
         versionSpec: $(NODE_VERSION)
-      displayName: 'Install Node.js'
+        checkLatest: false
+      displayName: 'Install Node.js $(NODE_VERSION)'
+      retryCountOnTaskFailure: 2
 
+    - task: Cache@2
+      inputs:
+        key: 'npm | "$(Agent.OS)" | repositories/web-platform/package-lock.json'
+        restoreKeys: |
+          npm | "$(Agent.OS)"
+          npm
+        path: $(npm_config_cache)
+      displayName: 'Cache npm dependencies'
+      condition: succeeded()
+      
     - script: |
         cd repositories/web-platform
-        npm ci
+        npm ci --prefer-offline --no-audit
       displayName: 'Install dependencies'
+      retryCountOnTaskFailure: 2
 
     - script: |
         cd repositories/web-platform
@@ -48,6 +62,12 @@ stages:
         cd repositories/web-platform
         npm test -- --coverage
       displayName: 'Run tests'
+      
+    - script: |
+        cd repositories/web-platform
+        npm audit --audit-level=high --json > npm-audit-report.json || true
+        npx better-npm-audit audit --level=high || true
+      displayName: 'Security vulnerability scan'
 
     - script: |
         cd repositories/web-platform
@@ -58,7 +78,12 @@ stages:
       inputs:
         PathtoPublish: 'repositories/web-platform/.next'
         ArtifactName: 'nextjs-build'
-      displayName: 'Publish build artifacts'
+        publishLocation: 'Container'
+        parallel: true
+        retentionDays: 30
+      displayName: 'Publish Next.js build artifacts'
+      condition: succeededOrFailed()
+      continueOnError: false
 
 - stage: Deploy
   displayName: 'Deploy to Vercel'
@@ -71,7 +96,17 @@ stages:
       runOnce:
         deploy:
           steps:
+          - task: NodeTool@0
+            inputs:
+              versionSpec: $(NODE_VERSION)
+            displayName: 'Setup Node.js for deployment'
+            
           - script: |
-              npm i -g vercel
+              npm i -g vercel@latest
               vercel --prod --token $(VERCEL_TOKEN)
             displayName: 'Deploy to Vercel'
+            env:
+              VERCEL_TOKEN: $(VERCEL_TOKEN)
+              VERCEL_ORG_ID: $(VERCEL_ORG_ID)
+              VERCEL_PROJECT_ID: $(VERCEL_PROJECT_ID)
+            retryCountOnTaskFailure: 1

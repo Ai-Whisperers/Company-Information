@@ -245,3 +245,25 @@ Management tools are configured for the AI-Whisperers organization. Key configur
 - Kubernetes deployments with resource limits and health checks
 - ML models require GPU resources for training/inference
 - Frontend deploys to CDN with API proxy configuration
+
+## Magic Commands
+
+### Excalibur Command: "claude pull excalibur"
+When this magic command is used, execute the Excalibur PowerShell script:
+```powershell
+.\scripts\excalibur-command.ps1 -Verbose
+```
+
+**What it does:**
+- Fetches live data from AI-Whisperers GitHub organization
+- Updates all todo lists with current issues and PRs
+- Syncs todos to respective repositories  
+- Generates execution summary and logs
+- Provides intelligent, context-aware todo updates
+
+**Output files:**
+- Updated `project-todos/*.md` files
+- `TODO.md` files synced to each repository
+- Execution summary and logs in `logs/` directory
+
+See `EXCALIBUR-COMMAND.md` for full documentation.

@@ -35,24 +35,43 @@ function Write-Header {
 
 function Test-AzureCLI {
     try {
+        # Test if Azure CLI is accessible
+        $null = Get-Command az -ErrorAction Stop
+        
+        # Get version information
         $azVersion = az --version 2>$null
         if ($azVersion) {
             Write-Host "[OK] Azure CLI is installed" -ForegroundColor Green
             
-            # Test authentication
-            $account = az account show 2>$null | ConvertFrom-Json
-            if ($account) {
-                Write-Host "[OK] Azure CLI is authenticated as: $($account.user.name)" -ForegroundColor Green
-                return $true
-            } else {
-                Write-Host "[WARNING] Azure CLI is not authenticated" -ForegroundColor Yellow
-                Write-Host "Run 'az login' to authenticate" -ForegroundColor Gray
+            try {
+                # Test authentication with proper error handling
+                $accountJson = az account show 2>$null
+                if ($LASTEXITCODE -eq 0 -and $accountJson) {
+                    $account = $accountJson | ConvertFrom-Json -ErrorAction Stop
+                    Write-Host "[OK] Azure CLI is authenticated as: $($account.user.name)" -ForegroundColor Green
+                    return $true
+                } else {
+                    Write-Host "[WARNING] Azure CLI is not authenticated" -ForegroundColor Yellow
+                    Write-Host "Run 'az login' to authenticate" -ForegroundColor Gray
+                    return $false
+                }
+            }
+            catch {
+                Write-Host "[WARNING] Failed to verify Azure CLI authentication: $($_.Exception.Message)" -ForegroundColor Yellow
                 return $false
             }
+        } else {
+            Write-Host "[ERROR] Azure CLI version check failed" -ForegroundColor Red
+            return $false
         }
     }
+    catch [System.Management.Automation.CommandNotFoundException] {
+        Write-Host "[ERROR] Azure CLI is not installed or not in PATH" -ForegroundColor Red
+        Write-Host "Install from: https://docs.microsoft.com/en-us/cli/azure/install-azure-cli" -ForegroundColor Gray
+        return $false
+    }
     catch {
-        Write-Host "[ERROR] Azure CLI is not installed or not accessible" -ForegroundColor Red
+        Write-Host "[ERROR] Unexpected error testing Azure CLI: $($_.Exception.Message)" -ForegroundColor Red
         Write-Host "Install from: https://docs.microsoft.com/en-us/cli/azure/install-azure-cli" -ForegroundColor Gray
         return $false
     }
@@ -60,7 +79,13 @@ function Test-AzureCLI {
 
 function Test-DevOpsExtension {
     try {
-        $extensions = az extension list --output json 2>$null | ConvertFrom-Json
+        $extensionsJson = az extension list --output json 2>$null
+        if ($LASTEXITCODE -ne 0) {
+            Write-Host "[ERROR] Failed to list Azure CLI extensions" -ForegroundColor Red
+            return $false
+        }
+        
+        $extensions = $extensionsJson | ConvertFrom-Json -ErrorAction Stop
         $devopsExt = $extensions | Where-Object { $_.name -eq "azure-devops" }
         
         if ($devopsExt) {
@@ -73,7 +98,7 @@ function Test-DevOpsExtension {
         }
     }
     catch {
-        Write-Host "[ERROR] Failed to check Azure DevOps extension" -ForegroundColor Red
+        Write-Host "[ERROR] Failed to check Azure DevOps extension: $($_.Exception.Message)" -ForegroundColor Red
         return $false
     }
 }
@@ -122,14 +147,29 @@ function Test-DevOpsAccess {
 
 function Get-GitHubRepositories {
     try {
-        $repos = gh repo list $Config.GitHubOrg --json name,url --limit 100 | ConvertFrom-Json
-        if ($repos) {
+        # Test if GitHub CLI is available
+        $null = Get-Command gh -ErrorAction Stop
+        
+        $reposJson = gh repo list $Config.GitHubOrg --json name,url --limit 100 2>$null
+        if ($LASTEXITCODE -ne 0) {
+            Write-Host "[ERROR] Failed to fetch GitHub repositories. Check GitHub CLI authentication." -ForegroundColor Red
+            Write-Host "Run 'gh auth login' to authenticate" -ForegroundColor Gray
+            return @()
+        }
+        
+        $repos = $reposJson | ConvertFrom-Json -ErrorAction Stop
+        if ($repos -and $repos.Count -gt 0) {
             Write-Host "[OK] Found $($repos.Count) GitHub repositories" -ForegroundColor Green
             return $repos
         } else {
-            Write-Host "[ERROR] No GitHub repositories found" -ForegroundColor Red
+            Write-Host "[WARNING] No GitHub repositories found for organization: $($Config.GitHubOrg)" -ForegroundColor Yellow
             return @()
         }
+    }
+    catch [System.Management.Automation.CommandNotFoundException] {
+        Write-Host "[ERROR] GitHub CLI (gh) is not installed" -ForegroundColor Red
+        Write-Host "Install from: https://cli.github.com/" -ForegroundColor Gray
+        return @()
     }
     catch {
         Write-Host "[ERROR] Failed to fetch GitHub repositories: $($_.Exception.Message)" -ForegroundColor Red

@@ -1,7 +1,28 @@
 # Azure CLI Backlog Import Script
 # This script will help you import the backlog items to Azure DevOps
 
-$azPath = "C:\Program Files\Microsoft SDKs\Azure\CLI2\wbin\az.cmd"
+# Use dynamic Azure CLI path detection
+$azPath = (Get-Command az -ErrorAction SilentlyContinue).Source
+if (-not $azPath) {
+    # Fallback paths for common installations
+    $fallbackPaths = @(
+        "${env:ProgramFiles}\Microsoft SDKs\Azure\CLI2\wbin\az.cmd",
+        "${env:ProgramFiles(x86)}\Microsoft SDKs\Azure\CLI2\wbin\az.cmd",
+        "az"  # System PATH
+    )
+    
+    foreach ($path in $fallbackPaths) {
+        if (Test-Path $path -ErrorAction SilentlyContinue) {
+            $azPath = $path
+            break
+        }
+    }
+    
+    if (-not $azPath) {
+        Write-Error "Azure CLI not found. Please install Azure CLI from https://docs.microsoft.com/en-us/cli/azure/install-azure-cli"
+        exit 1
+    }
+}
 $org = "https://dev.azure.com/aiwhisperer"
 $project = "Business Setup"
 
