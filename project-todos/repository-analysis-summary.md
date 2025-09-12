@@ -6,7 +6,7 @@ Based on the analysis conducted, here's the status of the requested repositories
 
 ### ✅ Active Repositories Found
 1. **AI-Investment** → `ai-investment-todos.md`
-2. **Comment-Analizer** → `comment-analizer-todos.md`  
+2. **Comment-Analyzer** → `comment-analizer-todos.md`  
 3. **AI-Whisperers-website-and-courses** → `ai-whisperers-website-courses-todos.md`
 4. **WPG-Amenities** → `wpg-amenities-todos.md`
 5. **AI-Whisperers-Website** → `ai-whisperers-website-todos.md`
@@ -21,7 +21,7 @@ Based on the analysis conducted, here's the status of the requested repositories
 ## Repository Status Overview
 
 ### 🚀 Production Ready
-- **Comment-Analizer**: Mature Streamlit application with AI analysis
+- **Comment-Analyzer**: Mature Streamlit application with AI analysis
 - **AI-Investment**: Advanced FastAPI + Next.js investment platform
 
 ### 🔧 Active Development
@@ -45,7 +45,7 @@ Based on the analysis conducted, here's the status of the requested repositories
 ### Medium Priority
 1. **AI-Whisperers-website-and-courses**: Complete course platform features
 2. **WPG-Amenities**: Core platform development
-3. **Comment-Analizer**: Feature enhancements and performance optimization
+3. **Comment-Analyzer**: Feature enhancements and performance optimization
 
 ### Low Priority
 1. **Call-Recorder**: Decision on archive vs. revival

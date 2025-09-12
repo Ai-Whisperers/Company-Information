@@ -33,7 +33,7 @@ $Config = @{
     }
     # Define internal service dependencies
     InternalServices = @{
-        "Comment-Analizer" = @{
+        "Comment-Analyzer" = @{
             Provides = @("AI Analysis", "Streamlit UI")
             ConsumesFrom = @("OpenAI API")
             Port = 8501
@@ -258,7 +258,7 @@ function Show-DependencyGraph {
     # ASCII dependency graph
     Write-Host "Dependency Flow:" -ForegroundColor Cyan
     Write-Host ""
-    Write-Host "  OpenAI API -----> Comment-Analizer" -ForegroundColor Green
+    Write-Host "  OpenAI API -----> Comment-Analyzer" -ForegroundColor Green
     Write-Host ""
     Write-Host "  TwelveData API ---->" -ForegroundColor Cyan
     Write-Host "  MarketAux API  ----> AI-Investment" -ForegroundColor Yellow

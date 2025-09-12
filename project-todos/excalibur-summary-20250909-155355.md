@@ -11,7 +11,7 @@
 - **AI-Whisperers-website-and-courses**: Last push 2025-09-06, Issues enabled
 - **Call-Recorder**: Last push 2025-08-14, Issues enabled
 - **clockify-ADO-automated-report**: Last push 2025-08-25, Issues enabled
-- **Comment-Analizer**: Last push 2025-09-09, Issues enabled
+- **Comment-Analyzer**: Last push 2025-09-09, Issues enabled
 - **Company-Information**: Last push 2025-09-08, Issues enabled
 - **Taller-Ocampos**: Last push 2025-09-09, Issues enabled
 - **WPG-Amenities**: Last push 2025-08-14, Issues enabled

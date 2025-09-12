@@ -4,32 +4,32 @@
       "command": "npx",
       "args": ["-y", "@azure-devops/mcp"],
       "env": {
-        "AZURE_DEVOPS_PAT": "REPLACE_WITH_YOUR_PAT_TOKEN",
-        "AZURE_DEVOPS_ORG": "aiwhisperer",
-        "AZURE_DEVOPS_PROJECT": "Business Setup",
-        "AZURE_DEVOPS_BASE_URL": "https://dev.azure.com/aiwhisperer"
+        "AZURE_DEVOPS_PAT": "${AZURE_DEVOPS_PAT}",
+        "AZURE_DEVOPS_ORG": "${AZURE_DEVOPS_ORG}",
+        "AZURE_DEVOPS_PROJECT": "${AZURE_DEVOPS_PROJECT}",
+        "AZURE_DEVOPS_BASE_URL": "${AZURE_DEVOPS_BASE_URL}"
       }
     },
     "github": {
       "command": "node",
       "args": ["mcp-servers/node_modules/@modelcontextprotocol/server-github/dist/index.js"],
       "env": {
-        "GITHUB_TOKEN": "REPLACE_WITH_YOUR_GITHUB_TOKEN"
+        "GITHUB_TOKEN": "${GITHUB_TOKEN}"
       }
     },
     "postgres": {
       "command": "node",
       "args": ["mcp-servers/node_modules/@modelcontextprotocol/server-postgres/dist/index.js"],
       "env": {
-        "POSTGRES_CONNECTION_STRING": "REPLACE_WITH_YOUR_CONNECTION_STRING"
+        "POSTGRES_CONNECTION_STRING": "${POSTGRES_CONNECTION_STRING}"
       }
     },
     "filesystem": {
       "command": "node",
       "args": ["mcp-servers/node_modules/@modelcontextprotocol/server-filesystem/dist/index.js"],
       "env": {
-        "FILESYSTEM_ROOT": "C:\\Users\\kyrian\\Documents\\AI-Whisperers",
-        "FILESYSTEM_ALLOW_WRITE": "true"
+        "FILESYSTEM_ROOT": "${FILESYSTEM_ROOT}",
+        "FILESYSTEM_ALLOW_WRITE": "${FILESYSTEM_ALLOW_WRITE}"
       }
     }
   }

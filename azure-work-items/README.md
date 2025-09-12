@@ -11,11 +11,11 @@
 ```
 azure-work-items/
 ├── Business-Setup/           # Main business setup project
-│   ├── Epic-001-Foundation/
-│   ├── Epic-002-Web-Presence/
-│   ├── Epic-003-Operations/
-│   ├── Epic-004-Development/
-│   └── Epic-005-Growth/
+│   ├── EPIC-001-Foundation/
+│   ├── EPIC-002-Web-Presence/
+│   ├── EPIC-003-Operations/
+│   ├── EPIC-004-Development/
+│   └── EPIC-005-Growth/
 ├── AI-Development/          # AI and ML projects
 ├── Client-Projects/         # Client work
 ├── Internal-Tools/          # Internal tooling
@@ -119,7 +119,7 @@ Example: TASK-001-Research-Structure.md
 ### 1. Create Work Items
 ```bash
 # Use templates to create new items
-cp _templates/epic-template.md Business-Setup/Epic-006-New-Epic.md
+cp _templates/epic-template.md Business-Setup/EPIC-006-New-Epic.md
 ```
 
 ### 2. Edit Work Items

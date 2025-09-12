@@ -155,7 +155,7 @@ Business Setup Project
 ### 1. Edit Work Items
 ```bash
 # Navigate to specific epic
-cd azure-work-items/Business-Setup/Epic-001-Foundation
+cd azure-work-items/Business-Setup/EPIC-001-Foundation
 
 # Edit epic definition
 notepad EPIC-001-Foundation.md
@@ -167,10 +167,10 @@ notepad Features/FEATURE-001-Legal-Structure.md
 ### 2. Create New Items
 ```bash
 # Copy template
-cp _templates/story-template.md Business-Setup/Epic-001-Foundation/Stories/STORY-049-New-Story.md
+cp _templates/story-template.md Business-Setup/EPIC-001-Foundation/Stories/STORY-049-New-Story.md
 
 # Edit new story
-notepad Business-Setup/Epic-001-Foundation/Stories/STORY-049-New-Story.md
+notepad Business-Setup/EPIC-001-Foundation/Stories/STORY-049-New-Story.md
 ```
 
 ### 3. Import to Azure DevOps

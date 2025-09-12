@@ -1,14 +1,14 @@
-# Comment-Analizer
+# Comment-Analyzer
 
-[![Status](https://img.shields.io/badge/Status-Production-brightgreen)](https://github.com/Ai-Whisperers/Comment-Analizer)
-[![Version](https://img.shields.io/badge/Version-3.0.0--IA--Pure-blue)](https://github.com/Ai-Whisperers/Comment-Analizer)
+[![Status](https://img.shields.io/badge/Status-Production-brightgreen)](https://github.com/Ai-Whisperers/Comment-Analyzer)
+[![Version](https://img.shields.io/badge/Version-3.0.0--IA--Pure-blue)](https://github.com/Ai-Whisperers/Comment-Analyzer)
 [![License](https://img.shields.io/badge/License-Proprietary-red)](LICENSE)
 [![Python](https://img.shields.io/badge/Python-3.12+-blue)](https://www.python.org/)
 [![Architecture](https://img.shields.io/badge/Architecture-Clean-green)](https://en.wikipedia.org/wiki/Clean_architecture)
 
 **AI-powered comment analysis system for enterprise customer feedback intelligence**
 
-The Comment-Analizer is a production-ready artificial intelligence system that transforms customer feedback into actionable business insights. Built with 100% AI-powered analysis using OpenAI GPT-4, it provides comprehensive sentiment analysis, emotion detection, and strategic recommendations for businesses.
+The Comment-Analyzer is a production-ready artificial intelligence system that transforms customer feedback into actionable business insights. Built with 100% AI-powered analysis using OpenAI GPT-4, it provides comprehensive sentiment analysis, emotion detection, and strategic recommendations for businesses.
 
 **Maintained by:** [AI-Whisperers Team](https://github.com/Ai-Whisperers)  
 **Project Type:** Production System (Cliente: Personal Paraguay)  
@@ -18,8 +18,8 @@ The Comment-Analizer is a production-ready artificial intelligence system that t
 
 ## 🎯 Overview
 
-### What is Comment-Analizer?
-Comment-Analizer is a professional-grade AI analytics platform designed specifically for analyzing customer feedback at scale. Originally developed for Personal Paraguay (Núcleo S.A.), it processes thousands of customer comments to generate executive-level insights, sentiment trends, and strategic business recommendations.
+### What is Comment-Analyzer?
+Comment-Analyzer is a professional-grade AI analytics platform designed specifically for analyzing customer feedback at scale. Originally developed for Personal Paraguay (Núcleo S.A.), it processes thousands of customer comments to generate executive-level insights, sentiment trends, and strategic business recommendations.
 
 The system represents a complete transformation to AI-pure architecture (Sistema IA Puro v3.0), eliminating traditional text processing methods in favor of advanced GPT-4 analysis that understands context, cultural nuances, and business implications.
 
@@ -54,8 +54,8 @@ The system represents a complete transformation to AI-pure architecture (Sistema
 #### Option 1: Standard Installation
 ```bash
 # Clone the repository
-git clone https://github.com/Ai-Whisperers/Comment-Analizer.git
-cd Comment-Analizer
+git clone https://github.com/Ai-Whisperers/Comment-Analyzer.git
+cd Comment-Analyzer
 
 # Create virtual environment
 python -m venv .venv
@@ -68,8 +68,8 @@ pip install -r requirements.txt
 #### Option 2: Development Installation
 ```bash
 # Clone with all development tools
-git clone https://github.com/Ai-Whisperers/Comment-Analizer.git
-cd Comment-Analizer
+git clone https://github.com/Ai-Whisperers/Comment-Analyzer.git
+cd Comment-Analyzer
 
 # Install with development dependencies
 pip install -r requirements-dev.txt
@@ -102,7 +102,7 @@ streamlit run streamlit_app.py
 
 ### Core AI Analysis Engine
 
-The Comment-Analizer employs a sophisticated AI analysis pipeline that processes customer feedback through multiple intelligence layers:
+The Comment-Analyzer employs a sophisticated AI analysis pipeline that processes customer feedback through multiple intelligence layers:
 
 #### GPT-4 Analysis Pipeline
 ```python
@@ -137,10 +137,10 @@ The system natively processes:
 
 ### Architecture Overview
 
-The Comment-Analizer follows Clean Architecture principles with clear separation of concerns:
+The Comment-Analyzer follows Clean Architecture principles with clear separation of concerns:
 
 ```
-Comment-Analizer/
+Comment-Analyzer/
 ├── streamlit_app.py                    # Application entry point
 ├── pages/                              # Streamlit pages
 │   ├── 1_Página_Principal.py          # Main dashboard
@@ -358,7 +358,7 @@ MAX_COMMENTS_PER_ANALYSIS=2000
 
 ## 🤝 Contributing
 
-We welcome contributions to enhance the Comment-Analizer system! Please see our [Contributing Guidelines](CONTRIBUTING.md) for detailed information.
+We welcome contributions to enhance the Comment-Analyzer system! Please see our [Contributing Guidelines](CONTRIBUTING.md) for detailed information.
 
 ### Quick Contribution Guide
 1. **Fork the repository** and create a feature branch
