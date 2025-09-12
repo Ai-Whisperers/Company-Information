@@ -13,7 +13,7 @@ const stories = [
   // EPIC-001: Foundation
   {
     id: 'STORY-001',
-    epic: 'Epic-001-Foundation',
+    epic: 'EPIC-001-Foundation',
     feature: 'FEATURE-001-Legal-Structure',
     title: 'Research Business Structures',
     points: 2,
@@ -22,7 +22,7 @@ const stories = [
   },
   {
     id: 'STORY-002',
-    epic: 'Epic-001-Foundation',
+    epic: 'EPIC-001-Foundation',
     feature: 'FEATURE-001-Legal-Structure',
     title: 'Register Business Entity',
     points: 3,
@@ -31,7 +31,7 @@ const stories = [
   },
   {
     id: 'STORY-003',
-    epic: 'Epic-001-Foundation',
+    epic: 'EPIC-001-Foundation',
     feature: 'FEATURE-001-Legal-Structure',
     title: 'Obtain EIN',
     points: 1,
@@ -40,7 +40,7 @@ const stories = [
   },
   {
     id: 'STORY-004',
-    epic: 'Epic-001-Foundation',
+    epic: 'EPIC-001-Foundation',
     feature: 'FEATURE-001-Legal-Structure',
     title: 'Create Operating Agreement',
     points: 2,
@@ -49,7 +49,7 @@ const stories = [
   },
   {
     id: 'STORY-005',
-    epic: 'Epic-001-Foundation',
+    epic: 'EPIC-001-Foundation',
     feature: 'FEATURE-002-Financial-Systems',
     title: 'Open Business Bank Accounts',
     points: 2,
@@ -58,7 +58,7 @@ const stories = [
   },
   {
     id: 'STORY-006',
-    epic: 'Epic-001-Foundation',
+    epic: 'EPIC-001-Foundation',
     feature: 'FEATURE-002-Financial-Systems',
     title: 'Setup Accounting System',
     points: 3,
@@ -67,7 +67,7 @@ const stories = [
   },
   {
     id: 'STORY-007',
-    epic: 'Epic-001-Foundation',
+    epic: 'EPIC-001-Foundation',
     feature: 'FEATURE-002-Financial-Systems',
     title: 'Configure Payment Processing',
     points: 2,
@@ -76,7 +76,7 @@ const stories = [
   },
   {
     id: 'STORY-008',
-    epic: 'Epic-001-Foundation',
+    epic: 'EPIC-001-Foundation',
     feature: 'FEATURE-002-Financial-Systems',
     title: 'Establish Financial Reporting',
     points: 1,
@@ -87,7 +87,7 @@ const stories = [
   // EPIC-002: Web Presence
   {
     id: 'STORY-009',
-    epic: 'Epic-002-Web-Presence',
+    epic: 'EPIC-002-Web-Presence',
     feature: 'FEATURE-003-Website-Development',
     title: 'Configure Squarespace Site',
     points: 2,
@@ -96,7 +96,7 @@ const stories = [
   },
   {
     id: 'STORY-010',
-    epic: 'Epic-002-Web-Presence',
+    epic: 'EPIC-002-Web-Presence',
     feature: 'FEATURE-003-Website-Development',
     title: 'Create Homepage Content',
     points: 3,
@@ -105,7 +105,7 @@ const stories = [
   },
   {
     id: 'STORY-011',
-    epic: 'Epic-002-Web-Presence',
+    epic: 'EPIC-002-Web-Presence',
     feature: 'FEATURE-003-Website-Development',
     title: 'Build Service Pages',
     points: 3,
@@ -114,7 +114,7 @@ const stories = [
   },
   {
     id: 'STORY-012',
-    epic: 'Epic-002-Web-Presence',
+    epic: 'EPIC-002-Web-Presence',
     feature: 'FEATURE-003-Website-Development',
     title: 'Setup Contact Forms',
     points: 1,
@@ -123,7 +123,7 @@ const stories = [
   },
   {
     id: 'STORY-013',
-    epic: 'Epic-002-Web-Presence',
+    epic: 'EPIC-002-Web-Presence',
     feature: 'FEATURE-003-Website-Development',
     title: 'Implement SEO',
     points: 1,
@@ -132,7 +132,7 @@ const stories = [
   },
   {
     id: 'STORY-014',
-    epic: 'Epic-002-Web-Presence',
+    epic: 'EPIC-002-Web-Presence',
     feature: 'FEATURE-004-Brand-Identity',
     title: 'Design Logo',
     points: 3,
@@ -141,7 +141,7 @@ const stories = [
   },
   {
     id: 'STORY-015',
-    epic: 'Epic-002-Web-Presence',
+    epic: 'EPIC-002-Web-Presence',
     feature: 'FEATURE-004-Brand-Identity',
     title: 'Create Brand Guidelines',
     points: 2,
@@ -150,7 +150,7 @@ const stories = [
   },
   {
     id: 'STORY-016',
-    epic: 'Epic-002-Web-Presence',
+    epic: 'EPIC-002-Web-Presence',
     feature: 'FEATURE-004-Brand-Identity',
     title: 'Design Business Cards',
     points: 2,
@@ -159,7 +159,7 @@ const stories = [
   },
   {
     id: 'STORY-017',
-    epic: 'Epic-002-Web-Presence',
+    epic: 'EPIC-002-Web-Presence',
     feature: 'FEATURE-004-Brand-Identity',
     title: 'Create Email Templates',
     points: 2,
@@ -168,7 +168,7 @@ const stories = [
   },
   {
     id: 'STORY-018',
-    epic: 'Epic-002-Web-Presence',
+    epic: 'EPIC-002-Web-Presence',
     feature: 'FEATURE-004-Brand-Identity',
     title: 'Setup Social Media Profiles',
     points: 1,
@@ -179,7 +179,7 @@ const stories = [
   // EPIC-003: Operations
   {
     id: 'STORY-019',
-    epic: 'Epic-003-Operations',
+    epic: 'EPIC-003-Operations',
     feature: 'FEATURE-005-Platform-Integration',
     title: 'Setup Azure DevOps',
     points: 2,
@@ -188,7 +188,7 @@ const stories = [
   },
   {
     id: 'STORY-020',
-    epic: 'Epic-003-Operations',
+    epic: 'EPIC-003-Operations',
     feature: 'FEATURE-005-Platform-Integration',
     title: 'Configure Discord Server',
     points: 2,
@@ -197,7 +197,7 @@ const stories = [
   },
   {
     id: 'STORY-021',
-    epic: 'Epic-003-Operations',
+    epic: 'EPIC-003-Operations',
     feature: 'FEATURE-005-Platform-Integration',
     title: 'Setup Supabase Database',
     points: 3,
@@ -206,7 +206,7 @@ const stories = [
   },
   {
     id: 'STORY-022',
-    epic: 'Epic-003-Operations',
+    epic: 'EPIC-003-Operations',
     feature: 'FEATURE-005-Platform-Integration',
     title: 'Configure Zoho CRM',
     points: 2,
@@ -215,7 +215,7 @@ const stories = [
   },
   {
     id: 'STORY-023',
-    epic: 'Epic-003-Operations',
+    epic: 'EPIC-003-Operations',
     feature: 'FEATURE-005-Platform-Integration',
     title: 'Setup Confluence Wiki',
     points: 1,
@@ -224,7 +224,7 @@ const stories = [
   },
   {
     id: 'STORY-024',
-    epic: 'Epic-003-Operations',
+    epic: 'EPIC-003-Operations',
     feature: 'FEATURE-006-Workflow-Automation',
     title: 'Setup n8n Cloud',
     points: 2,
@@ -233,7 +233,7 @@ const stories = [
   },
   {
     id: 'STORY-025',
-    epic: 'Epic-003-Operations',
+    epic: 'EPIC-003-Operations',
     feature: 'FEATURE-006-Workflow-Automation',
     title: 'Create Lead Automation',
     points: 3,
@@ -242,7 +242,7 @@ const stories = [
   },
   {
     id: 'STORY-026',
-    epic: 'Epic-003-Operations',
+    epic: 'EPIC-003-Operations',
     feature: 'FEATURE-006-Workflow-Automation',
     title: 'Automate Invoice Generation',
     points: 3,
@@ -251,7 +251,7 @@ const stories = [
   },
   {
     id: 'STORY-027',
-    epic: 'Epic-003-Operations',
+    epic: 'EPIC-003-Operations',
     feature: 'FEATURE-006-Workflow-Automation',
     title: 'Setup Email Automation',
     points: 1,
@@ -260,7 +260,7 @@ const stories = [
   },
   {
     id: 'STORY-028',
-    epic: 'Epic-003-Operations',
+    epic: 'EPIC-003-Operations',
     feature: 'FEATURE-006-Workflow-Automation',
     title: 'Create Reporting Dashboards',
     points: 1,
@@ -271,7 +271,7 @@ const stories = [
   // EPIC-004: Development
   {
     id: 'STORY-029',
-    epic: 'Epic-004-Development',
+    epic: 'EPIC-004-Development',
     feature: 'FEATURE-007-Repository-Management',
     title: 'Structure GitHub Repositories',
     points: 2,
@@ -280,7 +280,7 @@ const stories = [
   },
   {
     id: 'STORY-030',
-    epic: 'Epic-004-Development',
+    epic: 'EPIC-004-Development',
     feature: 'FEATURE-007-Repository-Management',
     title: 'Setup Branch Protection',
     points: 1,
@@ -289,7 +289,7 @@ const stories = [
   },
   {
     id: 'STORY-031',
-    epic: 'Epic-004-Development',
+    epic: 'EPIC-004-Development',
     feature: 'FEATURE-007-Repository-Management',
     title: 'Configure CICD Pipelines',
     points: 3,
@@ -298,7 +298,7 @@ const stories = [
   },
   {
     id: 'STORY-032',
-    epic: 'Epic-004-Development',
+    epic: 'EPIC-004-Development',
     feature: 'FEATURE-007-Repository-Management',
     title: 'Setup Code Review Process',
     points: 2,
@@ -307,7 +307,7 @@ const stories = [
   },
   {
     id: 'STORY-033',
-    epic: 'Epic-004-Development',
+    epic: 'EPIC-004-Development',
     feature: 'FEATURE-007-Repository-Management',
     title: 'Implement Version Control Strategy',
     points: 2,
@@ -316,7 +316,7 @@ const stories = [
   },
   {
     id: 'STORY-034',
-    epic: 'Epic-004-Development',
+    epic: 'EPIC-004-Development',
     feature: 'FEATURE-008-AI-Infrastructure',
     title: 'Setup Azure AI Services',
     points: 3,
@@ -325,7 +325,7 @@ const stories = [
   },
   {
     id: 'STORY-035',
-    epic: 'Epic-004-Development',
+    epic: 'EPIC-004-Development',
     feature: 'FEATURE-008-AI-Infrastructure',
     title: 'Configure ML Workspace',
     points: 3,
@@ -334,7 +334,7 @@ const stories = [
   },
   {
     id: 'STORY-036',
-    epic: 'Epic-004-Development',
+    epic: 'EPIC-004-Development',
     feature: 'FEATURE-008-AI-Infrastructure',
     title: 'Setup Model Registry',
     points: 2,
@@ -343,7 +343,7 @@ const stories = [
   },
   {
     id: 'STORY-037',
-    epic: 'Epic-004-Development',
+    epic: 'EPIC-004-Development',
     feature: 'FEATURE-008-AI-Infrastructure',
     title: 'Implement API Gateway',
     points: 1,
@@ -352,7 +352,7 @@ const stories = [
   },
   {
     id: 'STORY-038',
-    epic: 'Epic-004-Development',
+    epic: 'EPIC-004-Development',
     feature: 'FEATURE-008-AI-Infrastructure',
     title: 'Setup Monitoring & Logging',
     points: 1,
@@ -363,7 +363,7 @@ const stories = [
   // EPIC-005: Growth
   {
     id: 'STORY-039',
-    epic: 'Epic-005-Growth',
+    epic: 'EPIC-005-Growth',
     feature: 'FEATURE-009-Sales-Marketing',
     title: 'Define Service Packages',
     points: 2,
@@ -372,7 +372,7 @@ const stories = [
   },
   {
     id: 'STORY-040',
-    epic: 'Epic-005-Growth',
+    epic: 'EPIC-005-Growth',
     feature: 'FEATURE-009-Sales-Marketing',
     title: 'Create Pricing Strategy',
     points: 2,
@@ -381,7 +381,7 @@ const stories = [
   },
   {
     id: 'STORY-041',
-    epic: 'Epic-005-Growth',
+    epic: 'EPIC-005-Growth',
     feature: 'FEATURE-009-Sales-Marketing',
     title: 'Build Sales Pipeline',
     points: 3,
@@ -390,7 +390,7 @@ const stories = [
   },
   {
     id: 'STORY-042',
-    epic: 'Epic-005-Growth',
+    epic: 'EPIC-005-Growth',
     feature: 'FEATURE-009-Sales-Marketing',
     title: 'Launch Content Marketing',
     points: 2,
@@ -399,7 +399,7 @@ const stories = [
   },
   {
     id: 'STORY-043',
-    epic: 'Epic-005-Growth',
+    epic: 'EPIC-005-Growth',
     feature: 'FEATURE-009-Sales-Marketing',
     title: 'Setup Analytics Tracking',
     points: 1,
@@ -408,7 +408,7 @@ const stories = [
   },
   {
     id: 'STORY-044',
-    epic: 'Epic-005-Growth',
+    epic: 'EPIC-005-Growth',
     feature: 'FEATURE-010-Service-Delivery',
     title: 'Create Onboarding Process',
     points: 2,
@@ -417,7 +417,7 @@ const stories = [
   },
   {
     id: 'STORY-045',
-    epic: 'Epic-005-Growth',
+    epic: 'EPIC-005-Growth',
     feature: 'FEATURE-010-Service-Delivery',
     title: 'Build Project Templates',
     points: 2,
@@ -426,7 +426,7 @@ const stories = [
   },
   {
     id: 'STORY-046',
-    epic: 'Epic-005-Growth',
+    epic: 'EPIC-005-Growth',
     feature: 'FEATURE-010-Service-Delivery',
     title: 'Setup Customer Portal',
     points: 3,
@@ -435,7 +435,7 @@ const stories = [
   },
   {
     id: 'STORY-047',
-    epic: 'Epic-005-Growth',
+    epic: 'EPIC-005-Growth',
     feature: 'FEATURE-010-Service-Delivery',
     title: 'Create SLA Framework',
     points: 2,
@@ -444,7 +444,7 @@ const stories = [
   },
   {
     id: 'STORY-048',
-    epic: 'Epic-005-Growth',
+    epic: 'EPIC-005-Growth',
     feature: 'FEATURE-010-Service-Delivery',
     title: 'Implement Feedback System',
     points: 1,

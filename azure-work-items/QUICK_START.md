@@ -76,8 +76,8 @@ npm run sync
 Focus: Foundation (Legal + Financial)
 
 **Files to edit**:
-- `Epic-001-Foundation/Features/FEATURE-001-Legal-Structure.md`
-- `Epic-001-Foundation/Features/FEATURE-002-Financial-Systems.md`
+- `EPIC-001-Foundation/Features/FEATURE-001-Legal-Structure.md`
+- `EPIC-001-Foundation/Features/FEATURE-002-Financial-Systems.md`
 
 ### Update Status
 Change status in markdown:
@@ -98,10 +98,10 @@ Status options:
 ### Create New User Story
 ```bash
 # Copy template
-cp _templates/story-template.md Business-Setup/Epic-001-Foundation/Stories/STORY-049-New.md
+cp _templates/story-template.md Business-Setup/EPIC-001-Foundation/Stories/STORY-049-New.md
 
 # Edit it
-notepad Business-Setup/Epic-001-Foundation/Stories/STORY-049-New.md
+notepad Business-Setup/EPIC-001-Foundation/Stories/STORY-049-New.md
 
 # Import to Azure
 npm run import

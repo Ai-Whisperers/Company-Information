@@ -15,7 +15,7 @@ This is the **Company-Information** repository which serves as the central hub f
 - Business setup and planning documents
 
 The organization maintains these actual code repositories:
-- **[Comment-Analizer](https://github.com/Ai-Whisperers/Comment-Analizer)**: AI-powered customer feedback analysis (Python, GPT-4, Streamlit)
+- **[Comment-Analyzer](https://github.com/Ai-Whisperers/Comment-Analyzer)**: AI-powered customer feedback analysis (Python, GPT-4, Streamlit)
 - **[AI-Investment](https://github.com/Ai-Whisperers/AI-Investment)**: Waardhaven AutoIndex investment platform (FastAPI, Next.js, 145+ endpoints)
 - **[clockify-ADO-automated-report](https://github.com/Ai-Whisperers/clockify-ADO-automated-report)**: Time tracking automation (Python, Hexagonal Architecture)
 - **[AI-Whisperers-website-and-courses](https://github.com/Ai-Whisperers/AI-Whisperers-website-and-courses)**: Strategic educational platform (Planning)
@@ -30,7 +30,7 @@ The organization maintains these actual code repositories:
 
 **Important**: These commands should be run in their respective repository directories after cloning them separately.
 
-### Comment-Analizer (in `Comment-Analizer` repository)
+### Comment-Analyzer (in `Comment-Analyzer` repository)
 ```bash
 # Development
 streamlit run main.py                    # Start Streamlit app
@@ -39,8 +39,8 @@ python -m black .                       # Code formatting
 python -m flake8                        # Linting
 
 # Docker
-docker build -t comment-analizer .      # Build container
-docker run -p 8501:8501 comment-analizer # Run container
+docker build -t comment-analyzer .      # Build container
+docker run -p 8501:8501 comment-analyzer # Run container
 ```
 
 ### AI-Investment (in `AI-Investment` repository)
@@ -91,7 +91,7 @@ docker run clockify-ado                 # Run container
 
 ## Architecture Patterns
 
-### Comment-Analizer Architecture
+### Comment-Analyzer Architecture
 - **Framework**: Streamlit for web UI with Python backend
 - **AI Integration**: OpenAI GPT-4 API for analysis
 - **Architecture**: Clean Architecture with SOLID principles
@@ -136,7 +136,7 @@ Use conventional commits:
 
 ## Key Environment Variables
 
-### Comment-Analizer
+### Comment-Analyzer
 - `OPENAI_API_KEY`: OpenAI API key for GPT-4 access
 - `STREAMLIT_SERVER_PORT`: Server port (default: 8501)
 - `ANALYSIS_TIMEOUT`: Analysis timeout in seconds
@@ -157,7 +157,7 @@ Use conventional commits:
 
 ## Testing Strategy
 
-### Comment-Analizer
+### Comment-Analyzer
 - Unit tests: Analysis logic and data processing functions
 - Integration tests: OpenAI API integration and response handling
 - UI tests: Streamlit component functionality

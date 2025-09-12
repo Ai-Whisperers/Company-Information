@@ -16,7 +16,7 @@ $Config = @{
     # Define release order based on dependencies
     ReleaseOrder = @(
         "AI-Investment",                      # Production investment platform
-        "Comment-Analizer",                   # Production analysis tool
+        "Comment-Analyzer",                   # Production analysis tool
         "clockify-ADO-automated-report",      # Production automation tool
         "AI-Whisperers-website-and-courses", # Strategic platform
         "AI-Whisperers",                      # Standards and templates
@@ -30,7 +30,7 @@ $Config = @{
             MinHealthScore = 90
             MaxOpenIssues = 2
         }
-        "Comment-Analizer" = @{
+        "Comment-Analyzer" = @{
             RequiredTests = @("unit", "integration")
             RequiredChecks = @("lint", "security", "ai-api-test")
             MinHealthScore = 85
@@ -295,7 +295,7 @@ $requirements = $Config.ValidationRequirements[$repoName]
 ## Release Execution Order
 
 1. **AI-Investment** - Production investment platform (highest priority)
-2. **Comment-Analizer** - Production analysis tool
+2. **Comment-Analyzer** - Production analysis tool
 3. **clockify-ADO-automated-report** - Production automation tool
 4. **AI-Whisperers-website-and-courses** - Strategic platform development
 5. **AI-Whisperers** - Standards and templates (organizational)

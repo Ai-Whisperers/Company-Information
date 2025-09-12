@@ -1,0 +1,110 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Sync Configuration Schema",
+  "type": "object",
+  "properties": {
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+$"
+    },
+    "organization": {
+      "type": "string",
+      "minLength": 1
+    },
+    "lastUpdated": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "description": {
+      "type": "string"
+    },
+    "globalSettings": {
+      "type": "object",
+      "properties": {
+        "enabled": {"type": "boolean"},
+        "dryRun": {"type": "boolean"},
+        "createPullRequests": {"type": "boolean"},
+        "autoMerge": {"type": "boolean"},
+        "conflictResolution": {
+          "type": "string",
+          "enum": ["manual", "source-wins", "target-wins", "merge-attempt"]
+        },
+        "backupBeforeSync": {"type": "boolean"},
+        "maxConcurrentSyncs": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10
+        },
+        "retryAttempts": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 5
+        },
+        "notificationChannels": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["github-issues", "workflow-summary", "slack", "email"]
+          }
+        }
+      },
+      "required": ["enabled"],
+      "additionalProperties": false
+    },
+    "syncRules": {
+      "type": "object",
+      "patternProperties": {
+        "^[a-zA-Z0-9-_.]+$": {
+          "type": "object",
+          "properties": {
+            "enabled": {"type": "boolean"},
+            "description": {"type": "string"},
+            "sourceFile": {"type": "string"},
+            "sourcePattern": {"type": "string"},
+            "sourceFiles": {
+              "type": "array",
+              "items": {"type": "string"}
+            },
+            "targets": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "repository": {"type": "string"},
+                  "targetPath": {"type": "string"},
+                  "syncMode": {
+                    "type": "string",
+                    "enum": ["replace", "merge-append", "merge-strategy"]
+                  },
+                  "preserveLocal": {"type": "boolean"}
+                },
+                "required": ["repository", "targetPath", "syncMode"],
+                "additionalProperties": true
+              }
+            }
+          },
+          "required": ["enabled"],
+          "additionalProperties": true
+        }
+      }
+    },
+    "repositories": {
+      "type": "object",
+      "patternProperties": {
+        "^[a-zA-Z0-9-_.]+$": {
+          "type": "object",
+          "properties": {
+            "branch": {"type": "string"},
+            "protected": {"type": "boolean"},
+            "requiresPR": {"type": "boolean"},
+            "customSettings": {"type": "object"}
+          },
+          "required": ["branch"],
+          "additionalProperties": true
+        }
+      }
+    }
+  },
+  "required": ["version", "organization", "globalSettings"],
+  "additionalProperties": true
+}

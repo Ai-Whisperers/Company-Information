@@ -1,0 +1,19 @@
+{
+  "mcpServers": {
+    "github": {
+      "command": "node",
+      "args": ["server-github/dist/index.js"],
+      "env": {
+        "GITHUB_TOKEN": "${GITHUB_TOKEN}"
+      }
+    },
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem"],
+      "env": {
+        "FILESYSTEM_ROOT": "${FILESYSTEM_ROOT}",
+        "FILESYSTEM_ALLOW_WRITE": "${FILESYSTEM_ALLOW_WRITE}"
+      }
+    }
+  }
+}

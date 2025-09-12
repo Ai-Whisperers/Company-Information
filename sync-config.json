@@ -23,7 +23,7 @@
       "sourceFile": "CLAUDE.md",
       "targets": [
         {
-          "repository": "Comment-Analizer",
+          "repository": "Comment-Analyzer",
           "targetPath": "CLAUDE.md",
           "syncMode": "replace",
           "preserveLocal": false
@@ -58,8 +58,8 @@
         {
           "type": "repository-specific-sections",
           "rules": {
-            "Comment-Analizer": {
-              "includeOnly": ["Organization Overview", "Repository Structure", "Comment-Analizer Architecture", "Development Commands.Comment-Analizer", "Git Workflow", "Key Environment Variables.Comment-Analizer", "Testing Strategy.Comment-Analizer"],
+            "Comment-Analyzer": {
+              "includeOnly": ["Organization Overview", "Repository Structure", "Comment-Analyzer Architecture", "Development Commands.Comment-Analyzer", "Git Workflow", "Key Environment Variables.Comment-Analyzer", "Testing Strategy.Comment-Analyzer"],
               "customContent": {
                 "additionalNotes": "Focus on AI-powered analysis and Streamlit development patterns."
               }
@@ -179,7 +179,7 @@
   },
 
   "repositories": {
-    "Comment-Analizer": {
+    "Comment-Analyzer": {
       "branch": "main",
       "protected": false,
       "requiresPR": false,

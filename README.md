@@ -16,7 +16,7 @@ This repository serves as the command center for the AI-Whisperers organization,
 Company-Information/
 ├── 📋 DOCUMENTATION_MASTER_INDEX.md     # Central documentation hub
 ├── 📚 enhanced-documentation/           # Enhanced README files for all repos
-│   ├── Comment-Analizer-ENHANCED-README.md
+│   ├── Comment-Analyzer-ENHANCED-README.md
 │   ├── AI-Investment-ENHANCED-README.md
 │   ├── clockify-ADO-automated-report-ENHANCED-README.md
 │   ├── Company-Information-ENHANCED-README.md
@@ -56,7 +56,7 @@ Company-Information/
 
 ### **📚 Access Enhanced Documentation**
 All repositories now have comprehensive enhanced documentation:
-- **Production Systems:** Comment-Analizer, AI-Investment, clockify-ADO-automated-report
+- **Production Systems:** Comment-Analyzer, AI-Investment, clockify-ADO-automated-report
 - **Strategic Projects:** AI-Whisperers-website-and-courses, AI-Whisperers-Website  
 - **Assessment Projects:** WPG-Amenities, AI-Whisperers (Core)
 - **Decision Required:** Call-Recorder
@@ -71,7 +71,7 @@ All repositories now have comprehensive enhanced documentation:
 ## 🌐 Organization Repositories
 
 ### **✅ Production Systems** (Active)
-- **[Comment-Analizer](https://github.com/Ai-Whisperers/Comment-Analizer)** - AI-powered customer feedback analysis (Python, GPT-4, Streamlit)
+- **[Comment-Analyzer](https://github.com/Ai-Whisperers/Comment-Analyzer)** - AI-powered customer feedback analysis (Python, GPT-4, Streamlit)
 - **[AI-Investment](https://github.com/Ai-Whisperers/AI-Investment)** - Waardhaven AutoIndex investment platform (FastAPI, Next.js, 145+ endpoints)
 - **[clockify-ADO-automated-report](https://github.com/Ai-Whisperers/clockify-ADO-automated-report)** - Time tracking automation (Python, Hexagonal Architecture)
 

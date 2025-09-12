@@ -43,7 +43,7 @@ The AI-Whisperers-Website will be consolidated into the new **AI-Whisperers-webs
 #### Corporate Website Features (Migrating)
 - **Company Overview** - Mission, vision, values, and team information
 - **Service Portfolio** - AI consulting, development, and implementation services
-- **Case Studies** - Success stories from production systems (Comment-Analizer, AI-Investment, etc.)
+- **Case Studies** - Success stories from production systems (Comment-Analyzer, AI-Investment, etc.)
 - **Contact Information** - Business inquiries, consultation requests
 - **Blog/News** - Company updates, thought leadership content
 
