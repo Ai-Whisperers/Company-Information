@@ -1,0 +1,39 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mv:*)",
+      "Bash(pwsh:*)",
+      "Bash(powershell:*)",
+      "Bash(node:*)",
+      "Bash(git:status|diff|log)*"
+    ],
+    "deny": [
+      "Bash(rm:*)",
+      "Bash(az:*)", 
+      "Bash(terraform:*)",
+      "Bash(docker:system:prune:*)"
+    ],
+    "ask": [
+      "Bash(gh:*)"
+    ]
+  },
+  "commands": {
+    "excalibur-sync": ".claude/commands/excalibur-sync.md",
+    "weekly-health": ".claude/commands/weekly-health.md", 
+    "ado-sync": ".claude/commands/ado-sync.md",
+    "docs-coverage": ".claude/commands/docs-coverage.md"
+  },
+  "write_policies": {
+    "allowlist": [
+      "project-todos/**",
+      "logs/**", 
+      "scripts/**/reports/**",
+      "enhanced-documentation/**",
+      ".claude/**"
+    ],
+    "approval_threshold": {
+      "max_files": 6,
+      "max_lines": 300
+    }
+  }
+}
