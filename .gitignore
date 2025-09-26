@@ -85,4 +85,4 @@ out/
 *.pfx
 credentials.json
 secrets.yaml
-secrets.json
+secrets.jsonnul

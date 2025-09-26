@@ -208,7 +208,7 @@ I'll create a comprehensive onboarding guide for new team members joining AI-Whi
 | `azure-work-items/DASHBOARD.md` | L69-142 |
 | `azure-work-items/WORK_ITEMS_STRUCTURE.md` | L119-214 |
 | `documentation/README.md` | L49-119 |
-| `azure-work-items/Business-Setup/EPIC-003-Operations/Features/FEATURE-005-Platform-Integration.md` | L58-145 |
+| `azure-work-items/Business-Setup/Epic-003-Operations/Features/FEATURE-005-Platform-Integration.md` | L58-145 |
 | `documentation/business-analysis/COMPANY_SETUP_ROADMAP.md` | L325-383 |
 
 </details>

@@ -1,0 +1,287 @@
+name: Scheduled Org OS Tasks
+
+on:
+  schedule:
+    # Weekly Org Pulse Report - Every Monday at 9 AM UTC
+    - cron: '0 9 * * 1'
+    # Daily health scan - Every day at 2 AM UTC
+    - cron: '0 2 * * *'
+    # ADO sync check - Every 6 hours
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+    inputs:
+      task:
+        description: 'Task to run'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - health-scan
+          - org-pulse
+          - ado-sync
+          - docs-check
+
+env:
+  GITHUB_ORG: Ai-Whisperers
+  JOBS_SERVICE_URL: ${{ secrets.JOBS_SERVICE_URL }}
+
+jobs:
+  determine-task:
+    name: Determine Task
+    runs-on: ubuntu-latest
+    outputs:
+      run-health: ${{ steps.determine.outputs.run-health }}
+      run-pulse: ${{ steps.determine.outputs.run-pulse }}
+      run-sync: ${{ steps.determine.outputs.run-sync }}
+    steps:
+      - name: Determine tasks to run
+        id: determine
+        run: |
+          HOUR=$(date -u +%H)
+          DAY=$(date -u +%w)
+
+          # Manual trigger
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            case "${{ github.event.inputs.task }}" in
+              all)
+                echo "run-health=true" >> $GITHUB_OUTPUT
+                echo "run-pulse=true" >> $GITHUB_OUTPUT
+                echo "run-sync=true" >> $GITHUB_OUTPUT
+                ;;
+              health-scan)
+                echo "run-health=true" >> $GITHUB_OUTPUT
+                echo "run-pulse=false" >> $GITHUB_OUTPUT
+                echo "run-sync=false" >> $GITHUB_OUTPUT
+                ;;
+              org-pulse)
+                echo "run-health=false" >> $GITHUB_OUTPUT
+                echo "run-pulse=true" >> $GITHUB_OUTPUT
+                echo "run-sync=false" >> $GITHUB_OUTPUT
+                ;;
+              ado-sync)
+                echo "run-health=false" >> $GITHUB_OUTPUT
+                echo "run-pulse=false" >> $GITHUB_OUTPUT
+                echo "run-sync=true" >> $GITHUB_OUTPUT
+                ;;
+            esac
+          else
+            # Scheduled runs
+            echo "run-health=false" >> $GITHUB_OUTPUT
+            echo "run-pulse=false" >> $GITHUB_OUTPUT
+            echo "run-sync=false" >> $GITHUB_OUTPUT
+
+            # Daily health scan at 2 AM
+            if [ "$HOUR" = "02" ]; then
+              echo "run-health=true" >> $GITHUB_OUTPUT
+            fi
+
+            # Weekly pulse on Monday at 9 AM
+            if [ "$DAY" = "1" ] && [ "$HOUR" = "09" ]; then
+              echo "run-pulse=true" >> $GITHUB_OUTPUT
+            fi
+
+            # ADO sync every 6 hours
+            if [ $((HOUR % 6)) -eq 0 ]; then
+              echo "run-sync=true" >> $GITHUB_OUTPUT
+            fi
+          fi
+
+  health-scan:
+    name: Repository Health Scan
+    runs-on: ubuntu-latest
+    needs: determine-task
+    if: needs.determine-task.outputs.run-health == 'true'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Trigger health scan
+        run: |
+          echo "Triggering repository health scan..."
+
+          # Call the jobs service API
+          response=$(curl -X POST \
+            "${{ env.JOBS_SERVICE_URL }}/api/scanners/health/trigger" \
+            -H "Authorization: Bearer ${{ secrets.JOBS_API_KEY }}" \
+            -H "Content-Type: application/json" \
+            -d '{"immediate": true}' \
+            -w "\n%{http_code}")
+
+          http_code=$(echo "$response" | tail -n1)
+          body=$(echo "$response" | head -n-1)
+
+          if [ "$http_code" != "200" ] && [ "$http_code" != "201" ]; then
+            echo "Failed to trigger health scan: $body"
+            exit 1
+          fi
+
+          echo "Health scan triggered successfully"
+
+      - name: Scan repository docs
+        run: |
+          # Get all repositories
+          repos=$(gh repo list ${{ env.GITHUB_ORG }} --json name -q '.[].name' --limit 100)
+
+          missing_docs=""
+          for repo in $repos; do
+            echo "Checking documentation for $repo..."
+
+            # Check for required files
+            for file in README.md CONTRIBUTING.md LICENSE CODE_OF_CONDUCT.md; do
+              if ! gh api "repos/${{ env.GITHUB_ORG }}/$repo/contents/$file" >/dev/null 2>&1; then
+                missing_docs="$missing_docs\n- $repo: Missing $file"
+              fi
+            done
+          done
+
+          if [ -n "$missing_docs" ]; then
+            echo "Repositories with missing documentation:"
+            echo -e "$missing_docs"
+          fi
+
+  org-pulse-report:
+    name: Generate Org Pulse Report
+    runs-on: ubuntu-latest
+    needs: determine-task
+    if: needs.determine-task.outputs.run-pulse == 'true'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Generate weekly report
+        run: |
+          echo "Generating weekly Org Pulse report..."
+
+          # Trigger report generation
+          response=$(curl -X POST \
+            "${{ env.JOBS_SERVICE_URL }}/api/reporters/org-pulse/generate" \
+            -H "Authorization: Bearer ${{ secrets.JOBS_API_KEY }}" \
+            -H "Content-Type: application/json" \
+            -w "\n%{http_code}")
+
+          http_code=$(echo "$response" | tail -n1)
+          body=$(echo "$response" | head -n-1)
+
+          if [ "$http_code" != "200" ] && [ "$http_code" != "201" ]; then
+            echo "Failed to generate report: $body"
+            exit 1
+          fi
+
+          echo "Org Pulse report generated successfully"
+
+      - name: Commit report to repository
+        run: |
+          # Get the report from the API
+          week=$(date +%V)
+          year=$(date +%Y)
+
+          report=$(curl -s \
+            "${{ env.JOBS_SERVICE_URL }}/api/reports/org-pulse/$year-W$week" \
+            -H "Authorization: Bearer ${{ secrets.JOBS_API_KEY }}")
+
+          if [ -n "$report" ]; then
+            # Save report
+            mkdir -p reports
+            echo "$report" > "reports/$year-W$week.md"
+
+            # Commit if changed
+            git config --local user.email "action@github.com"
+            git config --local user.name "GitHub Action"
+            git add reports/
+            git diff --staged --quiet || git commit -m "Add Org Pulse report for Week $week, $year"
+            git push
+          fi
+
+  ado-github-sync:
+    name: ADO-GitHub Sync
+    runs-on: ubuntu-latest
+    needs: determine-task
+    if: needs.determine-task.outputs.run-sync == 'true'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run ADO sync
+        env:
+          AZURE_DEVOPS_PAT: ${{ secrets.AZURE_DEVOPS_PAT }}
+        run: |
+          echo "Starting Azure DevOps to GitHub synchronization..."
+
+          # Trigger sync
+          response=$(curl -X POST \
+            "${{ env.JOBS_SERVICE_URL }}/api/sync/ado-github/trigger" \
+            -H "Authorization: Bearer ${{ secrets.JOBS_API_KEY }}" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "detectDrift": true,
+              "repairDrift": true
+            }' \
+            -w "\n%{http_code}")
+
+          http_code=$(echo "$response" | tail -n1)
+          body=$(echo "$response" | head -n-1)
+
+          if [ "$http_code" != "200" ] && [ "$http_code" != "201" ]; then
+            echo "Failed to trigger sync: $body"
+            exit 1
+          fi
+
+          echo "ADO-GitHub sync completed"
+          echo "$body" | jq '.'
+
+  notify-completion:
+    name: Send Notifications
+    runs-on: ubuntu-latest
+    needs: [health-scan, org-pulse-report, ado-github-sync]
+    if: always() && (needs.health-scan.result == 'success' || needs.org-pulse-report.result == 'success' || needs.ado-github-sync.result == 'success')
+    steps:
+      - name: Send Slack notification
+        if: env.SLACK_WEBHOOK_URL != ''
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: |
+          tasks_run=""
+
+          if [ "${{ needs.health-scan.result }}" = "success" ]; then
+            tasks_run="$tasks_run\n- ✅ Health Scan"
+          fi
+
+          if [ "${{ needs.org-pulse-report.result }}" = "success" ]; then
+            tasks_run="$tasks_run\n- ✅ Org Pulse Report"
+          fi
+
+          if [ "${{ needs.ado-github-sync.result }}" = "success" ]; then
+            tasks_run="$tasks_run\n- ✅ ADO-GitHub Sync"
+          fi
+
+          curl -X POST "$SLACK_WEBHOOK_URL" \
+            -H 'Content-Type: application/json' \
+            -d '{
+              "text": "Org OS Scheduled Tasks Completed",
+              "blocks": [
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "🤖 Org OS Tasks Completed"
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "The following tasks have been completed:'"$tasks_run"'"
+                  }
+                },
+                {
+                  "type": "context",
+                  "elements": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "Run ID: ${{ github.run_id }} | <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View Run>"
+                    }
+                  ]
+                }
+              ]
+            }'

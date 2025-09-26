@@ -1,7 +1,0 @@
-{
-  "organization": "aiwhisperer",
-  "project": "Business Setup",
-  "pat": "${AZURE_DEVOPS_PAT}",
-  "baseUrl": "https://dev.azure.com/aiwhisperer",
-  "description": "Azure DevOps configuration - PAT token should be set via environment variable AZURE_DEVOPS_PAT"
-}

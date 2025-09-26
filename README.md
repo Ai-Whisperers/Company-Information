@@ -1,176 +1,267 @@
-# AI-Whisperers Company Information
+# AI-Whisperers Org OS (Company-Information) MVP
 
-[![Documentation](https://img.shields.io/badge/Documentation-100%25%20Complete-brightgreen)](DOCUMENTATION_MASTER_INDEX.md)
-[![Repositories](https://img.shields.io/badge/Repositories-9%20Documented-blue)](#organization-repositories)
-[![Status](https://img.shields.io/badge/Status-Active%20Hub-green)](https://github.com/Ai-Whisperers/Company-Information)
+A modern web-based control plane for managing the AI-Whisperers organization's repositories, providing automated health monitoring, Azure DevOps synchronization, and documentation governance.
 
-**Central organizational hub for AI-Whisperers multi-repository management, documentation standards, and DevOps automation**
+## 🚀 Quick Start
 
-This repository serves as the command center for the AI-Whisperers organization, providing comprehensive project documentation, automation scripts, and organizational standards across all 9 repositories.
+```bash
+# Clone the repository
+git clone https://github.com/Ai-Whisperers/Company-Information.git
+cd Company-Information
 
----
+# Install dependencies
+npm install
 
-## 📁 Repository Structure
+# Setup environment
+cp .env.example .env
+# Edit .env with your configuration
 
-```
-Company-Information/
-├── 📋 DOCUMENTATION_MASTER_INDEX.md     # Central documentation hub
-├── 📚 enhanced-documentation/           # Enhanced README files for all repos
-│   ├── Comment-Analyzer-ENHANCED-README.md
-│   ├── AI-Investment-ENHANCED-README.md
-│   ├── clockify-ADO-automated-report-ENHANCED-README.md
-│   ├── Company-Information-ENHANCED-README.md
-│   ├── AI-Whisperers-website-and-courses-ENHANCED-README.md
-│   ├── AI-Whisperers-Website-ENHANCED-README.md
-│   ├── WPG-Amenities-ENHANCED-README.md
-│   ├── AI-Whisperers-Core-ENHANCED-README.md
-│   └── Call-Recorder-ENHANCED-README.md
-├── 📖 documentation-templates/          # Standardized templates
-│   ├── README_TEMPLATE.md
-│   ├── CONTRIBUTING_TEMPLATE.md
-│   ├── ARCHITECTURE_TEMPLATE.md
-│   ├── API_TEMPLATE.md
-│   └── DOCUMENTATION_STANDARDS.md
-├── 🔧 scripts/                         # PowerShell automation scripts
-│   ├── github-commit-tracker.ps1
-│   ├── new-repo-monitor.ps1
-│   ├── simple-commit-tracker.ps1
-│   ├── weekly-activity-report.ps1
-│   └── README.md
-├── ☁️ azure-devops/                    # Azure DevOps integration
-├── 🔄 azure-pipelines/                 # CI/CD pipeline configurations
-├── 📋 azure-work-items/                # Work item templates and structure
-├── ⚙️ .github/                         # GitHub Actions workflows
-├── 🔌 mcp-servers/                     # MCP server configurations
-├── 📄 CLAUDE.md                        # Claude AI integration guide
-└── 📑 NEW_TEAM_MEMBER_ONBOARDING.md   # Team onboarding procedures
+# Setup database
+cd services/jobs
+npx prisma migrate dev
+npx prisma generate
+
+# Start development servers
+npm run dev  # Runs both dashboard (port 3000) and jobs service (port 4000)
 ```
 
----
+Visit http://localhost:3000 to access the dashboard.
 
-## 🎯 Quick Start
+## 📊 Features
 
-### **📊 View Documentation Status**
-- **[📋 Documentation Master Index](DOCUMENTATION_MASTER_INDEX.md)** - Complete overview of all 9 repositories
-- **[📈 Documentation Health Dashboard](DOCUMENTATION_MASTER_INDEX.md#documentation-overview)** - Quality metrics and status
+### MVP Core Features
 
-### **📚 Access Enhanced Documentation**
-All repositories now have comprehensive enhanced documentation:
-- **Production Systems:** Comment-Analyzer, AI-Investment, clockify-ADO-automated-report
-- **Strategic Projects:** AI-Whisperers-website-and-courses, AI-Whisperers-Website  
-- **Assessment Projects:** WPG-Amenities, AI-Whisperers (Core)
-- **Decision Required:** Call-Recorder
+#### 1. **Org Pulse Report** ✅
+- Weekly automated health reports
+- Repository activity metrics
+- Top contributor tracking
+- Markdown and HTML output formats
+- Historical report storage
 
-### **🔧 Use Documentation Standards**
-- **[📖 Templates](documentation-templates/)** - Standardized repository documentation
-- **[📏 Standards](documentation-templates/DOCUMENTATION_STANDARDS.md)** - Quality guidelines and processes
-- **[🎨 Style Guide](documentation-templates/DOCUMENTATION_STANDARDS.md#content-standards)** - Writing and formatting standards
+#### 2. **ADO↔GitHub Linker** ✅
+- Bidirectional work item linking
+- Automatic PR/commit parsing for work item IDs
+- Drift detection with <10 minute SLO
+- Automatic repair mode for broken links
 
----
+#### 3. **Documentation Gate** ✅
+- CI checks for required documentation
+- Template-based bootstrapping
+- Label-triggered PR generation
+- Configurable documentation policies
 
-## 🌐 Organization Repositories
+## 🏗️ Architecture
 
-### **✅ Production Systems** (Active)
-- **[Comment-Analyzer](https://github.com/Ai-Whisperers/Comment-Analyzer)** - AI-powered customer feedback analysis (Python, GPT-4, Streamlit)
-- **[AI-Investment](https://github.com/Ai-Whisperers/AI-Investment)** - Waardhaven AutoIndex investment platform (FastAPI, Next.js, 145+ endpoints)
-- **[clockify-ADO-automated-report](https://github.com/Ai-Whisperers/clockify-ADO-automated-report)** - Time tracking automation (Python, Hexagonal Architecture)
-
-### **🔄 Active Development**
-- **[Company-Information](https://github.com/Ai-Whisperers/Company-Information)** - Central organizational hub (PowerShell, GitHub Actions)
-- **[AI-Whisperers-website-and-courses](https://github.com/Ai-Whisperers/AI-Whisperers-website-and-courses)** - Strategic educational platform (Planning)
-
-### **🔄 Migration/Assessment**
-- **[AI-Whisperers-Website](https://github.com/Ai-Whisperers/AI-Whisperers-Website)** - Legacy website (Migration planned)
-- **[WPG-Amenities](https://github.com/Ai-Whisperers/WPG-Amenities)** - Winnipeg local services (Assessment required)
-- **[AI-Whisperers](https://github.com/Ai-Whisperers/AI-Whisperers)** - Organizational standards (Development required)
-
-### **⚠️ Decision Required**
-- **[Call-Recorder](https://github.com/Ai-Whisperers/Call-Recorder)** - Inactive repository (Archive recommended)
-
----
-
-## 🤖 Automation & Management
-
-### **GitHub Organization Tracking**
-- **Repository Health Monitoring** - Automated health checks across all repositories
-- **Cross-Repository Synchronization** - Consistent standards and template deployment
-- **Documentation Quality Assurance** - Automated quality metrics and reporting
-
-### **Azure DevOps Integration**
-- **Work Item Synchronization** - Bidirectional sync between GitHub issues and Azure DevOps
-- **Pipeline Automation** - CI/CD workflows for production systems
-- **Project Portfolio Management** - Strategic planning and resource allocation
-
-### **PowerShell Automation Scripts**
-```powershell
-# Monitor all repositories
-./scripts/github-commit-tracker.ps1
-
-# Generate weekly activity report  
-./scripts/weekly-activity-report.ps1
-
-# Track new repository activity
-./scripts/new-repo-monitor.ps1
+```
+┌─────────────────────────────────┐
+│    Next.js Dashboard (3000)     │ ← User Interface
+└────────────┬────────────────────┘
+             │
+┌────────────▼────────────────────┐
+│   NestJS Jobs Service (4000)    │ ← Backend API
+└────────────┬────────────────────┘
+             │
+    ┌────────┴────────┐
+    ▼                 ▼
+┌─────────┐     ┌──────────┐
+│ Postgres│     │  Redis   │
+└─────────┘     └──────────┘
 ```
 
+## 📁 Project Structure
+
+```
+company-information/
+├── apps/
+│   └── dashboard/          # Next.js web dashboard
+├── services/
+│   └── jobs/              # NestJS backend service
+├── automation/
+│   └── github-actions/    # CI/CD workflows
+├── templates/             # Documentation templates
+├── reports/              # Generated reports
+├── scripts/              # Legacy PowerShell scripts
+└── package.json          # Monorepo root
+```
+
+## 🔧 Configuration
+
+### Required Environment Variables
+
+```bash
+# GitHub
+GITHUB_TOKEN=            # Personal access token with repo, workflow scopes
+GITHUB_ORG=Ai-Whisperers
+
+# Azure DevOps
+AZURE_DEVOPS_PAT=        # Personal access token
+AZURE_DEVOPS_ORG=        # Your ADO organization
+AZURE_DEVOPS_PROJECT=    # Your ADO project
+
+# Database
+DATABASE_URL=postgresql://user:password@localhost:5432/orgos_db
+
+# Authentication
+NEXTAUTH_SECRET=         # Min 32 characters
+GITHUB_CLIENT_ID=        # OAuth App ID
+GITHUB_CLIENT_SECRET=    # OAuth App Secret
+```
+
+See `.env.example` for complete configuration options.
+
+## 📝 Development
+
+### Running Services
+
+```bash
+# Dashboard only
+npm run dev:dashboard
+
+# Jobs service only
+npm run dev:jobs
+
+# Both services
+npm run dev
+
+# Run tests
+npm test
+
+# Lint code
+npm run lint
+
+# Type check
+npm run typecheck
+```
+
+### Database Management
+
+```bash
+cd services/jobs
+
+# Create migration
+npx prisma migrate dev --name your_migration_name
+
+# Apply migrations
+npx prisma migrate deploy
+
+# Open Prisma Studio
+npx prisma studio
+```
+
+### Adding New Features
+
+1. **Scanner**: Add to `services/jobs/src/scanners/`
+2. **API Endpoint**: Add to appropriate module in `services/jobs/src/`
+3. **Dashboard Page**: Add to `apps/dashboard/app/`
+4. **GitHub Action**: Add to `automation/github-actions/`
+
+## 🚢 Deployment
+
+### Production Deployment
+
+```bash
+# Build all services
+npm run build
+
+# Deploy dashboard to Vercel
+npm run deploy:dashboard
+
+# Deploy jobs service (Docker)
+cd services/jobs
+docker build -t org-os-jobs .
+docker run -p 4000:4000 org-os-jobs
+```
+
+### GitHub Actions Setup
+
+1. Add these secrets to your repository:
+   - `GITHUB_TOKEN`
+   - `AZURE_DEVOPS_PAT`
+   - `JOBS_API_KEY`
+   - `SLACK_WEBHOOK_URL` (optional)
+
+2. Enable GitHub Actions workflows
+
+3. The following will run automatically:
+   - Weekly Org Pulse (Mondays 9 AM)
+   - Daily health scans (2 AM)
+   - ADO sync (every 6 hours)
+   - Docs gate (on every PR)
+
+## 📊 API Documentation
+
+### Dashboard API
+- `GET /api/health` - Health check
+- `GET /api/repos` - List repositories
+- `GET /api/reports/:id` - Get specific report
+
+### Jobs Service API
+- `POST /api/scanners/health/trigger` - Trigger health scan
+- `POST /api/sync/ado-github/trigger` - Trigger ADO sync
+- `POST /api/reporters/org-pulse/generate` - Generate report
+- `GET /api/reports/org-pulse/:week` - Get weekly report
+
+Full API documentation available at http://localhost:4000/api when running locally.
+
+## 🔍 Monitoring
+
+### Health Metrics
+- Repository health scores (0-100)
+- Stale PR detection
+- Branch protection status
+- Activity tracking
+
+### Performance Targets
+- Dashboard load: <1.5s (P95)
+- Weekly scan: <8 minutes
+- ADO sync lag: <10 minutes
+- Report generation: <15 minutes
+
+## 🐛 Troubleshooting
+
+### Common Issues
+
+**Database connection failed**
+```bash
+# Check PostgreSQL is running
+pg_isready
+
+# Verify connection string
+psql $DATABASE_URL
+```
+
+**GitHub API rate limited**
+```bash
+# Check rate limit status
+curl -H "Authorization: token $GITHUB_TOKEN" \
+  https://api.github.com/rate_limit
+```
+
+**ADO sync not working**
+- Verify PAT has work item read/write permissions
+- Check organization and project names are correct
+- Ensure work items use standard ID patterns (#123, WI123)
+
+## 🤝 Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for development guidelines.
+
+## 📄 License
+
+MIT License - see [LICENSE](LICENSE) for details.
+
+## 🔗 Related Repositories
+
+- [Comment-Analyzer](https://github.com/Ai-Whisperers/Comment-Analyzer)
+- [AI-Investment](https://github.com/Ai-Whisperers/AI-Investment)
+- [clockify-ADO-automated-report](https://github.com/Ai-Whisperers/clockify-ADO-automated-report)
+
+## 📞 Support
+
+- **Issues**: [GitHub Issues](https://github.com/Ai-Whisperers/Company-Information/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/Ai-Whisperers/Company-Information/discussions)
+- **Email**: support@ai-whisperers.com
+
 ---
 
-## 📊 Current Status
-
-### **Documentation Achievement** ✅
-- **100% Repository Coverage** - All 9 repositories documented
-- **Standardized Templates** - Consistent documentation framework
-- **Quality Metrics** - Comprehensive quality assessment and tracking
-- **Strategic Planning** - Clear roadmaps for all project types
-
-### **Key Metrics**
-| Metric | Status | Details |
-|--------|--------|---------|
-| **Documentation Coverage** | ✅ 100% | All 9 repositories with enhanced documentation |
-| **Production Systems** | ✅ 3/3 | All production systems fully documented |
-| **Templates Created** | ✅ 4/4 | README, Contributing, Architecture, API |
-| **Quality Standards** | ✅ Complete | Established and implemented |
-
----
-
-## 👥 Team Resources
-
-### **New Team Members**
-- **[📑 Onboarding Guide](NEW_TEAM_MEMBER_ONBOARDING.md)** - Complete orientation process
-- **[📋 Documentation Standards](documentation-templates/DOCUMENTATION_STANDARDS.md)** - Quality guidelines
-- **[🎯 Project Overview](DOCUMENTATION_MASTER_INDEX.md)** - Organization portfolio understanding
-
-### **Development Team**
-- **[🏗️ Architecture Templates](documentation-templates/ARCHITECTURE_TEMPLATE.md)** - System design standards
-- **[📖 API Documentation](documentation-templates/API_TEMPLATE.md)** - API documentation framework
-- **[🔧 Development Standards](enhanced-documentation/AI-Whisperers-Core-ENHANCED-README.md)** - Coding standards and patterns
-
-### **Project Management**
-- **[📊 Portfolio Analysis](DOCUMENTATION_MASTER_INDEX.md#documentation-overview)** - Complete project status overview
-- **[⏰ Timeline Planning](DOCUMENTATION_MASTER_INDEX.md#documentation-roadmap)** - Project roadmaps and milestones
-- **[🎯 Strategic Planning](enhanced-documentation/AI-Whisperers-website-and-courses-ENHANCED-README.md)** - Strategic initiative planning
-
----
-
-## 📞 Support & Contact
-
-### **Documentation Support**
-- **Standards Questions:** Review [Documentation Standards](documentation-templates/DOCUMENTATION_STANDARDS.md)
-- **Template Usage:** Use provided [templates](documentation-templates/) for consistency
-- **Quality Issues:** Follow quality assurance procedures in standards guide
-
-### **Technical Support**
-- **GitHub Actions:** Automation workflows in [.github/workflows/](.github/workflows/)
-- **PowerShell Scripts:** Automation scripts in [scripts/](scripts/)
-- **Azure Integration:** DevOps integration in [azure-devops/](azure-devops/)
-
-### **Project Inquiries**
-- **Strategic Planning:** [ai.whisperer.wvdp@gmail.com](mailto:ai.whisperer.wvdp@gmail.com)
-- **Technical Architecture:** Development team leads
-- **Business Development:** Executive team contacts
-
----
-
-**Last Updated:** September 9, 2025  
-**Documentation Status:** ✅ 100% Complete (All 9 repositories documented)  
-**Maintained by:** [AI-Whisperers Team](https://github.com/Ai-Whisperers)
+Built with ❤️ by AI-Whisperers Team

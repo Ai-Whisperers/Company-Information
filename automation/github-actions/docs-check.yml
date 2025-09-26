@@ -1,0 +1,151 @@
+name: Documentation Gate
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+  push:
+    branches:
+      - main
+      - develop
+  workflow_dispatch:
+
+jobs:
+  docs-check:
+    name: Check Documentation Requirements
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check for required documentation
+        id: check-docs
+        run: |
+          echo "Checking for required documentation files..."
+
+          MISSING_FILES=""
+          REQUIRED_FILES="README.md CONTRIBUTING.md LICENSE CODE_OF_CONDUCT.md"
+
+          for file in $REQUIRED_FILES; do
+            if [ ! -f "$file" ]; then
+              MISSING_FILES="$MISSING_FILES $file"
+              echo "❌ Missing: $file"
+            else
+              echo "✅ Found: $file"
+            fi
+          done
+
+          if [ -n "$MISSING_FILES" ]; then
+            echo "missing_files=$MISSING_FILES" >> $GITHUB_OUTPUT
+            echo "status=failed" >> $GITHUB_OUTPUT
+            echo "::error::Missing required documentation files: $MISSING_FILES"
+          else
+            echo "status=passed" >> $GITHUB_OUTPUT
+            echo "All required documentation files are present"
+          fi
+
+      - name: Check optional documentation
+        run: |
+          echo "Checking for optional documentation files..."
+
+          OPTIONAL_FILES="ARCHITECTURE.md API.md CHANGELOG.md SECURITY.md"
+
+          for file in $OPTIONAL_FILES; do
+            if [ ! -f "$file" ]; then
+              echo "ℹ️ Optional file not found: $file"
+            else
+              echo "✅ Found: $file"
+            fi
+          done
+
+      - name: Validate README content
+        if: steps.check-docs.outputs.status == 'passed'
+        run: |
+          echo "Validating README.md content..."
+
+          # Check for required sections
+          REQUIRED_SECTIONS=("## Getting Started" "## Installation" "## Usage" "## Contributing" "## License")
+          MISSING_SECTIONS=""
+
+          for section in "${REQUIRED_SECTIONS[@]}"; do
+            if ! grep -q "$section" README.md; then
+              MISSING_SECTIONS="$MISSING_SECTIONS '$section'"
+              echo "❌ Missing section: $section"
+            else
+              echo "✅ Found section: $section"
+            fi
+          done
+
+          if [ -n "$MISSING_SECTIONS" ]; then
+            echo "::warning::README.md is missing recommended sections: $MISSING_SECTIONS"
+          fi
+
+      - name: Generate documentation report
+        if: always()
+        run: |
+          cat > docs-report.md << EOF
+          # Documentation Check Report
+
+          **Repository:** ${{ github.repository }}
+          **Branch:** ${{ github.ref_name }}
+          **Status:** ${{ steps.check-docs.outputs.status == 'passed' && '✅ PASSED' || '❌ FAILED' }}
+
+          ## Required Files
+          EOF
+
+          for file in README.md CONTRIBUTING.md LICENSE CODE_OF_CONDUCT.md; do
+            if [ -f "$file" ]; then
+              echo "- ✅ $file" >> docs-report.md
+            else
+              echo "- ❌ $file (MISSING)" >> docs-report.md
+            fi
+          done
+
+          echo "" >> docs-report.md
+          echo "## Optional Files" >> docs-report.md
+
+          for file in ARCHITECTURE.md API.md CHANGELOG.md SECURITY.md; do
+            if [ -f "$file" ]; then
+              echo "- ✅ $file" >> docs-report.md
+            else
+              echo "- ℹ️ $file (not present)" >> docs-report.md
+            fi
+          done
+
+      - name: Upload documentation report
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: docs-report
+          path: docs-report.md
+
+      - name: Comment on PR
+        if: github.event_name == 'pull_request' && steps.check-docs.outputs.status == 'failed'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const missingFiles = '${{ steps.check-docs.outputs.missing_files }}'.trim().split(' ');
+            const body = `## 📚 Documentation Check Failed
+
+            This PR is missing required documentation files:
+            ${missingFiles.map(file => `- ❌ \`${file}\``).join('\n')}
+
+            ### How to fix:
+            1. Add the missing documentation files to your branch
+            2. You can use our templates by adding the \`bootstrap:docs\` label to this PR
+            3. Or create the files manually following our [documentation guidelines](https://github.com/Ai-Whisperers/Company-Information/blob/main/docs/DOCUMENTATION_GUIDE.md)
+
+            Need help? Check our [contributing guide](https://github.com/Ai-Whisperers/Company-Information/blob/main/CONTRIBUTING.md).`;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: body
+            });
+
+      - name: Fail if documentation is missing
+        if: steps.check-docs.outputs.status == 'failed'
+        run: |
+          echo "Documentation check failed. Missing files: ${{ steps.check-docs.outputs.missing_files }}"
+          exit 1
