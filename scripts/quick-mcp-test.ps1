@@ -1,8 +1,12 @@
 # Quick MCP Test with configured GitHub token
 Write-Host "`n=== Quick MCP Configuration Test ===" -ForegroundColor Cyan
 
-# Set the GitHub token for this session
-$env:GITHUB_TOKEN = "***REMOVED***"
+# Check if GitHub token is set in environment
+if (-not $env:GITHUB_TOKEN) {
+    Write-Host "ERROR: GITHUB_TOKEN environment variable not set" -ForegroundColor Red
+    Write-Host "Please set it using: `$env:GITHUB_TOKEN = 'your-token-here'" -ForegroundColor Yellow
+    exit 1
+}
 
 # Also set some reasonable defaults for filesystem
 $env:FILESYSTEM_ROOT = "C:\Users\kyrian\Documents\Company-Information"

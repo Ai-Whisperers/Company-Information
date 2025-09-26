@@ -1,5 +1,11 @@
 # Test GitHub Token
-$token = "***REMOVED***"
+# Get token from environment variable - set this before running the script
+$token = $env:GITHUB_TOKEN
+if (-not $token) {
+    Write-Host "ERROR: GITHUB_TOKEN environment variable not set" -ForegroundColor Red
+    Write-Host "Please set it using: `$env:GITHUB_TOKEN = 'your-token-here'" -ForegroundColor Yellow
+    exit 1
+}
 
 Write-Host "`nTesting GitHub API Connection..." -ForegroundColor Cyan
 
