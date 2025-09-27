@@ -25,6 +25,9 @@ build/
 logs/**
 scripts/**/reports/**
 *.log
+
+# Local reports
+local-reports/
 scripts/**/monitoring-*.log
 scripts/**/sync-*.log
 npm-debug.log*
