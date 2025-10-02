@@ -48,6 +48,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Fixed dashboard todosDir reference
 
 ### Security
+- **CVE-2025-54798 Mitigation**: Added npm override to fix `tmp` package vulnerability (≤ 0.2.3 → ^0.2.4)
+  - Low severity symlink vulnerability in dev dependency
+  - Affects: @nestjs/cli → inquirer → external-editor → tmp
+  - Added `"overrides": { "tmp": "^0.2.4" }` in package.json
+  - Documented in new SECURITY.md file
+  - Clean install required to fully apply the override
 - **npm Dependencies**: Audited and documented vulnerabilities
   - 5 low severity issues in dev dependencies (@nestjs/cli, tmp, inquirer)
   - Breaking change fix available but deferred (would require @nestjs/cli@11.0.10)
