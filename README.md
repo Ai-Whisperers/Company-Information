@@ -22,10 +22,10 @@ npx prisma migrate dev
 npx prisma generate
 
 # Start development servers
-npm run dev  # Runs both dashboard (port 3000) and jobs service (port 4000)
+npm run dev  # Runs both dashboard (port 3001) and jobs service (port 4000)
 ```
 
-Visit http://localhost:3000 to access the dashboard.
+Visit http://localhost:3001 to access the dashboard.
 
 ## 📊 Features
 
@@ -54,7 +54,7 @@ Visit http://localhost:3000 to access the dashboard.
 
 ```
 ┌─────────────────────────────────┐
-│    Next.js Dashboard (3000)     │ ← User Interface
+│  Express Dashboard (3001)       │ ← User Interface
 └────────────┬────────────────────┘
              │
 ┌────────────▼────────────────────┐
@@ -64,7 +64,8 @@ Visit http://localhost:3000 to access the dashboard.
     ┌────────┴────────┐
     ▼                 ▼
 ┌─────────┐     ┌──────────┐
-│ Postgres│     │  Redis   │
+│ SQLite/ │     │  Redis   │
+│Postgres │     │(Optional)│
 └─────────┘     └──────────┘
 ```
 
@@ -89,6 +90,10 @@ company-information/
 ### Required Environment Variables
 
 ```bash
+# Port Configuration
+DASHBOARD_PORT=3001      # Dashboard server port (default: 3001)
+JOBS_PORT=4000          # Jobs service port (default: 4000)
+
 # GitHub
 GITHUB_TOKEN=            # Personal access token with repo, workflow scopes
 GITHUB_ORG=Ai-Whisperers
@@ -100,6 +105,12 @@ AZURE_DEVOPS_PROJECT=    # Your ADO project
 
 # Database
 DATABASE_URL=postgresql://user:password@localhost:5432/orgos_db
+# or use SQLite for development:
+# DATABASE_URL=file:./dev.db
+
+# Redis (optional for job queues)
+REDIS_HOST=localhost
+REDIS_PORT=6379
 
 # Authentication
 NEXTAUTH_SECRET=         # Min 32 characters
@@ -190,18 +201,20 @@ docker run -p 4000:4000 org-os-jobs
 
 ## 📊 API Documentation
 
-### Dashboard API
+### Dashboard API (Port 3001)
 - `GET /api/health` - Health check
-- `GET /api/repos` - List repositories
-- `GET /api/reports/:id` - Get specific report
+- `GET /api/config` - Get runtime configuration
+- `GET /api/project/:name/todos` - Get project TODOs
+- `GET /api/project/:name/github` - Get GitHub data
+- `POST /api/excalibur/sync` - Run Excalibur sync
 
-### Jobs Service API
+### Jobs Service API (Port 4000)
 - `POST /api/scanners/health/trigger` - Trigger health scan
 - `POST /api/sync/ado-github/trigger` - Trigger ADO sync
 - `POST /api/reporters/org-pulse/generate` - Generate report
 - `GET /api/reports/org-pulse/:week` - Get weekly report
 
-Full API documentation available at http://localhost:4000/api when running locally.
+Full API documentation available at http://localhost:4000/api (Swagger) when running locally.
 
 ## 🔍 Monitoring
 
@@ -236,6 +249,11 @@ psql $DATABASE_URL
 curl -H "Authorization: token $GITHUB_TOKEN" \
   https://api.github.com/rate_limit
 ```
+
+**Redis not running (optional)**
+- Bull queues require Redis for background jobs
+- For development without Redis, job features will be disabled
+- Install Redis: https://redis.io/docs/getting-started/
 
 **ADO sync not working**
 - Verify PAT has work item read/write permissions

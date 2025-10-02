@@ -12,7 +12,7 @@ export default defineConfig({
     ['list'],
   ],
   use: {
-    baseURL: 'http://localhost:3000',
+    baseURL: process.env.DASHBOARD_URL || 'http://localhost:3001',
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
@@ -40,13 +40,13 @@ export default defineConfig({
   webServer: [
     {
       command: 'npm run dev:dashboard',
-      port: 3000,
+      port: parseInt(process.env.DASHBOARD_PORT || '3001'),
       timeout: 120 * 1000,
       reuseExistingServer: !process.env.CI,
     },
     {
       command: 'npm run dev:jobs',
-      port: 4000,
+      port: parseInt(process.env.JOBS_PORT || '4000'),
       timeout: 120 * 1000,
       reuseExistingServer: !process.env.CI,
     },

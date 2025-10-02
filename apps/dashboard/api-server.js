@@ -7,7 +7,7 @@ const { promisify } = require('util');
 
 const execAsync = promisify(exec);
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.DASHBOARD_PORT || 3001;
 
 // Middleware
 app.use(cors());
@@ -500,6 +500,15 @@ function calculateHealthScore(githubData) {
 
     return Math.max(0, Math.min(100, score));
 }
+
+// Serve config endpoint for frontend
+app.get('/api/config', (req, res) => {
+    res.json({
+        dashboardPort: PORT,
+        jobsServiceUrl: process.env.JOBS_SERVICE_URL || 'http://localhost:4000',
+        wsUrl: `ws://localhost:${PORT}`
+    });
+});
 
 // Start server
 server.listen(PORT, () => {

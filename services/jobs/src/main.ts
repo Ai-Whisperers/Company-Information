@@ -8,7 +8,7 @@ async function bootstrap() {
 
   // Enable CORS for dashboard
   app.enableCors({
-    origin: process.env.DASHBOARD_URL || 'http://localhost:3000',
+    origin: process.env.DASHBOARD_URL || 'http://localhost:3001',
     credentials: true,
   });
 
@@ -31,7 +31,7 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
-  const port = process.env.PORT || 4000;
+  const port = process.env.JOBS_PORT || 4000;
   await app.listen(port);
   console.log(`🚀 Jobs service running on http://localhost:${port}`);
   console.log(`📚 API documentation: http://localhost:${port}/api`);

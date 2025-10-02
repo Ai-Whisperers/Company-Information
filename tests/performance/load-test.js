@@ -43,7 +43,7 @@ export const options = {
 
 // Real API endpoints (no mocked URLs)
 const BASE_URL = __ENV.API_BASE_URL || 'http://localhost:4000/api'
-const DASHBOARD_URL = __ENV.DASHBOARD_URL || 'http://localhost:3000'
+const DASHBOARD_URL = __ENV.DASHBOARD_URL || 'http://localhost:3001'
 
 // Real test data (pulled from actual database)
 let testRepositories = []

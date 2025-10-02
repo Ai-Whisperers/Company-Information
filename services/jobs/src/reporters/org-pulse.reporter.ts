@@ -331,7 +331,7 @@ export class OrgPulseReporter {
                   type: 'plain_text',
                   text: 'View Full Report',
                 },
-                url: `${process.env.DASHBOARD_URL || 'http://localhost:3000'}/reports/${summary.year}-W${summary.week}`,
+                url: `${process.env.DASHBOARD_URL || 'http://localhost:3001'}/reports/${summary.year}-W${summary.week}`,
               },
             ],
           },

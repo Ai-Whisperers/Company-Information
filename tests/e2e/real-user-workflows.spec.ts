@@ -37,7 +37,7 @@ test.describe('Complete User Workflows - Real Data E2E', () => {
     page = await context.newPage()
 
     // Configure real API base URL
-    await page.goto(process.env.DASHBOARD_URL || 'http://localhost:3000')
+    await page.goto(process.env.DASHBOARD_URL || 'http://localhost:3001')
 
     // Wait for real application to load
     await page.waitForLoadState('networkidle')

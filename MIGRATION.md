@@ -81,9 +81,14 @@ DATABASE_URL=postgresql://user:password@localhost:5432/orgos_db
 REDIS_HOST=localhost
 REDIS_PORT=6379
 
+# Port Configuration
+DASHBOARD_PORT=3001
+JOBS_PORT=4000
+
 # Dashboard
+DASHBOARD_URL=http://localhost:3001
 NEXT_PUBLIC_API_URL=http://localhost:4000
-NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_URL=http://localhost:3001
 NEXTAUTH_SECRET=generate_a_random_32_character_string
 
 # File System (auto-detected by scripts now)
@@ -165,8 +170,8 @@ The new architecture has two main services:
 npm run dev
 
 # Option 2: Start individually
-npm run dev:dashboard  # Port 3000
-npm run dev:jobs       # Port 4000
+npm run dev:dashboard  # Port 3001 (Express server)
+npm run dev:jobs       # Port 4000 (NestJS backend)
 
 # Option 3: Use the batch scripts (Windows)
 .\start-dev.bat
@@ -176,7 +181,7 @@ npm run dev:jobs       # Port 4000
 
 ### Verify Services Are Running
 
-- **Dashboard**: http://localhost:3000
+- **Dashboard**: http://localhost:3001
 - **Backend API**: http://localhost:4000
 - **API Docs**: http://localhost:4000/api (Swagger)
 - **Health Check**: http://localhost:4000/health
@@ -252,7 +257,7 @@ Run these commands to verify everything works:
 
 ```bash
 # Check dashboard health
-curl http://localhost:3000
+curl http://localhost:3001
 
 # Check backend health
 curl http://localhost:4000/health
@@ -339,12 +344,12 @@ cd services/jobs && npm install
 ```bash
 # Find process using port
 # Windows:
-netstat -ano | findstr :3000
+netstat -ano | findstr :3001
 # Linux/Mac:
-lsof -i :3000
+lsof -i :3001
 
 # Kill process or change port in .env
-PORT=3001 npm run dev:dashboard
+DASHBOARD_PORT=3002 npm run dev:dashboard
 ```
 
 ### Issue: "Database connection failed"
@@ -473,7 +478,7 @@ Use this checklist to track your progress:
 - [ ] Set up database (PostgreSQL or SQLite)
 - [ ] Ran migrations (`npx prisma migrate deploy`)
 - [ ] Started services (`npm run dev`)
-- [ ] Verified dashboard (http://localhost:3000)
+- [ ] Verified dashboard (http://localhost:3001)
 - [ ] Verified API (http://localhost:4000)
 - [ ] Ran tests (`npm test`)
 - [ ] Tested PowerShell scripts

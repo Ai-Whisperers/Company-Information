@@ -13,11 +13,13 @@ class ProjectDashboard {
         this.currentProject = null;
         this.refreshInterval = null;
         this.lastFetchTime = {};
+        this.config = null;
 
         this.init();
     }
 
-    init() {
+    async init() {
+        await this.loadConfig();
         this.setupEventListeners();
         this.populateProjectDropdown();
         this.startAutoRefresh();
@@ -25,9 +27,24 @@ class ProjectDashboard {
         this.connectWebSocket();
     }
 
+    async loadConfig() {
+        try {
+            const response = await fetch('/api/config');
+            this.config = await response.json();
+        } catch (error) {
+            console.error('Failed to load config, using defaults:', error);
+            this.config = {
+                dashboardPort: 3001,
+                jobsServiceUrl: 'http://localhost:4000',
+                wsUrl: 'ws://localhost:3001'
+            };
+        }
+    }
+
     connectWebSocket() {
         try {
-            this.ws = new WebSocket('ws://localhost:3001');
+            const wsUrl = this.config?.wsUrl || 'ws://localhost:3001';
+            this.ws = new WebSocket(wsUrl);
 
             this.ws.onopen = () => {
                 console.log('WebSocket connected');
@@ -154,7 +171,7 @@ class ProjectDashboard {
     async fetchProjectTodos() {
         // Try to fetch from API first, fallback to mock data
         try {
-            const response = await fetch(`http://localhost:3001/api/project/${this.currentProject.name}/todos`);
+            const response = await fetch(`/api/project/${this.currentProject.name}/todos`);
             if (response.ok) {
                 const data = await response.json();
                 if (data.success && data.todos) {
@@ -232,7 +249,7 @@ class ProjectDashboard {
     async fetchGitHubData() {
         // Try to fetch from API first
         try {
-            const response = await fetch(`http://localhost:3001/api/project/${this.currentProject.name}/github`);
+            const response = await fetch(`/api/project/${this.currentProject.name}/github`);
             if (response.ok) {
                 const data = await response.json();
                 if (data.success && data.data) {
