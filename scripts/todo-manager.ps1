@@ -3,9 +3,12 @@ param(
     [Parameter(Position=0)]
     [ValidateSet("list", "status", "report")]
     [string]$Action = "status",
-    
+
     [string]$Repository = "all"
 )
+
+# Load path resolver utility
+. "$PSScriptRoot\common\PathResolver.ps1"
 
 # Configuration
 $Config = @{
@@ -43,20 +46,20 @@ function Get-AllRepositories {
 
 function Get-LocalTodoFile {
     param([string]$RepoName)
-    
-    $todoPath = "C:\Users\kyrian\Documents\Company-Information\project-todos\$RepoName-TODO.md"
+
+    $todoPath = Get-ProjectPath "project-todos\$RepoName-TODO.md"
     if (Test-Path $todoPath) {
         return Get-Content $todoPath -Raw
     }
-    
+
     # Check for company-information-todos.md specifically
     if ($RepoName -eq "Company-Information") {
-        $companyTodoPath = "C:\Users\kyrian\Documents\Company-Information\project-todos\company-information-todos.md"
+        $companyTodoPath = Get-ProjectPath "project-todos\company-information-todos.md"
         if (Test-Path $companyTodoPath) {
             return Get-Content $companyTodoPath -Raw
         }
     }
-    
+
     return $null
 }
 

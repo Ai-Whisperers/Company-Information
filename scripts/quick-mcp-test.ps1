@@ -1,6 +1,9 @@
 # Quick MCP Test with configured GitHub token
 Write-Host "`n=== Quick MCP Configuration Test ===" -ForegroundColor Cyan
 
+# Load path resolver utility
+. "$PSScriptRoot\common\PathResolver.ps1"
+
 # Check if GitHub token is set in environment
 if (-not $env:GITHUB_TOKEN) {
     Write-Host "ERROR: GITHUB_TOKEN environment variable not set" -ForegroundColor Red
@@ -9,7 +12,7 @@ if (-not $env:GITHUB_TOKEN) {
 }
 
 # Also set some reasonable defaults for filesystem
-$env:FILESYSTEM_ROOT = "C:\Users\kyrian\Documents\Company-Information"
+$env:FILESYSTEM_ROOT = Get-ProjectRoot
 $env:FILESYSTEM_ALLOW_WRITE = "false"
 
 Write-Host "`nEnvironment variables configured for session:" -ForegroundColor Green

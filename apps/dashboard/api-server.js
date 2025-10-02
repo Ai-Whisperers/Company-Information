@@ -17,8 +17,8 @@ app.use(express.static('.'));
 // Configuration
 const CONFIG = {
     organization: 'Ai-Whisperers',
-    todosDir: path.join(__dirname, '../../'), // Use the root directory since project-todos was deleted
-    excaliburScript: 'C:\\Users\\kyrian\\Documents\\Company-Information\\scripts\\excalibur-command.ps1',
+    todosDir: path.join(__dirname, '../../project-todos'), // Now restored!
+    excaliburScript: path.join(__dirname, '../../scripts/excalibur-command.ps1'),
     githubToken: process.env.GITHUB_TOKEN
 };
 

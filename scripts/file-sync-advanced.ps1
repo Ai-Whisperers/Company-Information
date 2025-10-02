@@ -3,17 +3,20 @@ param(
     [Parameter(Position=0)]
     [ValidateSet("sync", "status", "validate", "test")]
     [string]$Action = "status",
-    
+
     [string]$Repository = "all",
     [string]$SourceFile = "",
     [switch]$DryRun,
     [switch]$VerboseLogging
 )
 
+# Load path resolver utility
+. "$PSScriptRoot\common\PathResolver.ps1"
+
 # Configuration
 $Config = @{
     Organization = "Ai-Whisperers"
-    SourcePath = "C:\Users\kyrian\Documents\Company-Information\documentation-templates"
+    SourcePath = Get-ProjectPath "documentation-templates"
     LogPath = ".\sync-logs"
     SyncableFiles = @(
         @{ Name = "README_TEMPLATE.md"; Target = "docs/templates/README_TEMPLATE.md" }

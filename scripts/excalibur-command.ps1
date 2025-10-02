@@ -8,16 +8,16 @@ param(
     [switch]$Verbose
 )
 
+# Load path resolver utility
+. "$PSScriptRoot\common\PathResolver.ps1"
+
 # Configuration
 $OrganizationName = "Ai-Whisperers"
-$TodosDirectory = "C:\Users\kyrian\Documents\Company-Information\project-todos"
-$LogFile = "C:\Users\kyrian\Documents\Company-Information\logs\excalibur-$(Get-Date -Format 'yyyyMMdd-HHmmss').log"
+$TodosDirectory = Get-ProjectPath "project-todos"
+$LogFile = Get-ProjectPath "logs\excalibur-$(Get-Date -Format 'yyyyMMdd-HHmmss').log"
 
 # Ensure logs directory exists
-$LogDir = Split-Path $LogFile -Parent
-if (!(Test-Path $LogDir)) {
-    New-Item -ItemType Directory -Path $LogDir -Force | Out-Null
-}
+Ensure-DirectoryExists (Get-ProjectPath "logs") -Silent
 
 function Write-ExcaliburLog {
     param([string]$Message, [string]$Level = "INFO")

@@ -1,6 +1,9 @@
 # Full MCP Configuration Test with All Tokens
 Write-Host "`n=== Complete MCP Configuration Test ===" -ForegroundColor Cyan
 
+# Load path resolver utility
+. "$PSScriptRoot\common\PathResolver.ps1"
+
 # Check if tokens are set in environment
 if (-not $env:GITHUB_TOKEN) {
     Write-Host "ERROR: GITHUB_TOKEN environment variable not set" -ForegroundColor Red
@@ -15,7 +18,7 @@ if (-not $env:AZURE_DEVOPS_PAT) {
 $env:AZURE_DEVOPS_ORG = "aiwhisperer"
 $env:AZURE_DEVOPS_PROJECT = "Business Setup"
 $env:AZURE_DEVOPS_BASE_URL = "https://dev.azure.com/aiwhisperer"
-$env:FILESYSTEM_ROOT = "C:\Users\kyrian\Documents\Company-Information"
+$env:FILESYSTEM_ROOT = Get-ProjectRoot
 $env:FILESYSTEM_ALLOW_WRITE = "false"
 
 Write-Host "`nEnvironment variables configured:" -ForegroundColor Green
