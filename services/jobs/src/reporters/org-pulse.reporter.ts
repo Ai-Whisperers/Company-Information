@@ -164,7 +164,7 @@ export class OrgPulseReporter {
       .sort((a, b) => b.commits - a.commits)
       .slice(0, 5);
 
-    const averageHealth = repositories.reduce((sum, r) => sum + r.healthScore, 0) / repositories.length;
+    const averageHealth = repositories.reduce((sum: number, r: any) => sum + r.healthScore, 0) / repositories.length;
 
     return {
       repos: repoMetrics,

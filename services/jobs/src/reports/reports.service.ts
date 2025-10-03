@@ -37,7 +37,7 @@ export class ReportsService {
 
       // Fetch last commit for each repository
       const reposWithCommits = await Promise.all(
-        dbRepos.map(async (repo) => {
+        dbRepos.map(async (repo: any) => {
           const lastCommit = await this.github.getLastCommit(repo.name);
           return {
             ...repo,
@@ -271,7 +271,7 @@ export class ReportsService {
       },
     });
 
-    return repositories.map(repo => ({
+    return repositories.map((repo: any) => ({
       repository: repo.name,
       lastReport: repo.reports[0]?.generatedAt || null,
       reportId: repo.reports[0]?.id || null,
