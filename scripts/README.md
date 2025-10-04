@@ -77,39 +77,44 @@ Create scheduled tasks to run these scripts automatically:
 
 1. **Daily Commit Summary** (run daily at 9 AM):
    ```cmd
-   powershell.exe -ExecutionPolicy Bypass -File "C:\Users\kyrian\Documents\Company-Information\scripts\github-commit-tracker.ps1"
+   powershell.exe -ExecutionPolicy Bypass -File "%PROJECT_ROOT%\scripts\github-commit-tracker.ps1"
    ```
 
 2. **Weekly Activity Report** (run Mondays at 8 AM):
    ```cmd
-   powershell.exe -ExecutionPolicy Bypass -File "C:\Users\kyrian\Documents\Company-Information\scripts\weekly-activity-report.ps1"
+   powershell.exe -ExecutionPolicy Bypass -File "%PROJECT_ROOT%\scripts\weekly-activity-report.ps1"
    ```
 
 3. **New Repository Check** (run daily at 10 AM):
    ```cmd
-   powershell.exe -ExecutionPolicy Bypass -File "C:\Users\kyrian\Documents\Company-Information\scripts\new-repo-monitor.ps1"
+   powershell.exe -ExecutionPolicy Bypass -File "%PROJECT_ROOT%\scripts\new-repo-monitor.ps1"
    ```
+
+   Replace `%PROJECT_ROOT%` with your actual project root path.
 
 ### PowerShell Profile Integration
 
 Add to your PowerShell profile (`$PROFILE`) for quick access:
 
 ```powershell
+# Set your project root path
+$ProjectRoot = "YOUR_PROJECT_ROOT_PATH_HERE"
+
 # GitHub tracking aliases
-function Get-DailyCommits { 
-    & "C:\Users\kyrian\Documents\Company-Information\scripts\github-commit-tracker.ps1" @args 
+function Get-DailyCommits {
+    & "$ProjectRoot\scripts\github-commit-tracker.ps1" @args
 }
 
-function Get-NewRepos { 
-    & "C:\Users\kyrian\Documents\Company-Information\scripts\new-repo-monitor.ps1" @args 
+function Get-NewRepos {
+    & "$ProjectRoot\scripts\new-repo-monitor.ps1" @args
 }
 
-function Get-WeeklyReport { 
-    & "C:\Users\kyrian\Documents\Company-Information\scripts\weekly-activity-report.ps1" @args 
+function Get-WeeklyReport {
+    & "$ProjectRoot\scripts\weekly-activity-report.ps1" @args
 }
 
 Set-Alias -Name commits -Value Get-DailyCommits
-Set-Alias -Name newrepos -Value Get-NewRepos  
+Set-Alias -Name newrepos -Value Get-NewRepos
 Set-Alias -Name weeklyreport -Value Get-WeeklyReport
 ```
 

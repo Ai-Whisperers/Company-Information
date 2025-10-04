@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing'
 import { INestApplication } from '@nestjs/common'
 import * as request from 'supertest'
+import { Response } from 'supertest'
 import { AppModule } from './app.module'
 
 describe('AppController (Integration)', () => {
@@ -24,7 +25,7 @@ describe('AppController (Integration)', () => {
       return request(app.getHttpServer())
         .get('/api/health')
         .expect(200)
-        .expect((res) => {
+        .expect((res: Response) => {
           expect(res.body).toHaveProperty('status', 'healthy')
           expect(res.body).toHaveProperty('timestamp')
           expect(res.body).toHaveProperty('uptime')
@@ -46,7 +47,7 @@ describe('AppController (Integration)', () => {
         .set('Authorization', 'Bearer test-token')
         .send({ repositories: ['test-repo'] })
         .expect(202)
-        .expect((res) => {
+        .expect((res: Response) => {
           expect(res.body).toHaveProperty('jobId')
           expect(res.body).toHaveProperty('status', 'queued')
         })
@@ -71,7 +72,7 @@ describe('AppController (Integration)', () => {
           pullRequestNumber: 123
         })
         .expect(202)
-        .expect((res) => {
+        .expect((res: Response) => {
           expect(res.body).toHaveProperty('jobId')
           expect(res.body).toHaveProperty('status')
         })
@@ -99,7 +100,7 @@ describe('AppController (Integration)', () => {
         .get('/api/sync/ado-github/status')
         .set('Authorization', 'Bearer test-token')
         .expect(200)
-        .expect((res) => {
+        .expect((res: Response) => {
           expect(res.body).toHaveProperty('lastSync')
           expect(res.body).toHaveProperty('totalSynced')
           expect(res.body).toHaveProperty('pendingSync')
@@ -116,7 +117,7 @@ describe('AppController (Integration)', () => {
         .set('Authorization', 'Bearer test-token')
         .send({ week: 35, year: 2025 })
         .expect(202)
-        .expect((res) => {
+        .expect((res: Response) => {
           expect(res.body).toHaveProperty('reportId')
           expect(res.body).toHaveProperty('status', 'generating')
         })
@@ -158,7 +159,7 @@ describe('AppController (Integration)', () => {
         .get('/api/reports/org-pulse/37?year=2025')
         .set('Authorization', 'Bearer test-token')
         .expect(200)
-        .expect((res) => {
+        .expect((res: Response) => {
           expect(res.body).toHaveProperty('week', 37)
           expect(res.body).toHaveProperty('year', 2025)
           expect(res.body).toHaveProperty('content')
@@ -185,7 +186,7 @@ describe('AppController (Integration)', () => {
           files: ['README.md', 'docs/API.md']
         })
         .expect(200)
-        .expect((res) => {
+        .expect((res: Response) => {
           expect(res.body).toHaveProperty('passed')
           expect(res.body).toHaveProperty('violations')
           expect(res.body).toHaveProperty('suggestions')
@@ -202,7 +203,7 @@ describe('AppController (Integration)', () => {
           files: []
         })
         .expect(200)
-        .expect((res) => {
+        .expect((res: Response) => {
           expect(res.body.passed).toBe(false)
           expect(res.body.violations).toContain('Missing README.md')
         })
@@ -215,7 +216,7 @@ describe('AppController (Integration)', () => {
         .get('/api/jobs/queue')
         .set('Authorization', 'Bearer test-token')
         .expect(200)
-        .expect((res) => {
+        .expect((res: Response) => {
           expect(res.body).toHaveProperty('waiting')
           expect(res.body).toHaveProperty('active')
           expect(res.body).toHaveProperty('completed')
@@ -235,7 +236,7 @@ describe('AppController (Integration)', () => {
           message: 'Test notification from integration tests'
         })
         .expect(200)
-        .expect((res) => {
+        .expect((res: Response) => {
           expect(res.body).toHaveProperty('sent', true)
           expect(res.body).toHaveProperty('channel', 'slack')
         })
@@ -279,7 +280,7 @@ describe('AppController (Integration)', () => {
           pullRequestNumber: 'abc' // Should be number
         })
         .expect(400)
-        .expect((res) => {
+        .expect((res: Response) => {
           expect(res.body).toHaveProperty('error')
           expect(res.body).toHaveProperty('message')
         })

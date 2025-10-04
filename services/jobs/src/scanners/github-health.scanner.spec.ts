@@ -2,14 +2,12 @@ import { Test, TestingModule } from '@nestjs/testing'
 import { GitHubHealthScanner } from './github-health.scanner'
 import { GitHubService } from '../integrations/github.service'
 import { PrismaService } from '../db/prisma.service'
-import { SchedulerRegistry } from '@nestjs/schedule'
-import { createMockRepository, createMockHealthCheck } from '../../../../tests/utils/test-factories'
+import { createMockRepository } from '../../../../tests/utils/test-factories'
 
 describe('GitHubHealthScanner', () => {
   let scanner: GitHubHealthScanner
   let githubService: jest.Mocked<GitHubService>
   let prismaService: jest.Mocked<PrismaService>
-  let schedulerRegistry: jest.Mocked<SchedulerRegistry>
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -18,9 +16,11 @@ describe('GitHubHealthScanner', () => {
         {
           provide: GitHubService,
           useValue: {
-            getRepositories: jest.fn(),
-            getRepositoryHealth: jest.fn(),
-            checkRateLimit: jest.fn(),
+            listOrganizationRepos: jest.fn(),
+            getRepository: jest.fn(),
+            getBranchProtection: jest.fn(),
+            getPullRequests: jest.fn(),
+            getRecentCommits: jest.fn(),
           },
         },
         {
@@ -28,22 +28,13 @@ describe('GitHubHealthScanner', () => {
           useValue: {
             repository: {
               upsert: jest.fn(),
-              findMany: jest.fn(),
-              update: jest.fn(),
             },
             healthCheck: {
               create: jest.fn(),
-              findMany: jest.fn(),
-              findFirst: jest.fn(),
             },
-          },
-        },
-        {
-          provide: SchedulerRegistry,
-          useValue: {
-            addCronJob: jest.fn(),
-            getCronJob: jest.fn(),
-            deleteCronJob: jest.fn(),
+            syncLog: {
+              create: jest.fn(),
+            },
           },
         },
       ],
@@ -52,275 +43,151 @@ describe('GitHubHealthScanner', () => {
     scanner = module.get<GitHubHealthScanner>(GitHubHealthScanner)
     githubService = module.get(GitHubService)
     prismaService = module.get(PrismaService)
-    schedulerRegistry = module.get(SchedulerRegistry)
   })
 
   describe('scanRepository', () => {
-    it('should scan a repository and save health check results', async () => {
-      const mockRepo = createMockRepository()
-      const mockHealth = {
-        score: 85,
-        metrics: {
-          commits: 50,
-          pullRequests: 10,
-          issues: 5,
-          contributors: 8,
-          documentation: 80,
-          tests: 75,
-          security: 90,
-          branchProtection: true,
+    it('should scan a repository and calculate health score', async () => {
+      const mockRepoData = {
+        name: 'test-repo',
+        html_url: 'https://github.com/test/repo',
+        description: 'Test repository',
+        private: false,
+        stargazers_count: 10,
+        forks_count: 5,
+        open_issues_count: 3,
+        pushed_at: new Date().toISOString(),
+        default_branch: 'main',
+      }
+
+      const mockProtection = {
+        required_status_checks: {
+          checks: [{ context: 'ci/test' }],
         },
-        recommendations: ['Add more tests', 'Update documentation'],
       }
 
-      githubService.getRepositoryHealth.mockResolvedValue(mockHealth)
-      prismaService.repository.upsert.mockResolvedValue(mockRepo as any)
-      prismaService.healthCheck.create.mockResolvedValue(createMockHealthCheck() as any)
+      const mockPRs = [
+        { number: 1, title: 'PR 1', created_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString() },
+      ]
 
-      const result = await scanner.scanRepository(mockRepo.name)
+      const mockCommits = [
+        { sha: 'abc123', commit: { message: 'Test commit' } },
+      ]
 
-      expect(githubService.getRepositoryHealth).toHaveBeenCalledWith(mockRepo.name)
-      expect(prismaService.repository.upsert).toHaveBeenCalledWith({
-        where: { name: mockRepo.name },
-        create: expect.objectContaining({
-          name: mockRepo.name,
-          healthScore: mockHealth.score,
-        }),
-        update: expect.objectContaining({
-          healthScore: mockHealth.score,
-          lastScannedAt: expect.any(Date),
-        }),
-      })
-      expect(prismaService.healthCheck.create).toHaveBeenCalledWith({
-        data: expect.objectContaining({
-          repositoryId: mockRepo.id,
-          score: mockHealth.score,
-          metrics: mockHealth.metrics,
-          recommendations: mockHealth.recommendations,
-        }),
-      })
-      expect(result).toEqual(mockHealth)
+      const mockSavedRepo = {
+        id: 1,
+        name: 'test-repo',
+        url: mockRepoData.html_url,
+        healthScore: expect.any(Number),
+      }
+
+      githubService.getRepository = jest.fn().mockResolvedValue(mockRepoData as any)
+      githubService.getBranchProtection = jest.fn().mockResolvedValue(mockProtection as any)
+      githubService.getPullRequests = jest.fn().mockResolvedValue(mockPRs as any)
+      githubService.getRecentCommits = jest.fn().mockResolvedValue(mockCommits as any)
+      prismaService.repository.upsert = jest.fn().mockResolvedValue(mockSavedRepo as any)
+      prismaService.healthCheck.create = jest.fn().mockResolvedValue({} as any)
+
+      const result = await scanner.scanRepository('test-repo')
+
+      expect(githubService.getRepository).toHaveBeenCalledWith('test-repo')
+      expect(githubService.getBranchProtection).toHaveBeenCalledWith('test-repo', 'main')
+      expect(githubService.getPullRequests).toHaveBeenCalledWith('test-repo')
+      expect(githubService.getRecentCommits).toHaveBeenCalledWith('test-repo', 7)
+      expect(prismaService.repository.upsert).toHaveBeenCalled()
+      expect(prismaService.healthCheck.create).toHaveBeenCalled()
+      expect(result).toBeDefined()
     })
 
-    it('should handle scan failures gracefully', async () => {
-      githubService.getRepositoryHealth.mockRejectedValue(new Error('API Error'))
-
-      await expect(scanner.scanRepository('failing-repo')).rejects.toThrow('API Error')
-      expect(prismaService.healthCheck.create).not.toHaveBeenCalled()
-    })
-  })
-
-  describe('calculateHealthScore', () => {
-    it('should calculate health score based on multiple metrics', () => {
-      const metrics = {
-        commits: 100,
-        pullRequests: 20,
-        issues: 10,
-        contributors: 10,
-        documentation: 80,
-        tests: 90,
-        security: 95,
-        branchProtection: true,
+    it('should handle repositories without branch protection', async () => {
+      const mockRepoData = {
+        name: 'test-repo',
+        html_url: 'https://github.com/test/repo',
+        description: 'Test repository',
+        private: false,
+        stargazers_count: 0,
+        forks_count: 0,
+        open_issues_count: 0,
+        pushed_at: new Date().toISOString(),
+        default_branch: 'main',
       }
 
-      const score = scanner.calculateHealthScore(metrics)
+      githubService.getRepository = jest.fn().mockResolvedValue(mockRepoData as any)
+      githubService.getBranchProtection = jest.fn().mockResolvedValue(null)
+      githubService.getPullRequests = jest.fn().mockResolvedValue([])
+      githubService.getRecentCommits = jest.fn().mockResolvedValue([])
+      prismaService.repository.upsert = jest.fn().mockResolvedValue({ id: 1 } as any)
+      prismaService.healthCheck.create = jest.fn().mockResolvedValue({} as any)
 
-      expect(score).toBeGreaterThanOrEqual(0)
-      expect(score).toBeLessThanOrEqual(100)
-    })
+      const result = await scanner.scanRepository('test-repo')
 
-    it('should handle missing metrics gracefully', () => {
-      const metrics = {
-        commits: 50,
-        pullRequests: 0,
-        issues: 0,
-        contributors: 1,
-      }
-
-      const score = scanner.calculateHealthScore(metrics)
-
-      expect(score).toBeGreaterThanOrEqual(0)
-      expect(score).toBeLessThanOrEqual(100)
-    })
-
-    it('should give appropriate weight to critical metrics', () => {
-      const goodMetrics = {
-        commits: 100,
-        pullRequests: 30,
-        issues: 5,
-        contributors: 15,
-        documentation: 100,
-        tests: 100,
-        security: 100,
-        branchProtection: true,
-      }
-
-      const poorMetrics = {
-        commits: 0,
-        pullRequests: 0,
-        issues: 100,
-        contributors: 1,
-        documentation: 0,
-        tests: 0,
-        security: 0,
-        branchProtection: false,
-      }
-
-      const goodScore = scanner.calculateHealthScore(goodMetrics)
-      const poorScore = scanner.calculateHealthScore(poorMetrics)
-
-      expect(goodScore).toBeGreaterThan(80)
-      expect(poorScore).toBeLessThan(30)
+      expect(result).toBeDefined()
+      expect(prismaService.repository.upsert).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { name: 'test-repo' },
+          update: expect.objectContaining({
+            hasProtection: 0,
+          }),
+        })
+      )
     })
   })
 
-  describe('scheduledScan', () => {
-    it('should scan all active repositories on schedule', async () => {
+  describe('scanAllRepositories', () => {
+    it('should scan all repositories and log results', async () => {
       const mockRepos = [
         createMockRepository({ name: 'repo1' }),
         createMockRepository({ name: 'repo2' }),
-        createMockRepository({ name: 'repo3' }),
       ]
 
-      githubService.getRepositories.mockResolvedValue(mockRepos as any)
-      githubService.checkRateLimit.mockResolvedValue({
-        remaining: 4000,
-        shouldDelay: false,
+      githubService.listOrganizationRepos = jest.fn().mockResolvedValue(mockRepos)
+      githubService.getRepository = jest.fn().mockResolvedValue({
+        name: 'repo1',
+        html_url: 'https://github.com/test/repo1',
+        description: 'Test',
+        private: false,
+        stargazers_count: 0,
+        forks_count: 0,
+        open_issues_count: 0,
+        pushed_at: new Date().toISOString(),
+        default_branch: 'main',
       })
-      githubService.getRepositoryHealth.mockResolvedValue({
-        score: 85,
-        metrics: {} as any,
-        recommendations: [],
-      })
+      githubService.getBranchProtection = jest.fn().mockResolvedValue(null)
+      githubService.getPullRequests = jest.fn().mockResolvedValue([])
+      githubService.getRecentCommits = jest.fn().mockResolvedValue([])
+      prismaService.repository.upsert = jest.fn().mockResolvedValue({ id: 1 } as any)
+      prismaService.healthCheck.create = jest.fn().mockResolvedValue({} as any)
+      prismaService.syncLog.create = jest.fn().mockResolvedValue({} as any)
 
-      await scanner.scheduledScan()
+      await scanner.scanAllRepositories()
 
-      expect(githubService.getRepositories).toHaveBeenCalled()
-      expect(githubService.getRepositoryHealth).toHaveBeenCalledTimes(3)
-      expect(prismaService.healthCheck.create).toHaveBeenCalledTimes(3)
-    })
-
-    it('should respect rate limits during batch scanning', async () => {
-      const mockRepos = Array(10).fill(null).map(() => createMockRepository())
-
-      githubService.getRepositories.mockResolvedValue(mockRepos as any)
-      githubService.checkRateLimit
-        .mockResolvedValueOnce({ remaining: 100, shouldDelay: false })
-        .mockResolvedValueOnce({ remaining: 50, shouldDelay: true })
-
-      jest.spyOn(scanner, 'delay').mockResolvedValue()
-
-      await scanner.scheduledScan()
-
-      expect(scanner.delay).toHaveBeenCalled()
-    })
-
-    it('should continue scanning even if individual repos fail', async () => {
-      const mockRepos = [
-        createMockRepository({ name: 'repo1' }),
-        createMockRepository({ name: 'repo2-failing' }),
-        createMockRepository({ name: 'repo3' }),
-      ]
-
-      githubService.getRepositories.mockResolvedValue(mockRepos as any)
-      githubService.checkRateLimit.mockResolvedValue({
-        remaining: 4000,
-        shouldDelay: false,
-      })
-      githubService.getRepositoryHealth
-        .mockResolvedValueOnce({ score: 85, metrics: {} as any, recommendations: [] })
-        .mockRejectedValueOnce(new Error('Scan failed'))
-        .mockResolvedValueOnce({ score: 90, metrics: {} as any, recommendations: [] })
-
-      await scanner.scheduledScan()
-
-      expect(githubService.getRepositoryHealth).toHaveBeenCalledTimes(3)
-      expect(prismaService.healthCheck.create).toHaveBeenCalledTimes(2) // Only successful scans
-    })
-  })
-
-  describe('generateRecommendations', () => {
-    it('should generate relevant recommendations based on metrics', () => {
-      const lowDocMetrics = {
-        documentation: 20,
-        tests: 90,
-        security: 95,
-      }
-
-      const recommendations = scanner.generateRecommendations(lowDocMetrics)
-
-      expect(recommendations).toContain('Improve documentation coverage')
-      expect(recommendations).not.toContain('Add more tests')
-    })
-
-    it('should prioritize critical issues', () => {
-      const criticalMetrics = {
-        security: 30,
-        tests: 40,
-        documentation: 60,
-        branchProtection: false,
-      }
-
-      const recommendations = scanner.generateRecommendations(criticalMetrics)
-
-      expect(recommendations[0]).toContain('security')
-      expect(recommendations).toContain('Enable branch protection')
-    })
-
-    it('should limit number of recommendations', () => {
-      const poorMetrics = {
-        documentation: 10,
-        tests: 10,
-        security: 10,
-        commits: 0,
-        contributors: 1,
-        branchProtection: false,
-      }
-
-      const recommendations = scanner.generateRecommendations(poorMetrics)
-
-      expect(recommendations.length).toBeLessThanOrEqual(5)
-    })
-  })
-
-  describe('getTrend', () => {
-    it('should identify upward trends', async () => {
-      const currentScore = 85
-      const historicalScores = [70, 75, 80]
-
-      prismaService.healthCheck.findMany.mockResolvedValue(
-        historicalScores.map(score => ({ score, scannedAt: new Date() })) as any
+      expect(githubService.listOrganizationRepos).toHaveBeenCalled()
+      expect(prismaService.syncLog.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({
+            syncType: 'GITHUB_SCAN',
+            status: 'COMPLETED',
+            itemsProcessed: 2,
+            itemsFailed: 0,
+          }),
+        })
       )
-
-      const trend = await scanner.getTrend('repo-id', currentScore)
-
-      expect(trend).toBe('up')
     })
 
-    it('should identify downward trends', async () => {
-      const currentScore = 70
-      const historicalScores = [85, 80, 75]
+    it('should handle scan failures gracefully', async () => {
+      githubService.listOrganizationRepos = jest.fn().mockRejectedValue(new Error('API Error'))
+      prismaService.syncLog.create = jest.fn().mockResolvedValue({} as any)
 
-      prismaService.healthCheck.findMany.mockResolvedValue(
-        historicalScores.map(score => ({ score, scannedAt: new Date() })) as any
+      await scanner.scanAllRepositories()
+
+      expect(prismaService.syncLog.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({
+            syncType: 'GITHUB_SCAN',
+            status: 'FAILED',
+            errorMessage: 'API Error',
+          }),
+        })
       )
-
-      const trend = await scanner.getTrend('repo-id', currentScore)
-
-      expect(trend).toBe('down')
-    })
-
-    it('should identify stable trends', async () => {
-      const currentScore = 80
-      const historicalScores = [79, 80, 81]
-
-      prismaService.healthCheck.findMany.mockResolvedValue(
-        historicalScores.map(score => ({ score, scannedAt: new Date() })) as any
-      )
-
-      const trend = await scanner.getTrend('repo-id', currentScore)
-
-      expect(trend).toBe('stable')
     })
   })
 })

@@ -15,7 +15,7 @@ module.exports = {
     '!src/**/*.entity.ts',
     '!**/node_modules/**',
   ],
-  coverageThresholds: {
+  coverageThreshold: {
     global: {
       branches: 70,
       functions: 70,

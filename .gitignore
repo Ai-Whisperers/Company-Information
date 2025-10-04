@@ -15,11 +15,18 @@ build/
 *~
 .DS_Store
 
-# Environment variables
+# Environment variables (NEVER commit actual .env files!)
 .env
 .env.local
 .env.*.local
 *.env
+# But DO keep templates
+!.env.example
+!**/.env.example
+
+# Specific env files to ignore
+services/jobs/.env
+apps/dashboard/.env
 
 # Logs
 logs/**
@@ -63,6 +70,10 @@ __pycache__/
 tmp/
 temp/
 *.tmp
+
+# Project-specific generated files
+project-todos/*.backup-*
+project-todos/excalibur-summary-*.md
 
 # OS Files
 Thumbs.db

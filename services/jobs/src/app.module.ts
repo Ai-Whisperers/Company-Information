@@ -14,7 +14,12 @@ import { HealthController } from './health.controller';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: ['.env', '.env.local'],
+      // Read from ROOT .env (two levels up from services/jobs/src)
+      envFilePath: [
+        '../../../.env',
+        '../../../.env.local',
+        '.env', // Fallback for local overrides (not recommended)
+      ],
     }),
     ScheduleModule.forRoot(),
     BullModule.forRoot({
