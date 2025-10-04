@@ -12,20 +12,52 @@ cd Company-Information
 # Install dependencies
 npm install
 
-# Setup environment
+# Setup environment (ROOT .env - single source of truth)
 cp .env.example .env
-# Edit .env with your configuration
+# Edit .env with your GitHub token and other credentials
 
-# Setup database
+# Initialize database
 cd services/jobs
-npx prisma migrate dev
+npx prisma migrate deploy
 npx prisma generate
+cd ../..
 
 # Start development servers
 npm run dev  # Runs both dashboard (port 3001) and jobs service (port 4000)
 ```
 
 Visit http://localhost:3001 to access the dashboard.
+
+## ⚙️ Environment Configuration
+
+This project uses a **single ROOT `.env` file** as the source of truth for all services.
+
+**DO NOT** create `.env` files in subdirectories (services/jobs, apps/dashboard).
+
+### Required Variables
+
+```bash
+# GitHub (required)
+GITHUB_TOKEN=your_github_personal_access_token
+
+# Database (required)
+DATABASE_URL=file:./services/jobs/dev.db
+
+# Services (auto-configured)
+JOBS_PORT=4000
+DASHBOARD_PORT=3001
+```
+
+See `.env.example` for the complete list of variables with documentation.
+
+### How It Works
+
+1. **Root Contract**: All environment variables defined in ROOT `.env`
+2. **Jobs Service**: Reads from `../../.env` (relative to services/jobs/src)
+3. **Dashboard**: Loads ROOT `.env` via dotenv
+4. **Scripts**: Use PathResolver for automatic project root detection
+
+**No hardcoded paths anywhere!** ✅
 
 ## 📊 Features
 
@@ -74,14 +106,14 @@ Visit http://localhost:3001 to access the dashboard.
 ```
 company-information/
 ├── apps/
-│   └── dashboard/          # Next.js web dashboard
+│   └── dashboard/          # Express web dashboard (Vanilla JS)
 ├── services/
 │   └── jobs/              # NestJS backend service
 ├── automation/
 │   └── github-actions/    # CI/CD workflows
 ├── templates/             # Documentation templates
 ├── reports/              # Generated reports
-├── scripts/              # Legacy PowerShell scripts
+├── scripts/              # PowerShell automation scripts
 └── package.json          # Monorepo root
 ```
 
@@ -111,11 +143,6 @@ DATABASE_URL=postgresql://user:password@localhost:5432/orgos_db
 # Redis (optional for job queues)
 REDIS_HOST=localhost
 REDIS_PORT=6379
-
-# Authentication
-NEXTAUTH_SECRET=         # Min 32 characters
-GITHUB_CLIENT_ID=        # OAuth App ID
-GITHUB_CLIENT_SECRET=    # OAuth App Secret
 ```
 
 See `.env.example` for complete configuration options.
@@ -163,7 +190,7 @@ npx prisma studio
 
 1. **Scanner**: Add to `services/jobs/src/scanners/`
 2. **API Endpoint**: Add to appropriate module in `services/jobs/src/`
-3. **Dashboard Page**: Add to `apps/dashboard/app/`
+3. **Dashboard UI**: Update `apps/dashboard/dashboard.js` (vanilla JS)
 4. **GitHub Action**: Add to `automation/github-actions/`
 
 ## 🚢 Deployment
@@ -171,16 +198,20 @@ npx prisma studio
 ### Production Deployment
 
 ```bash
-# Build all services
-npm run build
+# Build jobs service
+npm run build:jobs
 
-# Deploy dashboard to Vercel
-npm run deploy:dashboard
+# Deploy dashboard (static hosting - no build required)
+# Dashboard can be served from any static host or reverse proxy
 
 # Deploy jobs service (Docker)
 cd services/jobs
 docker build -t org-os-jobs .
 docker run -p 4000:4000 org-os-jobs
+
+# Or deploy dashboard with jobs service
+cd apps/dashboard
+node api-server.js
 ```
 
 ### GitHub Actions Setup
