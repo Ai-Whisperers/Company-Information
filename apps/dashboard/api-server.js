@@ -4,6 +4,40 @@ const fs = require('fs').promises;
 const path = require('path');
 const { exec } = require('child_process');
 const { promisify } = require('util');
+const https = require('https');
+const http = require('http');
+require('dotenv').config({ path: path.join(__dirname, '../../.env') }); // Load ROOT .env
+
+// Polyfill fetch for Node.js < 18
+if (typeof fetch === 'undefined') {
+    global.fetch = function(url, options = {}) {
+        return new Promise((resolve, reject) => {
+            const urlObj = new URL(url);
+            const protocol = urlObj.protocol === 'https:' ? https : http;
+
+            const req = protocol.request(url, {
+                method: options.method || 'GET',
+                headers: options.headers || {}
+            }, (res) => {
+                let data = '';
+                res.on('data', chunk => data += chunk);
+                res.on('end', () => {
+                    resolve({
+                        ok: res.statusCode >= 200 && res.statusCode < 300,
+                        status: res.statusCode,
+                        statusText: res.statusMessage,
+                        json: async () => JSON.parse(data),
+                        text: async () => data
+                    });
+                });
+            });
+
+            req.on('error', reject);
+            if (options.body) req.write(options.body);
+            req.end();
+        });
+    };
+}
 
 const execAsync = promisify(exec);
 const app = express();
@@ -14,12 +48,13 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static('.'));
 
-// Configuration
+// Configuration - All values from ROOT .env
 const CONFIG = {
-    organization: 'Ai-Whisperers',
-    todosDir: path.join(__dirname, '../../project-todos'), // Now restored!
+    organization: process.env.GITHUB_ORG || 'Ai-Whisperers',
+    todosDir: path.join(__dirname, '../../project-todos'),
     excaliburScript: path.join(__dirname, '../../scripts/excalibur-command.ps1'),
-    githubToken: process.env.GITHUB_TOKEN
+    githubToken: process.env.GITHUB_TOKEN,
+    jobsServiceUrl: process.env.JOBS_SERVICE_URL || 'http://localhost:4000'
 };
 
 // Cache for GitHub data
@@ -38,6 +73,54 @@ const projectMapping = {
 };
 
 // API Endpoints
+
+// Health check endpoint
+const startTime = Date.now();
+app.get('/health', async (req, res) => {
+    const checks = {
+        dashboard: true,
+        jobsService: false,
+        filesystem: false,
+    };
+
+    // Check jobs service connectivity
+    try {
+        const response = await fetch(`${CONFIG.jobsServiceUrl}/health`);
+        checks.jobsService = response.ok;
+    } catch (error) {
+        checks.jobsService = false;
+    }
+
+    // Check filesystem access
+    try {
+        await fs.access(CONFIG.todosDir);
+        checks.filesystem = true;
+    } catch (error) {
+        checks.filesystem = false;
+    }
+
+    const isHealthy = checks.dashboard && checks.filesystem;
+
+    res.status(isHealthy ? 200 : 503).json({
+        status: isHealthy ? 'healthy' : 'degraded',
+        timestamp: new Date().toISOString(),
+        service: 'org-os-dashboard',
+        version: '1.0.0',
+        uptime: Math.floor((Date.now() - startTime) / 1000),
+        checks,
+        memoryUsage: {
+            rss: Math.round(process.memoryUsage().rss / 1024 / 1024),
+            heapUsed: Math.round(process.memoryUsage().heapUsed / 1024 / 1024),
+        },
+    });
+});
+
+app.get('/api/health', async (req, res) => {
+    // Redirect to /health for consistency
+    const healthResponse = await fetch(`http://localhost:${PORT}/health`);
+    const data = await healthResponse.json();
+    res.status(healthResponse.status).json(data);
+});
 
 // Get project list
 app.get('/api/projects', async (req, res) => {
@@ -61,13 +144,42 @@ app.get('/api/projects', async (req, res) => {
 app.get('/api/project/:name/todos', async (req, res) => {
     const { name } = req.params;
 
-    if (!projectMapping[name]) {
-        return res.status(404).json({ success: false, error: 'Project not found' });
-    }
+    try {
+        // Fetch TODOs from jobs service API
+        const response = await fetch(`${CONFIG.jobsServiceUrl}/api/reports/todos/${name}`);
 
-    // Return mock TODOs based on project name - keeping exact same format as before
-    const mockTodos = generateMockTodos(name);
-    res.json({ success: true, todos: mockTodos });
+        if (!response.ok) {
+            // Fallback to mock data if API fails
+            console.warn(`Jobs service unavailable, using mock data for ${name}`);
+            const mockTodos = generateMockTodos(name);
+            return res.json({ success: true, todos: mockTodos, source: 'mock' });
+        }
+
+        const todosData = await response.json();
+
+        // Transform API response to dashboard format
+        const todos = (todosData.todos || []).map(todo => ({
+            category: todo.priority || 'General',
+            text: todo.text || todo.content || 'Untitled TODO',
+            priority: todo.priority?.toLowerCase() || 'medium',
+            completed: todo.completed || false,
+            file: todo.file,
+            line: todo.line
+        }));
+
+        res.json({
+            success: true,
+            todos,
+            source: 'api',
+            totalTodos: todosData.totalTodos || todos.length,
+            criticalCount: todosData.criticalCount || 0
+        });
+    } catch (error) {
+        console.error(`Error fetching TODOs for ${name}:`, error.message);
+        // Fallback to mock data on error
+        const mockTodos = generateMockTodos(name);
+        res.json({ success: true, todos: mockTodos, source: 'mock', error: error.message });
+    }
 });
 
 // Get GitHub data for project
@@ -225,42 +337,72 @@ function generateMockTodos(projectName) {
 }
 
 async function fetchGitHubData(projectName) {
-    // Return mock data with realistic values for dashboard display
-    const mockData = {
-        repository: {
-            name: projectName,
-            description: `${projectName} project for AI Whisperers`,
-            lastPush: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000).toISOString(),
-            openIssues: Math.floor(Math.random() * 15) + 1,
-            stargazers: Math.floor(Math.random() * 50),
-            language: ['JavaScript', 'Python', 'TypeScript', 'C#'][Math.floor(Math.random() * 4)]
-        },
-        issues: Math.floor(Math.random() * 15) + 1,
-        pullRequests: Math.floor(Math.random() * 5),
-        recentCommits: [
-            {
-                sha: Math.random().toString(36).substr(2, 7),
-                message: `feat: Update ${projectName} functionality`,
-                author: 'developer1',
-                date: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString()
-            },
-            {
-                sha: Math.random().toString(36).substr(2, 7),
-                message: `fix: Resolve issues in ${projectName}`,
-                author: 'developer2',
-                date: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString()
-            },
-            {
-                sha: Math.random().toString(36).substr(2, 7),
-                message: `docs: Update README for ${projectName}`,
-                author: 'developer3',
-                date: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
-            }
-        ],
-        lastCommit: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString()
-    };
+    // Fetch real data from jobs service API
+    try {
+        const response = await fetch(`${CONFIG.jobsServiceUrl}/api/reports/repositories`);
 
-    return mockData;
+        if (!response.ok) {
+            throw new Error(`API responded with status ${response.status}`);
+        }
+
+        const repositories = await response.json();
+        const repo = repositories.find(r => r.name === projectName || r.name.toLowerCase() === projectName.toLowerCase());
+
+        if (!repo) {
+            // Fallback if repository not found in API
+            console.warn(`Repository ${projectName} not found in API, returning minimal data`);
+            return {
+                repository: {
+                    name: projectName,
+                    description: `${projectName} project`,
+                    lastPush: new Date().toISOString(),
+                    openIssues: 0,
+                    stargazers: 0,
+                    language: 'Unknown'
+                },
+                issues: 0,
+                pullRequests: 0,
+                recentCommits: [],
+                lastCommit: new Date().toISOString()
+            };
+        }
+
+        // Transform API response to dashboard format
+        return {
+            repository: {
+                name: repo.name,
+                description: repo.description || `${repo.name} project`,
+                lastPush: repo.lastActivity || repo.updatedAt || new Date().toISOString(),
+                openIssues: repo.openIssues || 0,
+                stargazers: repo.starCount || 0,
+                language: repo.language || 'Unknown'
+            },
+            issues: repo.openIssues || 0,
+            pullRequests: repo.openPRs || 0,
+            recentCommits: [], // Will be populated by separate API call if needed
+            lastCommit: repo.lastActivity || new Date().toISOString(),
+            healthScore: repo.healthScore || 0,
+            healthStatus: repo.healthStatus || 'UNKNOWN'
+        };
+    } catch (error) {
+        console.error(`Error fetching GitHub data for ${projectName}:`, error.message);
+        // Return minimal data on error
+        return {
+            repository: {
+                name: projectName,
+                description: `${projectName} project`,
+                lastPush: new Date().toISOString(),
+                openIssues: 0,
+                stargazers: 0,
+                language: 'Unknown'
+            },
+            issues: 0,
+            pullRequests: 0,
+            recentCommits: [],
+            lastCommit: new Date().toISOString(),
+            error: error.message
+        };
+    }
 }
 
 async function runExcaliburSync() {
