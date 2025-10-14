@@ -10,7 +10,7 @@ Synchronize GitHub issues/PRs with Azure DevOps work items.
 
 ## Script Execution
 ```powershell
-powershell.exe -ExecutionPolicy Bypass -File ./scripts/azure-devops-sync.ps1 -DryRun -Verbose
+powershell.exe -ExecutionPolicy Bypass -File ./scripts/azure-devops/azure-devops-sync.ps1 -DryRun -Verbose
 ```
 
 ## Safety

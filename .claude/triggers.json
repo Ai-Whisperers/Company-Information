@@ -1,32 +1,32 @@
 {
   "magic_commands": {
     "claude pull excalibur": {
-      "script": "powershell.exe -ExecutionPolicy Bypass -File ./scripts/excalibur-command.ps1 -DryRun -Verbose",
+      "script": "powershell.exe -ExecutionPolicy Bypass -File ./scripts/todos/excalibur-command.ps1 -DryRun -Verbose",
       "description": "Sync todos from GitHub organization",
       "requires_approval": true
     },
     "/ops:weekly-health": {
-      "script": "powershell.exe -ExecutionPolicy Bypass -File ./scripts/weekly-activity-report.ps1 -Verbose",
+      "script": "powershell.exe -ExecutionPolicy Bypass -File ./scripts/monitoring/weekly-activity-report.ps1 -Verbose",
       "description": "Generate weekly repository health report",
       "requires_approval": true
     },
     "/ops:deps": {
-      "script": "powershell.exe -ExecutionPolicy Bypass -File ./scripts/dependency-tracker.ps1 -All -Out ./scripts/dependency-reports -Verbose",
+      "script": "powershell.exe -ExecutionPolicy Bypass -File ./scripts/todos/dependency-tracker.ps1 -All -Out ./scripts/release/reports -Verbose",
       "description": "Track dependencies across repositories",
       "requires_approval": false
     },
     "/ado:sync-iteration": {
-      "script": "powershell.exe -ExecutionPolicy Bypass -File ./scripts/azure-devops-sync.ps1 -DryRun -Verbose",
+      "script": "powershell.exe -ExecutionPolicy Bypass -File ./scripts/azure-devops/azure-devops-sync.ps1 -DryRun -Verbose",
       "description": "Sync GitHub with Azure DevOps work items",
       "requires_approval": true
     },
     "/todos:status": {
-      "script": "powershell.exe -ExecutionPolicy Bypass -File ./scripts/todo-manager.ps1 status",
+      "script": "powershell.exe -ExecutionPolicy Bypass -File ./scripts/todos/todo-manager.ps1 status",
       "description": "View todos across all repositories",
       "requires_approval": false
     },
     "/todos:sync": {
-      "script": "powershell.exe -ExecutionPolicy Bypass -File ./scripts/todo-manager.ps1 sync -Verbose",
+      "script": "powershell.exe -ExecutionPolicy Bypass -File ./scripts/todos/todo-manager.ps1 sync -Verbose",
       "description": "Synchronize todo changes across repos",
       "requires_approval": true
     },

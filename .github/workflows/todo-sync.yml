@@ -3,7 +3,7 @@ name: Todo Synchronization
 on:
   push:
     paths:
-      - 'project-todos/**'
+      - 'data/todos/**'
   schedule:
     - cron: '0 8 * * MON,WED,FRI' # Monday, Wednesday, Friday at 8 AM
   workflow_dispatch: # Manual trigger
@@ -47,12 +47,12 @@ jobs:
       - name: Detect Changed Todo Files
         id: changes
         run: |
-          # Get changed files in the project-todos directory
+          # Get changed files in the data/todos directory
           if [ "${{ github.event_name }}" == "push" ]; then
-            changed_files=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} -- project-todos/ || true)
+            changed_files=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} -- data/todos/ || true)
           else
             # For scheduled runs, check all todo files
-            changed_files=$(find project-todos/ -name "*.md" -not -name "README.md" | head -20)
+            changed_files=$(find data/todos/ -name "*.md" -not -name "README.md" | head -20)
           fi
           
           echo "Changed todo files:"
@@ -61,7 +61,7 @@ jobs:
           # Convert to space-separated list for matrix
           todo_files=""
           for file in $changed_files; do
-            if [[ $file == project-todos/*-todos.md ]]; then
+            if [[ $file == data/todos/*-todos.md ]]; then
               repo_name=$(basename "$file" -todos.md)
               # Map file names to repository names
               case $repo_name in
@@ -305,4 +305,4 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "- Check the created/updated issues in target repositories" >> $GITHUB_STEP_SUMMARY
           echo "- Review and update todo completion status" >> $GITHUB_STEP_SUMMARY
-          echo "- Run \`scripts/manage-todos.ps1 -Action status\` for current status" >> $GITHUB_STEP_SUMMARY
+          echo "- Run \`scripts/todos/manage-todos.ps1 -Action status\` for current status" >> $GITHUB_STEP_SUMMARY

@@ -51,8 +51,8 @@ app.use(express.static('.'));
 // Configuration - All values from ROOT .env
 const CONFIG = {
     organization: process.env.GITHUB_ORG || 'Ai-Whisperers',
-    todosDir: path.join(__dirname, '../../project-todos'),
-    excaliburScript: path.join(__dirname, '../../scripts/excalibur-command.ps1'),
+    todosDir: path.join(__dirname, '../../data/todos'),
+    excaliburScript: path.join(__dirname, '../../scripts/todos/excalibur-command.ps1'),
     githubToken: process.env.GITHUB_TOKEN,
     jobsServiceUrl: process.env.JOBS_SERVICE_URL || 'http://localhost:4000'
 };

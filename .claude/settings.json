@@ -25,10 +25,11 @@
   },
   "write_policies": {
     "allowlist": [
-      "project-todos/**",
-      "logs/**", 
-      "scripts/**/reports/**",
-      "enhanced-documentation/**",
+      "data/todos/**",
+      "data/logs/**",
+      "data/reports/**",
+      "scripts/release/reports/**",
+      "docs/**",
       ".claude/**"
     ],
     "approval_threshold": {

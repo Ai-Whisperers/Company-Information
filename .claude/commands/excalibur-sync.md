@@ -10,12 +10,12 @@ claude pull excalibur
 
 ## Script Execution
 ```powershell
-powershell.exe -ExecutionPolicy Bypass -File ./scripts/excalibur-command.ps1 -DryRun -Verbose
+powershell.exe -ExecutionPolicy Bypass -File ./scripts/todos/excalibur-command.ps1 -DryRun -Verbose
 ```
 
 ## What it does
 - Fetches live data from GitHub API
-- Updates project-todos/*.md files  
+- Updates data/todos/*.md files
 - Syncs TODO.md to each repository
 - Generates execution summary
 

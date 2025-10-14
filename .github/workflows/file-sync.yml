@@ -435,7 +435,7 @@ Rule: ${{ matrix.rule }}
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "- Check target repositories for updated files" >> $GITHUB_STEP_SUMMARY
           echo "- Verify builds and tests in affected repositories" >> $GITHUB_STEP_SUMMARY  
-          echo "- Run \`scripts/file-sync.ps1 -Action status\` for detailed status" >> $GITHUB_STEP_SUMMARY
+          echo "- Run \`scripts/file-sync/file-sync.ps1 -Action status\` for detailed status" >> $GITHUB_STEP_SUMMARY
           
           # Create issue for failures if needed
           if [[ "${{ needs.sync-files.result }}" == "failure" ]]; then
@@ -485,7 +485,7 @@ Some file synchronization tasks failed during this run. Please check the workflo
 2. Verify target repositories are accessible
 3. Ensure GitHub CLI authentication is working
 4. Check if target files have conflicts or protection rules
-5. Run manual sync with: \`scripts/file-sync.ps1 -Action sync -Verbose\`
+5. Run manual sync with: \`scripts/file-sync/file-sync.ps1 -Action sync -Verbose\`
 
 ## Next Actions
 
