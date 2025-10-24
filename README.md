@@ -82,6 +82,21 @@ See `.env.example` for the complete list of variables with documentation.
 - Label-triggered PR generation
 - Configurable documentation policies
 
+#### 4. **Multi-Agent Orchestration** ✅ 🆕
+- Plugin-based agent architecture (6 agents, 4 plugins)
+- Multi-agent workflow automation (4 pre-configured workflows)
+- Integration with existing NestJS services
+- Progressive disclosure pattern for minimal token usage
+- Clear evolution path to MCP server (see [roadmap](./automation/MCP_EVOLUTION_ROADMAP.md))
+
+**Available Workflows:**
+- `weekly-org-pulse` - Weekly health reporting
+- `pr-quality-gate` - Automated PR validation
+- `ado-sync-cycle` - ADO-GitHub synchronization
+- `compliance-audit` - Full repository compliance scan
+
+See [automation/README.md](./automation/README.md) for complete documentation.
+
 ## 🏗️ Architecture
 
 ```
@@ -110,6 +125,11 @@ company-information/
 ├── services/
 │   └── jobs/              # NestJS backend service
 ├── automation/
+│   ├── orchestration/     # 🆕 Multi-agent orchestration system
+│   │   ├── config/        # Agent, workflow, plugin configs
+│   │   ├── core/          # Orchestration engine
+│   │   ├── agents/        # Agent implementations
+│   │   └── workflows/     # Workflow orchestrators
 │   └── github-actions/    # CI/CD workflows
 ├── templates/             # Documentation templates
 ├── reports/              # Generated reports

@@ -1,0 +1,40 @@
+{
+  "name": "@ai-whisperers/orchestration",
+  "version": "1.0.0",
+  "description": "Multi-agent orchestration system for AI-Whisperers",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "clean": "rm -rf dist",
+    "typecheck": "tsc --noEmit",
+    "workflow:org-pulse": "ts-node orchestration/workflows/weekly-org-pulse.ts",
+    "workflow:compliance": "ts-node orchestration/workflows/compliance-audit.ts"
+  },
+  "keywords": [
+    "orchestration",
+    "multi-agent",
+    "automation",
+    "workflows"
+  ],
+  "author": "AI-Whisperers",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "typescript": "^5.3.3",
+    "ts-node": "^10.9.2"
+  },
+  "dependencies": {},
+  "peerDependencies": {
+    "@nestjs/common": "^10.0.0",
+    "@nestjs/core": "^10.0.0"
+  },
+  "files": [
+    "dist",
+    "orchestration/config/*.json",
+    "README.md",
+    "MCP_EVOLUTION_ROADMAP.md",
+    "INTEGRATION_GUIDE.md"
+  ]
+}
