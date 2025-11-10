@@ -11,6 +11,8 @@ interface RepoCardProps {
     issues: number;
     lastActivity: string;
     protection: boolean;
+    projectStatus?: string;
+    pricingInfo?: string;
   };
 }
 
@@ -18,7 +20,7 @@ export default function RepoCard({ repo }: RepoCardProps) {
   return (
     <div className="card hover:shadow-lg transition-shadow">
       <div className="flex items-start justify-between mb-4">
-        <div>
+        <div className="flex-1">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
             {repo.name}
           </h3>
@@ -28,9 +30,21 @@ export default function RepoCard({ repo }: RepoCardProps) {
               {repo.health} health
             </span>
           </div>
+          {repo.projectStatus && (
+            <div className="mt-2 px-3 py-1 bg-yellow-100 dark:bg-yellow-900/30 border border-yellow-300 dark:border-yellow-700 rounded-md">
+              <p className="text-xs font-medium text-yellow-800 dark:text-yellow-200">
+                {repo.projectStatus}
+              </p>
+              {repo.pricingInfo && (
+                <p className="text-xs text-yellow-700 dark:text-yellow-300 mt-1">
+                  {repo.pricingInfo}
+                </p>
+              )}
+            </div>
+          )}
         </div>
         {repo.protection && (
-          <Shield className="w-5 h-5 text-green-500" title="Branch protection enabled" />
+          <Shield className="w-5 h-5 text-green-500 flex-shrink-0" title="Branch protection enabled" />
         )}
       </div>
 

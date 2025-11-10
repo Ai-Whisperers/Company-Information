@@ -4,6 +4,7 @@ const fs = require('fs').promises;
 const path = require('path');
 const { exec } = require('child_process');
 const { promisify } = require('util');
+const { Octokit } = require('@octokit/rest');
 
 const execAsync = promisify(exec);
 const app = express();
@@ -12,15 +13,41 @@ const PORT = process.env.PORT || 3001;
 // Middleware
 app.use(cors());
 app.use(express.json());
+
+// Content Security Policy middleware
+app.use((req, res, next) => {
+    res.setHeader(
+        'Content-Security-Policy',
+        "default-src 'self'; " +
+        "script-src 'self' 'unsafe-inline'; " +
+        "style-src 'self' 'unsafe-inline'; " +
+        "img-src 'self' data: https:; " +
+        "connect-src 'self' ws: wss:; " +
+        "font-src 'self'; " +
+        "object-src 'none'; " +
+        "base-uri 'self'; " +
+        "form-action 'self'"
+    );
+    next();
+});
+
 app.use(express.static('.'));
+
+// Load environment variables
+require('dotenv').config({ path: path.join(__dirname, '../../.env') });
 
 // Configuration
 const CONFIG = {
     organization: 'Ai-Whisperers',
-    todosDir: path.join(__dirname, '../../'), // Use the root directory since project-todos was deleted
+    todosDir: path.join(__dirname, '../../'),
     excaliburScript: 'C:\\Users\\kyrian\\Documents\\Company-Information\\scripts\\excalibur-command.ps1',
-    githubToken: process.env.GITHUB_TOKEN
+    githubToken: process.env.GITHUB_TOKEN || process.env.GITHUB_PAT
 };
+
+// Initialize GitHub API client
+const octokit = new Octokit({
+    auth: CONFIG.githubToken
+});
 
 // Cache for GitHub data
 const dataCache = new Map();
@@ -39,18 +66,74 @@ const projectMapping = {
 
 // API Endpoints
 
-// Get project list
+// Get project list with real-time GitHub data
 app.get('/api/projects', async (req, res) => {
     try {
+        // Fetch all repositories from GitHub
+        const { data: repos } = await octokit.repos.listForOrg({
+            org: CONFIG.organization,
+            per_page: 100,
+            sort: 'updated',
+            type: 'all'
+        });
+
         const projects = await Promise.all(
-            Object.keys(projectMapping).map(async name => ({
-                name,
-                todoFile: projectMapping[name],
-                lastUpdated: await getFileModificationTime(path.join(CONFIG.todosDir, projectMapping[name]))
-            }))
+            repos.map(async repo => {
+                try {
+                    // Get additional data for each repo
+                    const [issuesData, prsData, commitsData] = await Promise.all([
+                        octokit.issues.listForRepo({
+                            owner: CONFIG.organization,
+                            repo: repo.name,
+                            state: 'open',
+                            per_page: 1
+                        }),
+                        octokit.pulls.list({
+                            owner: CONFIG.organization,
+                            repo: repo.name,
+                            state: 'open',
+                            per_page: 1
+                        }),
+                        octokit.repos.listCommits({
+                            owner: CONFIG.organization,
+                            repo: repo.name,
+                            per_page: 1
+                        }).catch(() => ({ data: [] }))
+                    ]);
+
+                    // Calculate health score
+                    const daysSinceUpdate = Math.floor((Date.now() - new Date(repo.pushed_at)) / (1000 * 60 * 60 * 24));
+                    let healthScore = 100;
+                    healthScore -= Math.min(daysSinceUpdate * 2, 40); // Penalize old repos
+                    healthScore -= Math.min(repo.open_issues_count * 1, 30); // Penalize open issues
+                    healthScore = Math.max(0, healthScore);
+
+                    return {
+                        name: repo.name,
+                        description: repo.description,
+                        url: repo.html_url,
+                        lastUpdated: repo.pushed_at,
+                        openIssues: repo.open_issues_count,
+                        openPRs: prsData.data.length,
+                        stars: repo.stargazers_count,
+                        language: repo.language,
+                        healthScore,
+                        isPrivate: repo.private,
+                        lastCommit: commitsData.data.length > 0 ? commitsData.data[0].commit.author.date : null,
+                        todoFile: projectMapping[repo.name] || null
+                    };
+                } catch (error) {
+                    console.error(`Error processing repo ${repo.name}:`, error.message);
+                    return null;
+                }
+            })
         );
 
-        res.json({ success: true, projects });
+        res.json({
+            success: true,
+            projects: projects.filter(p => p !== null),
+            timestamp: new Date().toISOString()
+        });
     } catch (error) {
         console.error('Failed to get projects:', error);
         res.status(500).json({ success: false, error: error.message });
@@ -225,42 +308,61 @@ function generateMockTodos(projectName) {
 }
 
 async function fetchGitHubData(projectName) {
-    // Return mock data with realistic values for dashboard display
-    const mockData = {
-        repository: {
-            name: projectName,
-            description: `${projectName} project for AI Whisperers`,
-            lastPush: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000).toISOString(),
-            openIssues: Math.floor(Math.random() * 15) + 1,
-            stargazers: Math.floor(Math.random() * 50),
-            language: ['JavaScript', 'Python', 'TypeScript', 'C#'][Math.floor(Math.random() * 4)]
-        },
-        issues: Math.floor(Math.random() * 15) + 1,
-        pullRequests: Math.floor(Math.random() * 5),
-        recentCommits: [
-            {
-                sha: Math.random().toString(36).substr(2, 7),
-                message: `feat: Update ${projectName} functionality`,
-                author: 'developer1',
-                date: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString()
-            },
-            {
-                sha: Math.random().toString(36).substr(2, 7),
-                message: `fix: Resolve issues in ${projectName}`,
-                author: 'developer2',
-                date: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString()
-            },
-            {
-                sha: Math.random().toString(36).substr(2, 7),
-                message: `docs: Update README for ${projectName}`,
-                author: 'developer3',
-                date: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
-            }
-        ],
-        lastCommit: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString()
-    };
+    try {
+        // Get repository information
+        const { data: repo } = await octokit.repos.get({
+            owner: CONFIG.organization,
+            repo: projectName
+        });
 
-    return mockData;
+        // Get issues
+        const { data: issues } = await octokit.issues.listForRepo({
+            owner: CONFIG.organization,
+            repo: projectName,
+            state: 'open',
+            per_page: 100
+        });
+
+        // Get pull requests
+        const { data: pullRequests } = await octokit.pulls.list({
+            owner: CONFIG.organization,
+            repo: projectName,
+            state: 'open',
+            per_page: 50
+        });
+
+        // Get recent commits
+        const { data: commits } = await octokit.repos.listCommits({
+            owner: CONFIG.organization,
+            repo: projectName,
+            per_page: 5
+        });
+
+        const recentCommits = commits.map(commit => ({
+            sha: commit.sha.substring(0, 7),
+            message: commit.commit.message.split('\n')[0],
+            author: commit.commit.author.name,
+            date: commit.commit.author.date
+        }));
+
+        return {
+            repository: {
+                name: repo.name,
+                description: repo.description,
+                lastPush: repo.pushed_at,
+                openIssues: issues.length,
+                stargazers: repo.stargazers_count,
+                language: repo.language
+            },
+            issues: issues.length,
+            pullRequests: pullRequests.length,
+            recentCommits,
+            lastCommit: commits.length > 0 ? commits[0].commit.author.date : null
+        };
+    } catch (error) {
+        console.error(`Error fetching GitHub data for ${projectName}:`, error.message);
+        throw error;
+    }
 }
 
 async function runExcaliburSync() {
@@ -487,14 +589,20 @@ async function generateTodoMarkdownContent(projectName) {
     return markdown;
 }
 
+/**
+ * DEPRECATED: Use health score from NestJS API /api/repository-monitor endpoints
+ * This legacy calculation is inconsistent with the canonical GitHubHealthScanner
+ *
+ * @deprecated Migrate to NestJS API for standardized health scores
+ */
 function calculateHealthScore(githubData) {
+    // Simplified calculation for backward compatibility
+    // Should be replaced by fetching from RepositoryScan table via NestJS API
     let score = 100;
 
-    // Deduct points for issues and PRs
     score -= Math.min(githubData.issues * 2, 30);
     score -= Math.min(githubData.pullRequests * 3, 15);
 
-    // Deduct points for old commits
     const daysSinceCommit = Math.floor((Date.now() - new Date(githubData.lastCommit)) / (1000 * 60 * 60 * 24));
     score -= Math.min(daysSinceCommit * 5, 20);
 

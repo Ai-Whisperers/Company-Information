@@ -71,11 +71,21 @@ export class GitHubHealthScanner {
     const repoData = await this.github.getRepository(repoName);
     const protection = await this.github.getBranchProtection(repoName, repoData.default_branch);
     const pulls = await this.github.getPullRequests(repoName);
-    const commits = await this.github.getRecentCommits(repoName, 7);
 
-    // Calculate health metrics
+    // Fetch commits from last 1 hour for hourly metrics
+    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
+    const recentCommits = await this.github.getRecentCommits(repoName, 7);
+    const commitsLastHour = recentCommits.filter(commit => {
+      if (!commit.commit.author?.date) return false;
+      const commitDate = new Date(commit.commit.author.date);
+      return commitDate >= oneHourAgo;
+    }).length;
+
+    // Calculate health metrics (still based on 7-day activity for health score)
     const stalePRs = pulls.filter(pr => {
-      const daysOld = (Date.now() - new Date(pr.created_at).getTime()) / (1000 * 60 * 60 * 24);
+      // FIX: Check updated_at instead of created_at for stale PRs
+      const lastActivity = pr.updated_at || pr.created_at;
+      const daysOld = (Date.now() - new Date(lastActivity).getTime()) / (1000 * 60 * 60 * 24);
       return daysOld > 7;
     });
 
@@ -83,7 +93,7 @@ export class GitHubHealthScanner {
       hasProtection: !!protection,
       stalePRs: stalePRs.length,
       openPRs: pulls.length,
-      recentCommits: commits.length,
+      recentCommits: recentCommits.length,  // 7-day commits for health score
       openIssues: repoData.open_issues_count,
     });
 
@@ -139,8 +149,8 @@ export class GitHubHealthScanner {
       },
       {
         checkType: 'activity',
-        status: commits.length > 0 ? 'PASS' : 'FAIL',
-        message: `${commits.length} commits in last 7 days`,
+        status: recentCommits.length > 0 ? 'PASS' : 'FAIL',
+        message: `${recentCommits.length} commits in last 7 days`,
       },
     ];
 
@@ -156,9 +166,88 @@ export class GitHubHealthScanner {
       });
     }
 
+    /**
+     * SAVE TO REPOSITORYSCAN TABLE
+     * This table is used by the dashboard for hourly metrics and trends.
+     * Alert flags are determined based on thresholds.
+     */
+    const needsAttention = healthScore < 70;
+    const hasStalePrs = stalePRs.length > 0;
+    const highIssueCount = repoData.open_issues_count > 10;
+    const inactive = recentCommits.length === 0;
+
+    await this.prisma.repositoryScan.create({
+      data: {
+        repositoryName: repoName,
+        fullName: repoData.full_name,
+        repositoryUrl: repoData.html_url,
+        visibility: repoData.private ? 'private' : 'public',
+        defaultBranch: repoData.default_branch,
+        commitsLastHour,  // Actual hourly commits
+        openPrs: pulls.length,
+        stalePrs: stalePRs.length,
+        openIssues: repoData.open_issues_count,
+        totalBranches: 1,  // TODO: Fetch actual branch count
+        healthScore,
+        lastUpdated: repoData.updated_at ? new Date(repoData.updated_at) : null,
+        lastPushed: repoData.pushed_at ? new Date(repoData.pushed_at) : null,
+        sizeKb: repoData.size,
+        stars: repoData.stargazers_count,
+        watchers: repoData.watchers_count,
+        forks: repoData.forks_count,
+        needsAttention: needsAttention ? 1 : 0,
+        hasStalePrs: hasStalePrs ? 1 : 0,
+        highIssueCount: highIssueCount ? 1 : 0,
+        tooManyBranches: 0,  // TODO: Implement branch count threshold
+        inactive: inactive ? 1 : 0,
+        scanTimestamp: new Date(),
+      },
+    });
+
+    this.logger.debug(`Scan complete for ${repoName}: health=${healthScore}, commits(1h)=${commitsLastHour}`);
+
     return repository;
   }
 
+  /**
+   * CANONICAL HEALTH SCORE CALCULATION
+   * This is the single source of truth for repository health scores.
+   * All other health score calculations should be deprecated in favor of this method.
+   *
+   * Scoring System (max 100 points):
+   *
+   * 1. Branch Protection (30 points)
+   *    - Protected main branch: +30 points
+   *    - No protection: +0 points
+   *    Rationale: Branch protection ensures code review and prevents direct pushes
+   *
+   * 2. Pull Request Health (25 points)
+   *    - 0 stale PRs (>7 days old): +25 points
+   *    - 1-2 stale PRs: +15 points
+   *    - 3-5 stale PRs: +5 points
+   *    - >5 stale PRs: +0 points
+   *    Rationale: Stale PRs indicate poor code review hygiene
+   *
+   * 3. Activity Level (25 points) - Based on last 7 days
+   *    - ≥10 commits: +25 points
+   *    - 5-9 commits: +15 points
+   *    - 1-4 commits: +10 points
+   *    - 0 commits: +0 points
+   *    Rationale: Active development shows healthy project engagement
+   *
+   * 4. Issue Management (20 points)
+   *    - 0 open issues: +20 points
+   *    - 1-5 issues: +15 points
+   *    - 6-10 issues: +10 points
+   *    - 11-20 issues: +5 points
+   *    - >20 issues: +0 points
+   *    Rationale: Controlled issue count shows good project maintenance
+   *
+   * Health Categories (Aligned with Frontend):
+   * - GOOD: ≥70 points (Green - Healthy)
+   * - WARNING: 50-69 points (Yellow/Orange - Needs Attention)
+   * - CRITICAL: <50 points (Red - Critical)
+   */
   private calculateHealthScore(metrics: {
     hasProtection: boolean;
     stalePRs: number;
@@ -190,10 +279,13 @@ export class GitHubHealthScanner {
     return Math.min(100, score);
   }
 
+  /**
+   * Get health status based on score
+   * Thresholds aligned with frontend and repository monitor service
+   */
   private getHealthStatus(score: number): HealthStatus {
-    if (score >= 80) return 'GOOD';
-    if (score >= 60) return 'WARNING';
-    if (score >= 40) return 'CRITICAL';
-    return 'UNKNOWN';
+    if (score >= 70) return 'GOOD';      // Healthy repos
+    if (score >= 50) return 'WARNING';   // Needs attention
+    return 'CRITICAL';                   // Critical issues
   }
 }

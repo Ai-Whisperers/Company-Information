@@ -1,15 +1,6 @@
 class ProjectDashboard {
     constructor() {
-        this.projects = [
-            { name: 'AI-Investment', repo: 'AI-Investment', priority: 'high' },
-            { name: 'Comment-Analyzer', repo: 'Comment-Analizer', priority: 'high' },
-            { name: 'WPG-Amenities', repo: 'WPG-Amenities', priority: 'medium' },
-            { name: 'AI-Whisperers-Website', repo: 'AI-Whisperers-Website', priority: 'medium' },
-            { name: 'AI-Whisperers-Core', repo: 'AI-Whisperers-Core', priority: 'high' },
-            { name: 'Call-Recorder', repo: 'Call-Recorder', priority: 'low' },
-            { name: 'Clockify-ADO-Report', repo: 'clockify-ADO-automated-report', priority: 'low' }
-        ];
-
+        this.projects = [];
         this.currentProject = null;
         this.refreshInterval = null;
         this.lastFetchTime = {};
@@ -17,12 +8,41 @@ class ProjectDashboard {
         this.init();
     }
 
-    init() {
+    async init() {
         this.setupEventListeners();
+        await this.loadProjectsList();
         this.populateProjectDropdown();
         this.startAutoRefresh();
         this.loadDashboardState();
         this.connectWebSocket();
+    }
+
+    async loadProjectsList() {
+        try {
+            const response = await fetch('http://localhost:3001/api/projects');
+            if (response.ok) {
+                const data = await response.json();
+                if (data.success && data.projects) {
+                    // Map API data to dashboard format
+                    this.projects = data.projects.map(project => ({
+                        name: project.name,
+                        repo: project.name,
+                        priority: project.healthScore >= 80 ? 'high' : project.healthScore >= 60 ? 'medium' : 'low',
+                        healthScore: project.healthScore,
+                        openIssues: project.openIssues,
+                        openPRs: project.openPRs,
+                        lastCommit: project.lastCommit
+                    }));
+                    console.log('Loaded projects from API:', this.projects);
+                } else {
+                    console.error('API returned no projects');
+                }
+            }
+        } catch (error) {
+            console.error('Failed to load projects list:', error);
+            // Fallback to empty array - user will see "Select a project"
+            this.projects = [];
+        }
     }
 
     connectWebSocket() {
@@ -87,6 +107,20 @@ class ProjectDashboard {
 
     populateProjectDropdown() {
         const dropdown = document.getElementById('projectDropdown');
+
+        // Clear existing options except the first one
+        while (dropdown.options.length > 1) {
+            dropdown.remove(1);
+        }
+
+        if (this.projects.length === 0) {
+            const option = document.createElement('option');
+            option.value = '';
+            option.textContent = 'Loading projects...';
+            dropdown.appendChild(option);
+            return;
+        }
+
         this.projects.forEach(project => {
             const option = document.createElement('option');
             option.value = project.name;

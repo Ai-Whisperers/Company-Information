@@ -1,0 +1,402 @@
+{
+  "name": "AI Whisperers - Repository Monitor (All 25 Repos)",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 6
+            }
+          ]
+        }
+      },
+      "id": "schedule-trigger",
+      "name": "Schedule Trigger - Every 6 Hours",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1,
+      "position": [
+        140,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "headerAuth",
+        "url": "https://api.github.com/orgs/Ai-Whisperers/repos",
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "per_page",
+              "value": "100"
+            },
+            {
+              "name": "type",
+              "value": "all"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "fetch-all-repos",
+      "name": "Fetch All Organization Repos",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        380,
+        140
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "github-token",
+          "name": "GitHub Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "headerAuth",
+        "url": "={{ $json.url }}/commits",
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "since",
+              "value": "={{ $now.minus({ hours: 6 }).toISO() }}"
+            },
+            {
+              "name": "per_page",
+              "value": "100"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "fetch-recent-commits",
+      "name": "Get Recent Commits (Last 6h)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        380,
+        220
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "github-token",
+          "name": "GitHub Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "headerAuth",
+        "url": "={{ $json.url }}/issues",
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "state",
+              "value": "open"
+            },
+            {
+              "name": "per_page",
+              "value": "100"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "fetch-open-issues",
+      "name": "Get Open Issues",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        380,
+        310
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "github-token",
+          "name": "GitHub Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "headerAuth",
+        "url": "={{ $json.url }}/pulls",
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "state",
+              "value": "open"
+            },
+            {
+              "name": "per_page",
+              "value": "100"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "fetch-open-prs",
+      "name": "Get Open Pull Requests",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        380,
+        400
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "github-token",
+          "name": "GitHub Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "headerAuth",
+        "url": "={{ $json.url }}/branches",
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "per_page",
+              "value": "100"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "fetch-branches",
+      "name": "Get All Branches",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        380,
+        490
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "github-token",
+          "name": "GitHub Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combinationMode": "mergeByPosition",
+        "options": {}
+      },
+      "id": "merge-repo-data",
+      "name": "Merge All Repository Data",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2.1,
+      "position": [
+        680,
+        280
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// The merge node combines 4 inputs:\n// Input 0: Commits array (for all repos)\n// Input 1: Issues array (for all repos)\n// Input 2: Pull Requests array (for all repos)\n// Input 3: Branches array (for all repos)\n\nconst allInputs = $input.all();\n\n// Extract data from merge node\nconst commitsInput = allInputs[0]?.json || [];\nconst issuesInput = allInputs[1]?.json || [];\nconst prsInput = allInputs[2]?.json || [];\nconst branchesInput = allInputs[3]?.json || [];\n\n// The first input (Fetch All Organization Repos) contains the base repo data\n// We need to get this from the commits input which has the repo metadata\nconst repos = Array.isArray(commitsInput) ? commitsInput : [commitsInput];\n\n// Process each repository\nconst results = repos.map((repo, index) => {\n  // Extract repo metadata\n  const repoData = {\n    name: repo.name,\n    full_name: repo.full_name,\n    html_url: repo.html_url,\n    visibility: repo.visibility,\n    private: repo.private,\n    default_branch: repo.default_branch,\n    updated_at: repo.updated_at,\n    pushed_at: repo.pushed_at,\n    size: repo.size,\n    stargazers_count: repo.stargazers_count,\n    watchers_count: repo.watchers_count,\n    forks_count: repo.forks_count\n  };\n\n  // Get corresponding data for this repo from other inputs\n  const commits = Array.isArray(commitsInput) && commitsInput[index]?.commits ? commitsInput[index].commits : [];\n  const allIssues = Array.isArray(issuesInput) && issuesInput[index]?.issues ? issuesInput[index].issues : [];\n  const pullRequests = Array.isArray(prsInput) && prsInput[index]?.prs ? prsInput[index].prs : [];\n  const branches = Array.isArray(branchesInput) && branchesInput[index]?.branches ? branchesInput[index].branches : [];\n\n  // Filter out PRs from issues (GitHub API returns PRs in issues endpoint)\n  const issues = allIssues.filter(issue => !issue.pull_request);\n\n  // Calculate stale PRs (older than 7 days)\n  const stalePRs = pullRequests.filter(pr => {\n    const created = new Date(pr.created_at);\n    const daysSince = (Date.now() - created.getTime()) / (1000 * 60 * 60 * 24);\n    return daysSince > 7;\n  });\n\n  // Calculate health score\n  let healthScore = 100;\n  if (commits.length === 0) healthScore -= 20;\n  if (stalePRs.length > 0) healthScore -= Math.min(stalePRs.length * 10, 30); // Cap at -30\n  if (issues.length > 10) healthScore -= 15;\n  if (branches.length > 20) healthScore -= 10;\n  healthScore = Math.max(0, healthScore);\n\n  return {\n    json: {\n      repository: repoData.name,\n      full_name: repoData.full_name,\n      url: repoData.html_url,\n      visibility: repoData.visibility || (repoData.private ? 'private' : 'public'),\n      default_branch: repoData.default_branch,\n      \n      // Activity metrics\n      commits_last_6h: commits.length,\n      open_pull_requests: pullRequests.length,\n      stale_pull_requests: stalePRs.length,\n      open_issues: issues.length,\n      total_branches: branches.length,\n      \n      // Health metrics\n      health_score: healthScore,\n      last_updated: repoData.updated_at,\n      last_pushed: repoData.pushed_at,\n      \n      // Size metrics\n      size_kb: repoData.size,\n      stars: repoData.stargazers_count || 0,\n      watchers: repoData.watchers_count || 0,\n      forks: repoData.forks_count || 0,\n      \n      // Alert flags\n      needs_attention: healthScore < 70,\n      has_stale_prs: stalePRs.length > 0,\n      high_issue_count: issues.length > 10,\n      too_many_branches: branches.length > 20,\n      inactive: commits.length === 0,\n      \n      // Timestamp\n      scan_timestamp: new Date().toISOString()\n    }\n  };\n});\n\nreturn results;"
+      },
+      "id": "calculate-metrics",
+      "name": "Calculate Repository Metrics",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        810,
+        280
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\n\n// Group by status\nconst healthy = items.filter(i => !i.json.needs_attention);\nconst needsAttention = items.filter(i => i.json.needs_attention);\n\n// Calculate summary statistics\nconst summary = {\n  total_repos: items.length,\n  healthy_repos: healthy.length,\n  repos_needing_attention: needsAttention.length,\n  total_commits_6h: items.reduce((sum, i) => sum + i.json.commits_last_6h, 0),\n  total_open_prs: items.reduce((sum, i) => sum + i.json.open_pull_requests, 0),\n  total_stale_prs: items.reduce((sum, i) => sum + i.json.stale_pull_requests, 0),\n  total_open_issues: items.reduce((sum, i) => sum + i.json.open_issues, 0),\n  average_health_score: Math.round(items.reduce((sum, i) => sum + i.json.health_score, 0) / items.length),\n  scan_timestamp: new Date().toISOString()\n};\n\n// Create alert list\nconst alerts = needsAttention.map(i => ({\n  repository: i.json.repository,\n  health_score: i.json.health_score,\n  issues: [\n    i.json.has_stale_prs ? `${i.json.stale_pull_requests} stale PRs` : null,\n    i.json.high_issue_count ? `${i.json.open_issues} open issues` : null,\n    i.json.too_many_branches ? `${i.json.total_branches} branches` : null,\n    i.json.inactive ? 'No recent activity' : null\n  ].filter(Boolean),\n  url: i.json.url\n}));\n\n// Create markdown report\nconst markdown = `# AI Whisperers - Repository Health Report\\n\\n**Scan Time:** ${summary.scan_timestamp}\\n\\n## Summary\\n\\n- **Total Repositories:** ${summary.total_repos}\\n- **Healthy:** ${summary.healthy_repos} ✅\\n- **Needs Attention:** ${summary.repos_needing_attention} ⚠️\\n- **Average Health Score:** ${summary.average_health_score}/100\\n\\n## Activity (Last 6 Hours)\\n\\n- **Commits:** ${summary.total_commits_6h}\\n- **Open Pull Requests:** ${summary.total_open_prs}\\n- **Stale Pull Requests:** ${summary.total_stale_prs}\\n- **Open Issues:** ${summary.total_open_issues}\\n\\n${alerts.length > 0 ? `## Repositories Needing Attention\\n\\n${alerts.map(a => `### ${a.repository} (Health: ${a.health_score}/100)\\n\\n${a.issues.map(i => `- ${i}`).join('\\n')}\\n\\n[View Repository](${a.url})\\n`).join('\\n')}` : '## All Repositories Healthy! 🎉\\n'}\\n\\n---\\n*Generated by n8n Repository Monitor*`;\n\nreturn [{\n  json: {\n    summary,\n    alerts,\n    markdown,\n    all_repos: items.map(i => i.json)\n  }\n}];"
+      },
+      "id": "generate-summary",
+      "name": "Generate Summary Report",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        950,
+        280
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Convert markdown to HTML for email\nconst items = $input.all();\nconst data = items[0].json;\n\n// Simple markdown to HTML converter\nfunction markdownToHtml(markdown) {\n  // First, convert escaped newlines to actual newlines if they exist\n  let text = markdown.replace(/\\\\n/g, '\\n');\n  \n  // Split into lines for processing\n  const lines = text.split('\\n');\n  const htmlLines = [];\n  let inList = false;\n  \n  for (let i = 0; i < lines.length; i++) {\n    let line = lines[i];\n    \n    // Skip empty lines but add spacing\n    if (line.trim() === '') {\n      if (inList) {\n        htmlLines.push('</ul>');\n        inList = false;\n      }\n      htmlLines.push('<br>');\n      continue;\n    }\n    \n    // Headers\n    if (line.startsWith('### ')) {\n      if (inList) { htmlLines.push('</ul>'); inList = false; }\n      htmlLines.push('<h3>' + line.substring(4) + '</h3>');\n    } else if (line.startsWith('## ')) {\n      if (inList) { htmlLines.push('</ul>'); inList = false; }\n      htmlLines.push('<h2>' + line.substring(3) + '</h2>');\n    } else if (line.startsWith('# ')) {\n      if (inList) { htmlLines.push('</ul>'); inList = false; }\n      htmlLines.push('<h1>' + line.substring(2) + '</h1>');\n    }\n    // Lists\n    else if (line.startsWith('- ')) {\n      if (!inList) {\n        htmlLines.push('<ul>');\n        inList = true;\n      }\n      htmlLines.push('<li>' + line.substring(2) + '</li>');\n    }\n    // Horizontal rule\n    else if (line.trim() === '---') {\n      if (inList) { htmlLines.push('</ul>'); inList = false; }\n      htmlLines.push('<hr style=\"border: none; border-top: 1px solid #ccc; margin: 20px 0;\">');\n    }\n    // Regular text\n    else {\n      if (inList) { htmlLines.push('</ul>'); inList = false; }\n      htmlLines.push('<p>' + line + '</p>');\n    }\n  }\n  \n  // Close list if still open\n  if (inList) {\n    htmlLines.push('</ul>');\n  }\n  \n  // Join lines\n  let html = htmlLines.join('\\n');\n  \n  // Bold text\n  html = html.replace(/\\*\\*(.*?)\\*\\*/g, '<strong>$1</strong>');\n  \n  // Links\n  html = html.replace(/\\[(.*?)\\]\\((.*?)\\)/g, '<a href=\"$2\" style=\"color: #3498db; text-decoration: none;\">$1</a>');\n  \n  // Emojis (keep them as-is)\n  \n  // Wrap in HTML structure\n  const fullHtml = `<!DOCTYPE html>\n<html>\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <style>\n    body {\n      font-family: Arial, Helvetica, sans-serif;\n      line-height: 1.6;\n      color: #333;\n      max-width: 800px;\n      margin: 0 auto;\n      padding: 20px;\n      background-color: #f5f5f5;\n    }\n    .container {\n      background-color: white;\n      padding: 30px;\n      border-radius: 8px;\n      box-shadow: 0 2px 4px rgba(0,0,0,0.1);\n    }\n    h1 {\n      color: #2c3e50;\n      border-bottom: 3px solid #3498db;\n      padding-bottom: 10px;\n      margin-top: 0;\n    }\n    h2 {\n      color: #34495e;\n      margin-top: 30px;\n      border-bottom: 2px solid #95a5a6;\n      padding-bottom: 8px;\n    }\n    h3 {\n      color: #7f8c8d;\n      margin-top: 20px;\n    }\n    ul {\n      padding-left: 20px;\n      margin: 10px 0;\n    }\n    li {\n      margin: 8px 0;\n    }\n    p {\n      margin: 10px 0;\n    }\n    a {\n      color: #3498db;\n      text-decoration: none;\n    }\n    a:hover {\n      text-decoration: underline;\n    }\n    strong {\n      color: #2c3e50;\n    }\n  </style>\n</head>\n<body>\n  <div class=\"container\">\n    ${html}\n  </div>\n</body>\n</html>`;\n  \n  return fullHtml;\n}\n\nconst htmlContent = markdownToHtml(data.markdown);\n\nreturn [{\n  json: {\n    ...data,\n    html: htmlContent\n  }\n}];"
+      },
+      "id": "convert-to-html",
+      "name": "Convert Markdown to HTML",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1090,
+        280
+      ]
+    },
+    {
+      "parameters": {
+        "fromEmail": "={{ $env.EMAIL_FROM || 'noreply@ai-whisperers.com' }}",
+        "toEmail": "={{ $env.EMAIL_TO || 'team@ai-whisperers.com' }}",
+        "subject": "AI Whisperers - Repository Health Report - {{ $json.summary.scan_timestamp }}",
+        "emailType": "html",
+        "message": "={{ $json.html }}",
+        "options": {}
+      },
+      "id": "send-email-report",
+      "name": "Send Email Report",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [
+        1230,
+        280
+      ],
+      "credentials": {
+        "smtp": {
+          "id": "smtp-credentials",
+          "name": "SMTP Account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Schedule Trigger - Every 6 Hours": {
+      "main": [
+        [
+          {
+            "node": "Fetch All Organization Repos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch All Organization Repos": {
+      "main": [
+        [
+          {
+            "node": "Get Recent Commits (Last 6h)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get Open Issues",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get Open Pull Requests",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get All Branches",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Recent Commits (Last 6h)": {
+      "main": [
+        [
+          {
+            "node": "Merge All Repository Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Open Issues": {
+      "main": [
+        [
+          {
+            "node": "Merge All Repository Data",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Get Open Pull Requests": {
+      "main": [
+        [
+          {
+            "node": "Merge All Repository Data",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Get All Branches": {
+      "main": [
+        [
+          {
+            "node": "Merge All Repository Data",
+            "type": "main",
+            "index": 3
+          }
+        ]
+      ]
+    },
+    "Merge All Repository Data": {
+      "main": [
+        [
+          {
+            "node": "Calculate Repository Metrics",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculate Repository Metrics": {
+      "main": [
+        [
+          {
+            "node": "Generate Summary Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Summary Report": {
+      "main": [
+        [
+          {
+            "node": "Convert Markdown to HTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert Markdown to HTML": {
+      "main": [
+        [
+          {
+            "node": "Send Email Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": ""
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2025-11-10T15:25:00.000Z",
+  "versionId": "5"
+}

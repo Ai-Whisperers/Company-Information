@@ -1,0 +1,227 @@
+{
+  "name": "AI Whisperers - Repository Monitor (All 25 Repos)",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 6
+            }
+          ]
+        }
+      },
+      "id": "schedule-trigger",
+      "name": "Schedule Trigger - Every 6 Hours",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "authentication": "headerAuth",
+        "url": "https://api.github.com/orgs/Ai-Whisperers/repos",
+        "queryParameters": {
+          "parameters": [
+            {"name": "per_page", "value": "100"},
+            {"name": "type", "value": "all"}
+          ]
+        },
+        "options": {}
+      },
+      "id": "fetch-all-repos",
+      "name": "Fetch All Organization Repos",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [470, 300],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "github-token",
+          "name": "GitHub Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "batchSize": 1,
+        "options": {}
+      },
+      "id": "split-repos",
+      "name": "Split Into Individual Repos",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [690, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Store base repository data and fetch all metrics\nconst repo = $input.first().json;\n\n// Fetch commits\nlet commits = [];\ntry {\n  const since = new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString();\n  const commitRes = await $http.request({\n    method: 'GET',\n    url: `${repo.url}/commits?since=${since}&per_page=100`,\n    headers: {\n      'Authorization': 'Bearer ' + $env.GITHUB_TOKEN || $env.GITHUB_PAT,\n      'Accept': 'application/vnd.github.v3+json'\n    }\n  });\n  commits = commitRes.data || [];\n} catch (error) {\n  console.log('Error fetching commits:', error.message);\n}\n\n// Fetch pull requests\nlet pullRequests = [];\ntry {\n  const prRes = await $http.request({\n    method: 'GET',\n    url: `${repo.url}/pulls?state=open&per_page=100`,\n    headers: {\n      'Authorization': 'Bearer ' + $env.GITHUB_TOKEN || $env.GITHUB_PAT,\n      'Accept': 'application/vnd.github.v3+json'\n    }\n  });\n  pullRequests = prRes.data || [];\n} catch (error) {\n  console.log('Error fetching PRs:', error.message);\n}\n\n// Fetch issues\nlet issues = [];\ntry {\n  const issueRes = await $http.request({\n    method: 'GET',\n    url: `${repo.url}/issues?state=open&per_page=100`,\n    headers: {\n      'Authorization': 'Bearer ' + $env.GITHUB_TOKEN || $env.GITHUB_PAT,\n      'Accept': 'application/vnd.github.v3+json'\n    }\n  });\n  issues = issueRes.data || [];\n  // Filter out pull requests (GitHub API returns PRs in issues endpoint)\n  issues = issues.filter(issue => !issue.pull_request);\n} catch (error) {\n  console.log('Error fetching issues:', error.message);\n}\n\n// Fetch branches\nlet branches = [];\ntry {\n  const branchRes = await $http.request({\n    method: 'GET',\n    url: `${repo.url}/branches?per_page=100`,\n    headers: {\n      'Authorization': 'Bearer ' + $env.GITHUB_TOKEN || $env.GITHUB_PAT,\n      'Accept': 'application/vnd.github.v3+json'\n    }\n  });\n  branches = branchRes.data || [];\n} catch (error) {\n  console.log('Error fetching branches:', error.message);\n}\n\n// Calculate stale PRs (older than 7 days)\nconst stalePRs = pullRequests.filter(pr => {\n  const created = new Date(pr.created_at);\n  const daysSince = (Date.now() - created.getTime()) / (1000 * 60 * 60 * 24);\n  return daysSince > 7;\n});\n\n// Calculate health score\nlet healthScore = 100;\nif (commits.length === 0) healthScore -= 20;\nif (stalePRs.length > 0) healthScore -= (stalePRs.length * 10);\nif (issues.length > 10) healthScore -= 15;\nif (branches.length > 20) healthScore -= 10;\nhealthScore = Math.max(0, healthScore);\n\nreturn [{\n  json: {\n    repository: repo.name,\n    full_name: repo.full_name,\n    url: repo.html_url,\n    visibility: repo.visibility || (repo.private ? 'private' : 'public'),\n    default_branch: repo.default_branch,\n    \n    // Activity metrics\n    commits_last_6h: commits.length,\n    open_pull_requests: pullRequests.length,\n    stale_pull_requests: stalePRs.length,\n    open_issues: issues.length,\n    total_branches: branches.length,\n    \n    // Health metrics\n    health_score: healthScore,\n    last_updated: repo.updated_at,\n    last_pushed: repo.pushed_at,\n    \n    // Size metrics\n    size_kb: repo.size,\n    stars: repo.stargazers_count || 0,\n    watchers: repo.watchers_count || 0,\n    forks: repo.forks_count || 0,\n    \n    // Alert flags\n    needs_attention: healthScore < 70,\n    has_stale_prs: stalePRs.length > 0,\n    high_issue_count: issues.length > 10,\n    too_many_branches: branches.length > 20,\n    inactive: commits.length === 0,\n    \n    // Timestamp\n    scan_timestamp: new Date().toISOString()\n  }\n}];"
+      },
+      "id": "fetch-and-calculate",
+      "name": "Fetch All Data & Calculate Metrics",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [910, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "alert-condition",
+              "leftValue": "={{ $json.needs_attention }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "id": "filter-alerts",
+      "name": "Filter Repos Needing Attention",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2,
+      "position": [1130, 200]
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\n\n// Group by status\nconst healthy = items.filter(i => !i.json.needs_attention);\nconst needsAttention = items.filter(i => i.json.needs_attention);\n\n// Calculate summary statistics\nconst summary = {\n  total_repos: items.length,\n  healthy_repos: healthy.length,\n  repos_needing_attention: needsAttention.length,\n  total_commits_6h: items.reduce((sum, i) => sum + i.json.commits_last_6h, 0),\n  total_open_prs: items.reduce((sum, i) => sum + i.json.open_pull_requests, 0),\n  total_stale_prs: items.reduce((sum, i) => sum + i.json.stale_pull_requests, 0),\n  total_open_issues: items.reduce((sum, i) => sum + i.json.open_issues, 0),\n  average_health_score: Math.round(items.reduce((sum, i) => sum + i.json.health_score, 0) / items.length),\n  scan_timestamp: new Date().toISOString()\n};\n\n// Create alert list\nconst alerts = needsAttention.map(i => ({\n  repository: i.json.repository,\n  health_score: i.json.health_score,\n  issues: [\n    i.json.has_stale_prs ? `${i.json.stale_pull_requests} stale PRs` : null,\n    i.json.high_issue_count ? `${i.json.open_issues} open issues` : null,\n    i.json.too_many_branches ? `${i.json.total_branches} branches` : null,\n    i.json.inactive ? 'No recent activity' : null\n  ].filter(Boolean),\n  url: i.json.url\n}));\n\n// Create markdown report\nconst markdown = `# AI Whisperers - Repository Health Report\\n\\n**Scan Time:** ${summary.scan_timestamp}\\n\\n## Summary\\n\\n- **Total Repositories:** ${summary.total_repos}\\n- **Healthy:** ${summary.healthy_repos} ✅\\n- **Needs Attention:** ${summary.repos_needing_attention} ⚠️\\n- **Average Health Score:** ${summary.average_health_score}/100\\n\\n## Activity (Last 6 Hours)\\n\\n- **Commits:** ${summary.total_commits_6h}\\n- **Open Pull Requests:** ${summary.total_open_prs}\\n- **Stale Pull Requests:** ${summary.total_stale_prs}\\n- **Open Issues:** ${summary.total_open_issues}\\n\\n${alerts.length > 0 ? `## Repositories Needing Attention\\n\\n${alerts.map(a => `### ${a.repository} (Health: ${a.health_score}/100)\\n\\n${a.issues.map(i => `- ${i}`).join('\\n')}\\n\\n[View Repository](${a.url})\\n`).join('\\n')}` : '## All Repositories Healthy! 🎉\\n'}\\n\\n---\\n*Generated by n8n Repository Monitor*`;\n\nreturn [{\n  json: {\n    summary,\n    alerts,\n    markdown,\n    all_repos: items.map(i => i.json)\n  }\n}];"
+      },
+      "id": "generate-summary",
+      "name": "Generate Summary Report",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1130, 400]
+    },
+    {
+      "parameters": {
+        "operation": "insert",
+        "schema": "public",
+        "table": "repository_scans",
+        "columns": {
+          "mappings": [
+            {"column": "repository_name", "value": "={{ $json.repository }}"},
+            {"column": "health_score", "value": "={{ $json.health_score }}"},
+            {"column": "commits_last_6h", "value": "={{ $json.commits_last_6h }}"},
+            {"column": "open_prs", "value": "={{ $json.open_pull_requests }}"},
+            {"column": "stale_prs", "value": "={{ $json.stale_pull_requests }}"},
+            {"column": "open_issues", "value": "={{ $json.open_issues }}"},
+            {"column": "needs_attention", "value": "={{ $json.needs_attention }}"},
+            {"column": "scan_timestamp", "value": "={{ $json.scan_timestamp }}"}
+          ]
+        },
+        "options": {}
+      },
+      "id": "save-to-postgres",
+      "name": "Save to PostgreSQL",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [1350, 200],
+      "credentials": {
+        "postgres": {
+          "id": "postgres-connection",
+          "name": "PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SLACK_WEBHOOK_URL }}",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {"name": "text", "value": "AI Whisperers Repository Health Report"},
+            {"name": "blocks", "value": "={{ JSON.stringify([{type: 'header', text: {type: 'plain_text', text: '🔍 AI Whisperers - Repository Health Report'}}, {type: 'section', fields: [{type: 'mrkdwn', text: `*Total Repos:*\\n${$json.summary.total_repos}`}, {type: 'mrkdwn', text: `*Average Health:*\\n${$json.summary.average_health_score}/100`}, {type: 'mrkdwn', text: `*Healthy:*\\n✅ ${$json.summary.healthy_repos}`}, {type: 'mrkdwn', text: `*Needs Attention:*\\n⚠️ ${$json.summary.repos_needing_attention}`}]}]) }}"}
+          ]
+        },
+        "options": {}
+      },
+      "id": "send-slack",
+      "name": "Send Slack Notification",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1350, 400],
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// Convert markdown to HTML for email\nconst items = $input.all();\nconst data = items[0].json;\n\n// Simple markdown to HTML converter\nfunction markdownToHtml(markdown) {\n  let html = markdown;\n  \n  // Headers\n  html = html.replace(/^# (.*$)/gim, '<h1>$1</h1>');\n  html = html.replace(/^## (.*$)/gim, '<h2>$1</h2>');\n  html = html.replace(/^### (.*$)/gim, '<h3>$1</h3>');\n  \n  // Bold\n  html = html.replace(/\\*\\*(.*?)\\*\\*/gim, '<strong>$1</strong>');\n  \n  // Lists\n  html = html.replace(/^- (.*$)/gim, '<li>$1</li>');\n  html = html.replace(/(<li>.*<\\/li>)/s, '<ul>$1</ul>');\n  \n  // Links\n  html = html.replace(/\\[(.*?)\\]\\((.*?)\\)/gim, '<a href=\"$2\">$1</a>');\n  \n  // Line breaks\n  html = html.replace(/\\n/g, '<br>');\n  \n  // Wrap in basic HTML structure with styling\n  html = `\n<!DOCTYPE html>\n<html>\n<head>\n  <style>\n    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 800px; margin: 0 auto; padding: 20px; }\n    h1 { color: #2c3e50; border-bottom: 3px solid #3498db; padding-bottom: 10px; }\n    h2 { color: #34495e; margin-top: 30px; border-bottom: 2px solid #95a5a6; padding-bottom: 8px; }\n    h3 { color: #7f8c8d; margin-top: 20px; }\n    ul { padding-left: 20px; }\n    li { margin: 5px 0; }\n    a { color: #3498db; text-decoration: none; }\n    a:hover { text-decoration: underline; }\n    .summary { background-color: #ecf0f1; padding: 15px; border-radius: 5px; margin: 20px 0; }\n    .alert { background-color: #ffe6e6; padding: 15px; border-radius: 5px; margin: 15px 0; border-left: 4px solid #e74c3c; }\n    .healthy { background-color: #e8f8f5; padding: 15px; border-radius: 5px; margin: 15px 0; border-left: 4px solid #2ecc71; }\n  </style>\n</head>\n<body>\n  ${html}\n</body>\n</html>\n  `;\n  \n  return html;\n}\n\nconst htmlContent = markdownToHtml(data.markdown);\n\nreturn [{\n  json: {\n    ...data,\n    html: htmlContent\n  }\n}];"
+      },
+      "id": "convert-to-html",
+      "name": "Convert Markdown to HTML",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1350, 600]
+    },
+    {
+      "parameters": {
+        "fromEmail": "={{ $env.EMAIL_FROM || 'noreply@ai-whisperers.com' }}",
+        "toEmail": "={{ $env.EMAIL_TO || 'team@ai-whisperers.com' }}",
+        "subject": "AI Whisperers - Repository Health Report - {{ $json.summary.scan_timestamp }}",
+        "emailType": "html",
+        "message": "={{ $json.html }}",
+        "options": {}
+      },
+      "id": "send-email",
+      "name": "Send Email Report",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [1570, 600],
+      "credentials": {
+        "smtp": {
+          "id": "smtp-credentials",
+          "name": "SMTP Account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Schedule Trigger - Every 6 Hours": {
+      "main": [[{"node": "Fetch All Organization Repos", "type": "main", "index": 0}]]
+    },
+    "Fetch All Organization Repos": {
+      "main": [[{"node": "Split Into Individual Repos", "type": "main", "index": 0}]]
+    },
+    "Split Into Individual Repos": {
+      "main": [
+        [{"node": "Fetch All Data & Calculate Metrics", "type": "main", "index": 0}],
+        [{"node": "Generate Summary Report", "type": "main", "index": 0}]
+      ]
+    },
+    "Fetch All Data & Calculate Metrics": {
+      "main": [[{"node": "Filter Repos Needing Attention", "type": "main", "index": 0}]]
+    },
+    "Filter Repos Needing Attention": {
+      "main": [[{"node": "Save to PostgreSQL", "type": "main", "index": 0}]]
+    },
+    "Generate Summary Report": {
+      "main": [[
+        {"node": "Send Slack Notification", "type": "main", "index": 0},
+        {"node": "Convert Markdown to HTML", "type": "main", "index": 0}
+      ]]
+    },
+    "Convert Markdown to HTML": {
+      "main": [[{"node": "Send Email Report", "type": "main", "index": 0}]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2025-11-05T00:00:00.000Z",
+  "versionId": "2"
+}

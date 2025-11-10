@@ -2,7 +2,9 @@
 const nextConfig = {
   reactStrictMode: true,
   experimental: {
-    serverActions: true,
+    serverActions: {
+      bodySizeLimit: '2mb',
+    },
   },
   env: {
     GITHUB_ORG: 'Ai-Whisperers',
@@ -13,7 +15,7 @@ const nextConfig = {
     return [
       {
         source: '/api/jobs/:path*',
-        destination: process.env.JOBS_SERVICE_URL || 'http://localhost:4000/:path*',
+        destination: process.env.JOBS_SERVICE_URL || 'http://localhost:4000/api/:path*',
       },
     ];
   },

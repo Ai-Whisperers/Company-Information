@@ -1,11 +1,11 @@
-// Simplified Prisma schema for SQLite development
+// Prisma schema for PostgreSQL
 
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -155,4 +155,48 @@ model PolicyResult {
 
   @@index([policyId, checkedAt])
   @@index([repositoryName, branch])
+}
+
+model RepositoryScan {
+  id                String            @id @default(cuid())
+  repositoryName    String
+  fullName          String?
+  repositoryUrl     String?
+  visibility        String?
+  defaultBranch     String?
+
+  // Activity metrics
+  commitsLastHour   Int               @default(0)  // Commits in the last hour (updated hourly by scanner)
+  openPrs           Int               @default(0)
+  stalePrs          Int               @default(0)
+  openIssues        Int               @default(0)
+  totalBranches     Int               @default(0)
+
+  // Health metrics
+  healthScore       Int
+  lastUpdated       DateTime?
+  lastPushed        DateTime?
+
+  // Size metrics
+  sizeKb            Int?
+  stars             Int               @default(0)
+  watchers          Int               @default(0)
+  forks             Int               @default(0)
+
+  // Alert flags
+  needsAttention    Int               @default(0)
+  hasStalePrs       Int               @default(0)
+  highIssueCount    Int               @default(0)
+  tooManyBranches   Int               @default(0)
+  inactive          Int               @default(0)
+
+  // Timestamps
+  scanTimestamp     DateTime
+  createdAt         DateTime          @default(now())
+
+  @@index([repositoryName])
+  @@index([scanTimestamp])
+  @@index([needsAttention])
+  @@index([healthScore])
+  @@index([repositoryName, scanTimestamp])
 }

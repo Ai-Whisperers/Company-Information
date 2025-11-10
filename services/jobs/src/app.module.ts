@@ -8,6 +8,7 @@ import { SyncModule } from './sync/sync.module';
 import { ReportersModule } from './reporters/reporters.module';
 import { ReportsModule } from './reports/reports.module';
 import { IntegrationsModule } from './integrations/integrations.module';
+import { RepositoryMonitorModule } from './repository-monitor/repository-monitor.module';
 import { HealthController } from './health.controller';
 
 @Module({
@@ -29,6 +30,7 @@ import { HealthController } from './health.controller';
     ReportersModule,
     ReportsModule,
     IntegrationsModule,
+    RepositoryMonitorModule,
   ],
   controllers: [HealthController],
 })

@@ -14,6 +14,8 @@ interface RepoHealth {
   issues: number;
   lastActivity: string;
   protection: boolean;
+  projectStatus?: string;
+  pricingInfo?: string;
 }
 
 interface OrgStats {
@@ -38,48 +40,73 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Simulate data fetch - will connect to backend later
-    setTimeout(() => {
-      setRepos([
-        {
-          name: 'Comment-Analyzer',
-          health: 'good',
-          commits: 45,
-          prs: 3,
-          issues: 2,
-          lastActivity: '2 hours ago',
+    async function fetchData() {
+      try {
+        setLoading(true);
+        const response = await fetch('http://localhost:4000/api/reports/repositories');
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch repositories');
+        }
+        
+        const repositories = await response.json();
+        
+        // Transform API data to match component interface
+        const transformedRepos: RepoHealth[] = repositories.map((repo: any) => ({
+          name: repo.name,
+          health: repo.healthStatus === 'healthy' ? 'good' : 
+                  repo.healthStatus === 'needs-attention' ? 'warning' : 'critical',
+          commits: 0, // Will be populated from lastCommit data
+          prs: repo.openPRs || 0,
+          issues: repo.openIssues || 0,
+          lastActivity: repo.lastActivity ? formatLastActivity(new Date(repo.lastActivity)) : 'Never',
           protection: true,
-        },
-        {
-          name: 'AI-Investment',
-          health: 'warning',
-          commits: 128,
-          prs: 7,
-          issues: 12,
-          lastActivity: '1 day ago',
-          protection: true,
-        },
-        {
-          name: 'clockify-ADO-automated-report',
-          health: 'good',
-          commits: 32,
-          prs: 1,
-          issues: 0,
-          lastActivity: '3 hours ago',
-          protection: true,
-        },
-      ]);
-      setStats({
-        totalRepos: 9,
-        activeRepos: 5,
-        totalCommits: 245,
-        openPRs: 11,
-        openIssues: 14,
-        healthScore: 82,
-      });
-      setLoading(false);
-    }, 1000);
+        }));
+        
+        setRepos(transformedRepos);
+        
+        // Calculate aggregate stats
+        const totalCommits = repositories.reduce((sum: number, repo: any) => sum + (repo.lastCommit ? 1 : 0), 0);
+        const totalPRs = repositories.reduce((sum: number, repo: any) => sum + (repo.openPRs || 0), 0);
+        const totalIssues = repositories.reduce((sum: number, repo: any) => sum + (repo.openIssues || 0), 0);
+        const avgHealth = repositories.reduce((sum: number, repo: any) => sum + repo.healthScore, 0) / repositories.length;
+        const activeRepos = repositories.filter((repo: any) => {
+          if (!repo.lastActivity) return false;
+          const daysSince = Math.floor((Date.now() - new Date(repo.lastActivity).getTime()) / (1000 * 60 * 60 * 24));
+          return daysSince <= 7;
+        }).length;
+        
+        setStats({
+          totalRepos: repositories.length,
+          activeRepos,
+          totalCommits,
+          openPRs: totalPRs,
+          openIssues: totalIssues,
+          healthScore: Math.round(avgHealth),
+        });
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        // Keep loading state to show error
+      } finally {
+        setLoading(false);
+      }
+    }
+    
+    fetchData();
   }, []);
+  
+  function formatLastActivity(date: Date): string {
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+    
+    if (diffDays === 0) {
+      if (diffHours === 0) return 'Just now';
+      return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
+    }
+    return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -148,6 +175,26 @@ export default function DashboardPage() {
             icon={<Users className="w-5 h-5" />}
             trend={stats.healthScore > 80 ? 'up' : 'down'}
           />
+        </div>
+
+        {/* Repository Health Monitor Banner */}
+        <div className="bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg shadow-lg p-6 mb-8">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-xl font-bold text-white mb-2">
+                🔍 Real-time Repository Health Monitor
+              </h3>
+              <p className="text-blue-100">
+                Track health scores, activity metrics, and alerts for all 25 repositories
+              </p>
+            </div>
+            <a
+              href="/repository-health"
+              className="px-6 py-3 bg-white text-blue-600 font-semibold rounded-lg hover:bg-blue-50 transition-colors shadow-md"
+            >
+              View Dashboard →
+            </a>
+          </div>
         </div>
 
         {/* Repository Health Section */}

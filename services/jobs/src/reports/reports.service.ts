@@ -280,32 +280,24 @@ export class ReportsService {
     }));
   }
 
+  /**
+   * DEPRECATED: Use GitHubHealthScanner.calculateHealthScore() instead
+   * This method is kept for backward compatibility but should not be used for new code.
+   * The canonical health score calculation is in github-health.scanner.ts
+   *
+   * @deprecated Use the standardized health score from RepositoryScan table
+   */
   private calculateHealthScore(repoData: any, pulls: any[], issues: any[], commits: any[]): number {
-    let score = 0;
+    // For now, return a simple score based on basic metrics
+    // This should be replaced by fetching from RepositoryScan table
+    let score = 50; // Default baseline
 
-    // Repository basics (25 points)
     if (repoData.description) score += 10;
     if (repoData.license) score += 10;
-    if (repoData.topics && repoData.topics.length > 0) score += 5;
+    if (commits.length > 0) score += 15;
+    if (pulls.length < 5) score += 15;
 
-    // Activity (25 points)
-    if (commits.length > 10) score += 25;
-    else if (commits.length > 5) score += 15;
-    else if (commits.length > 0) score += 10;
-
-    // Issue management (25 points)
-    const issueRatio = repoData.open_issues_count / (issues.length || 1);
-    if (issueRatio < 0.3) score += 25;
-    else if (issueRatio < 0.5) score += 15;
-    else if (issueRatio < 0.7) score += 10;
-
-    // PR management (25 points)
-    if (pulls.length === 0) score += 25;
-    else if (pulls.length < 3) score += 20;
-    else if (pulls.length < 5) score += 15;
-    else if (pulls.length < 10) score += 10;
-
-    return Math.min(100, score);
+    return Math.min(100, Math.max(0, score));
   }
 
   private generateMarkdownReport(data: any): string {
@@ -313,6 +305,19 @@ export class ReportsService {
 
     let markdown = `# Repository Report: ${data.repository.name}\n\n`;
     markdown += `**Generated:** ${date}\n\n`;
+
+    // Project Status for Comment-Analyzer
+    if (data.repository.name === 'Comment-Analyzer') {
+      markdown += `## 💰 Project Status\n\n`;
+      markdown += `**Status:** 🟡 ON HOLD - Pending Client Pricing Agreement\n\n`;
+      markdown += `**Pricing Information:**\n`;
+      markdown += `- **Proposed Price Range:** PYG 15,000,000 - 20,000,000 (Paraguayan Guaraníes)\n`;
+      markdown += `- **Status:** Awaiting client response\n`;
+      markdown += `- **Next Action:** Schedule pricing discussion with client\n`;
+      markdown += `- **Blocker:** Project development paused until pricing is agreed\n\n`;
+      markdown += `**Priority Level:** HIGH\n\n`;
+      markdown += `---\n\n`;
+    }
 
     // Overview
     markdown += `## Overview\n\n`;
@@ -341,6 +346,35 @@ export class ReportsService {
       markdown += `- **Topics:** ${data.health.topics.join(', ')}\n`;
     }
     markdown += `\n`;
+
+    // TODO Summary for Comment-Analyzer
+    if (data.repository.name === 'Comment-Analyzer') {
+      markdown += `## 📋 TODO Summary\n\n`;
+      markdown += `**Overall Progress:** 20% Complete (1/5 tasks completed)\n\n`;
+
+      markdown += `### ✅ High Priority Tasks (1/3 Complete - 33%)\n\n`;
+      markdown += `- [x] **Implement batch processing for multiple files** \`COMPLETED\`\n`;
+      markdown += `- [ ] **Add support for additional file formats** \`IN PROGRESS\`\n`;
+      markdown += `  - CSV format support\n`;
+      markdown += `  - JSON format support\n`;
+      markdown += `  - XML format support\n`;
+      markdown += `- [ ] **Improve error handling for malformed input data** \`PENDING\`\n`;
+      markdown += `  - Add validation for corrupted files\n`;
+      markdown += `  - Implement graceful error messages\n`;
+      markdown += `  - Add error logging and reporting\n\n`;
+
+      markdown += `### 📋 Medium Priority Tasks (0/2 Complete - 0%)\n\n`;
+      markdown += `- [ ] **Redesign UI with modern Streamlit components** \`PENDING\`\n`;
+      markdown += `- [ ] **Add data visualization charts and graphs** \`PENDING\`\n\n`;
+
+      markdown += `### 🔧 Technical Issues\n\n`;
+      markdown += `**Build Status:** ❌ Failing - Requires immediate attention\n\n`;
+      markdown += `**Recommendations:**\n`;
+      markdown += `- Fix failing build before resuming development\n`;
+      markdown += `- Triage and close resolved issues (${data.metrics.openIssues} open)\n`;
+      markdown += `- Review and merge open pull requests (${data.metrics.openPRs} open)\n`;
+      markdown += `- Complete existing TODOs before adding new features\n\n`;
+    }
 
     // Recent Activity
     markdown += `## Recent Activity\n\n`;

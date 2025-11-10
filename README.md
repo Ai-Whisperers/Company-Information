@@ -77,7 +77,8 @@ company-information/
 ├── services/
 │   └── jobs/              # NestJS backend service
 ├── automation/
-│   └── github-actions/    # CI/CD workflows
+│   ├── github-actions/    # CI/CD workflows
+│   └── n8n-workflows/     # n8n repository monitoring
 ├── templates/             # Documentation templates
 ├── reports/              # Generated reports
 ├── scripts/              # Legacy PowerShell scripts
@@ -187,6 +188,25 @@ docker run -p 4000:4000 org-os-jobs
    - Daily health scans (2 AM)
    - ADO sync (every 6 hours)
    - Docs gate (on every PR)
+
+### n8n Workflow Setup
+
+For advanced repository monitoring with n8n:
+
+```bash
+# See detailed setup guide
+cd automation/n8n-workflows
+cat QUICKSTART.md
+```
+
+The n8n workflow provides:
+- Automated monitoring of all 25 repositories every 6 hours
+- Health score calculation (0-100) for each repository
+- Alert detection for stale PRs, high issues, and inactive repos
+- Multi-channel notifications (Slack, Email, Database)
+- Historical tracking and trend analysis
+
+See [n8n-workflows/README.md](automation/n8n-workflows/README.md) for full documentation.
 
 ## 📊 API Documentation
 
