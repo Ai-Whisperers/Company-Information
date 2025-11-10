@@ -1,5 +1,11 @@
 # Find Azure DevOps Organizations
-$pat = "***REMOVED***"
+# Get PAT from environment variable - set this before running the script
+$pat = $env:AZURE_DEVOPS_PAT
+if (-not $pat) {
+    Write-Host "ERROR: AZURE_DEVOPS_PAT environment variable not set" -ForegroundColor Red
+    Write-Host "Please set it using: `$env:AZURE_DEVOPS_PAT = 'your-token-here'" -ForegroundColor Yellow
+    exit 1
+}
 
 Write-Host "`nDiscovering Azure DevOps Organizations..." -ForegroundColor Cyan
 

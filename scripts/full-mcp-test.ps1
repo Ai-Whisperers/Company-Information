@@ -1,9 +1,17 @@
 # Full MCP Configuration Test with All Tokens
 Write-Host "`n=== Complete MCP Configuration Test ===" -ForegroundColor Cyan
 
-# Set all configured tokens for this session
-$env:GITHUB_TOKEN = "***REMOVED***"
-$env:AZURE_DEVOPS_PAT = "***REMOVED***"
+# Check if tokens are set in environment
+if (-not $env:GITHUB_TOKEN) {
+    Write-Host "ERROR: GITHUB_TOKEN environment variable not set" -ForegroundColor Red
+    Write-Host "Please set it using: `$env:GITHUB_TOKEN = 'your-token-here'" -ForegroundColor Yellow
+    exit 1
+}
+if (-not $env:AZURE_DEVOPS_PAT) {
+    Write-Host "ERROR: AZURE_DEVOPS_PAT environment variable not set" -ForegroundColor Red
+    Write-Host "Please set it using: `$env:AZURE_DEVOPS_PAT = 'your-token-here'" -ForegroundColor Yellow
+    exit 1
+}
 $env:AZURE_DEVOPS_ORG = "aiwhisperer"
 $env:AZURE_DEVOPS_PROJECT = "Business Setup"
 $env:AZURE_DEVOPS_BASE_URL = "https://dev.azure.com/aiwhisperer"
