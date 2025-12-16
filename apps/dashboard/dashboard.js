@@ -7,7 +7,7 @@ class ProjectDashboard {
             { name: 'AI-Whisperers-Website', repo: 'AI-Whisperers-Website', priority: 'medium' },
             { name: 'AI-Whisperers-Core', repo: 'AI-Whisperers-Core', priority: 'high' },
             { name: 'Call-Recorder', repo: 'Call-Recorder', priority: 'low' },
-            { name: 'Clockify-ADO-Report', repo: 'clockify-ADO-automated-report', priority: 'low' }
+            { name: 'Work-Hours-Reports', repo: 'work-hours-automated-reports', priority: 'medium' }
         ];
 
         this.currentProject = null;

@@ -69,7 +69,7 @@ const projectMapping = {
     'AI-Whisperers-Website': 'ai-whisperers-website-todos.md',
     'AI-Whisperers-Core': 'ai-whisperers-todos.md',
     'Call-Recorder': 'call-recorder-todos.md',
-    'Clockify-ADO-Report': 'clockify-ado-automated-report-todos.md'
+    'Work-Hours-Reports': 'work-hours-automated-reports-todos.md'
 };
 
 // API Endpoints

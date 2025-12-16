@@ -1,21 +1,33 @@
-name: Sync to Azure DevOps
+name: Sync to Azure DevOps (DISABLED)
+
+# =============================================================================
+# DISABLED: This workflow has been disabled in favor of work-hours-automated-reports
+# integration. Keeping code for reference. To re-enable, remove the 'if: false'
+# conditions from the jobs below.
+# See: https://github.com/Ai-Whisperers/work-hours-automated-reports
+# =============================================================================
 
 on:
-  push:
-    branches: [main, develop]
-    paths:
-      - 'documentation/**'
-      - 'azure-work-items/**'
-      - '*.md'
-      - 'CLAUDE.md'
-    paths-ignore:
-      - 'azure-pipelines.yml'  # Avoid circular triggers
+  # push:
+  #   branches: [main, develop]
+  #   paths:
+  #     - 'documentation/**'
+  #     - 'azure-work-items/**'
+  #     - '*.md'
+  #     - 'CLAUDE.md'
+  #   paths-ignore:
+  #     - 'azure-pipelines.yml'  # Avoid circular triggers
   workflow_dispatch:
+    inputs:
+      confirm_run:
+        description: 'Type CONFIRM to run this deprecated workflow'
+        required: true
 
 jobs:
   sync-to-azure:
+    if: ${{ github.event.inputs.confirm_run == 'CONFIRM' }}
     runs-on: ubuntu-latest
-    name: Mirror to Azure Repos
+    name: Mirror to Azure Repos (DISABLED)
     
     steps:
     - name: Checkout Repository
@@ -68,11 +80,13 @@ jobs:
         fi
 
   sync-documentation:
+    if: ${{ github.event.inputs.confirm_run == 'CONFIRM' }}
     runs-on: ubuntu-latest
-    name: Sync Documentation to Wiki
-    if: |
-      contains(github.event.head_commit.modified, '.md') ||
-      contains(github.event.head_commit.added, '.md')
+    name: Sync Documentation to Wiki (DISABLED)
+    # Original condition (disabled):
+    # if: |
+    #   contains(github.event.head_commit.modified, '.md') ||
+    #   contains(github.event.head_commit.added, '.md')
     
     steps:
     - name: Checkout Repository
